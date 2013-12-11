@@ -1,0 +1,31 @@
+
+--
+-- Structure de la table `login_facebook_2`
+--
+
+CREATE TABLE IF NOT EXISTS `login_facebook_2` (
+  `uid` bigint(20) unsigned NOT NULL,
+  `fb_uid` bigint(20) unsigned NOT NULL,
+  `app_id` bigint(20) NOT NULL,
+  PRIMARY KEY (`uid`),
+  UNIQUE KEY `fb_uid` (`fb_uid`,`app_id`),
+  UNIQUE KEY `uid` (`uid`,`fb_uid`),
+  KEY `fk_bienla_Login_facebook_2` (`uid`),
+  KEY `fk_login_facebook_2_1` (`uid`),
+  KEY `app_id` (`app_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Contenu de la table `login_facebook_2`
+--
+
+
+--
+-- Contraintes pour les tables exportées
+--
+
+--
+-- Contraintes pour la table `login_facebook_2`
+--
+ALTER TABLE `login_facebook_2`
+  ADD CONSTRAINT `fk_login_facebook_2_1` FOREIGN KEY (`uid`) REFERENCES `login` (`uid`) ON DELETE CASCADE ON UPDATE CASCADE;

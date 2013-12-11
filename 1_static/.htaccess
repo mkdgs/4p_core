@@ -1,0 +1,30 @@
+#Misc
+Options -Indexes 
+SetOutputFilter DEFLATE 
+BrowserMatch ^Mozilla/4 gzip-only-text/html
+BrowserMatch ^Mozilla/4\.0[678] no-gzip
+BrowserMatch \bMSIE !no-gzip !gzip-only-text/html 
+FileETag none
+AddType image/x-icon .ico
+
+<IfModule mod_headers.c>	
+	# any Header directives go here		
+	<FilesMatch "\.(gif|jpg|jpeg|png|js|pdf|ico|icon|css|swf|avi|mp3|ogg|wav|ttf|otf|eot|woff)$">
+		Header unset Cache-Control	
+		Header set Cache-Control "max-age=29030400, public"	
+		RequestHeader unset Cookie				
+	</FilesMatch>
+	
+	<FilesMatch "\.(ttf|otf|eot|css|woff)$"> 	
+		Header always set Access-Control-Allow-Origin "*"
+	</FilesMatch>
+	Header unset ETag
+</IfModule>
+
+
+<IfModule mod_expires.c>
+	ExpiresActive On
+	<FilesMatch "\.(gif|jpg|jpeg|png|js|pdf|ico|icon|css|swf|avi|mp3|ogg|wav|ttf|otf|eot)$">
+		ExpiresDefault "access plus 6 week"
+	</FilesMatch>
+</IfModule>

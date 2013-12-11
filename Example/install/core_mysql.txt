@@ -1,0 +1,223 @@
+SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `debug`
+--
+
+CREATE TABLE IF NOT EXISTS `debug` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `uid` bigint(20) unsigned DEFAULT NULL,
+  `pid` bigint(20) unsigned NOT NULL,
+  `errno` varchar(127) COLLATE utf8_bin NOT NULL,
+  `msg` varchar(512) COLLATE utf8_bin NOT NULL,
+  `backtrace` text COLLATE utf8_bin NOT NULL,
+  `file` varchar(127) COLLATE utf8_bin NOT NULL,
+  `line` varchar(8) COLLATE utf8_bin NOT NULL,
+  `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `referer` varchar(256) COLLATE utf8_bin NOT NULL,
+  `user_agent` varchar(256) COLLATE utf8_bin NOT NULL,
+  `ip` varchar(256) COLLATE utf8_bin NOT NULL,
+  `request_uri` varchar(512) COLLATE utf8_bin NOT NULL,
+  `query_string` varchar(512) COLLATE utf8_bin NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `uid` (`uid`),
+  KEY `pid` (`pid`),
+  KEY `date` (`date`),
+  KEY `file` (`file`),
+  KEY `ip` (`ip`(255)),
+  KEY `user_agent` (`user_agent`(255)),
+  KEY `request_uri` (`request_uri`(255)),
+  KEY `query_string` (`query_string`(255))
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `login`
+--
+
+CREATE TABLE IF NOT EXISTS `login` (
+  `uid` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `time` datetime DEFAULT NULL,
+  `status` int(1) unsigned NOT NULL,
+  PRIMARY KEY (`uid`),
+  KEY `time` (`time`),
+  KEY `status` (`status`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `login_mail`
+--
+
+CREATE TABLE IF NOT EXISTS `login_mail` (
+  `uid` bigint(20) unsigned NOT NULL,
+  `mail` varchar(255) COLLATE utf8_bin NOT NULL,
+  `tmp_mail` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+  `status` int(1) unsigned NOT NULL,
+  PRIMARY KEY (`uid`),
+  UNIQUE KEY `mail` (`mail`),
+  KEY `tmp_mail` (`tmp_mail`),
+  KEY `satus` (`status`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `login_password`
+--
+
+CREATE TABLE IF NOT EXISTS `login_password` (
+  `uid` bigint(20) unsigned NOT NULL,
+  `password` varchar(255) COLLATE utf8_bin NOT NULL,
+  `password_tmp` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+  PRIMARY KEY (`uid`),
+  KEY `password` (`password`),
+  KEY `password_tmp` (`password_tmp`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `node`
+--
+
+CREATE TABLE IF NOT EXISTS `node` (
+  `id_node` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `type_node` varchar(45) NOT NULL,
+  `uid` bigint(20) unsigned DEFAULT NULL,
+  `gid` bigint(20) unsigned DEFAULT NULL,
+  `zid` bigint(20) unsigned DEFAULT NULL,
+  `etat` tinyint(1) unsigned NOT NULL,
+  `rank` int(5) unsigned NOT NULL,
+  `data` longblob,
+  `date_creation` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `date_modification` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id_node`),
+  KEY `fk_node_1` (`uid`),
+  KEY `fk_node_2` (`gid`),
+  KEY `fk_node_3` (`zid`),
+  KEY `etat` (`etat`),
+  KEY `rank` (`rank`),
+  KEY `type_node` (`type_node`),
+  KEY `date_creation` (`date_creation`),
+  KEY `date_modification` (`date_modification`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `permissions_group`
+--
+
+CREATE TABLE IF NOT EXISTS `permissions_group` (
+  `gid` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) COLLATE utf8_bin NOT NULL,
+  `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`gid`),
+  UNIQUE KEY `name` (`name`),
+  KEY `timestamp` (`timestamp`) USING BTREE
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `permissions_group_user`
+--
+
+CREATE TABLE IF NOT EXISTS `permissions_group_user` (
+  `gid` bigint(20) unsigned NOT NULL,
+  `uid` bigint(20) unsigned NOT NULL,
+  `permission` int(3) unsigned DEFAULT NULL,
+  `timestamp` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`gid`,`uid`),
+  KEY `fk_sc_P_GroupUser_gid` (`gid`),
+  KEY `fk_sc_P_GroupUser_uid` (`uid`),
+  KEY `timestamp` (`timestamp`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `permissions_group_zone`
+--
+
+CREATE TABLE IF NOT EXISTS `permissions_group_zone` (
+  `gid` bigint(20) unsigned NOT NULL,
+  `zid` bigint(20) unsigned NOT NULL,
+  `permission` int(3) NOT NULL,
+  `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`gid`,`zid`),
+  KEY `permission` (`permission`),
+  KEY `fk_sc_P_GroupZone_gid` (`gid`),
+  KEY `fk_sc_P_GroupZone_zid` (`zid`),
+  KEY `timestamp` (`timestamp`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `permissions_zone`
+--
+
+CREATE TABLE IF NOT EXISTS `permissions_zone` (
+  `zid` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) COLLATE utf8_bin NOT NULL,
+  `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`zid`),
+  UNIQUE KEY `name` (`name`),
+  KEY `timestamp` (`timestamp`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `sessions`
+--
+
+CREATE TABLE IF NOT EXISTS `sessions` (
+  `id` varchar(255) NOT NULL,
+  `data` text,
+  `lastaccess` int(10) unsigned DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Contraintes pour les tables exportées
+--
+
+--
+-- Contraintes pour la table `login_mail`
+--
+ALTER TABLE `login_mail`
+  ADD CONSTRAINT `fk_sc_Login_mail_uid` FOREIGN KEY (`uid`) REFERENCES `login` (`uid`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Contraintes pour la table `login_password`
+--
+ALTER TABLE `login_password`
+  ADD CONSTRAINT `fk_sc_Login_password_uid` FOREIGN KEY (`uid`) REFERENCES `login` (`uid`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Contraintes pour la table `node`
+--
+ALTER TABLE `node`
+  ADD CONSTRAINT `fk_node_1` FOREIGN KEY (`uid`) REFERENCES `login` (`uid`) ON DELETE SET NULL ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_node_2` FOREIGN KEY (`gid`) REFERENCES `permissions_group` (`gid`) ON DELETE SET NULL ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_node_3` FOREIGN KEY (`zid`) REFERENCES `permissions_zone` (`zid`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+--
+-- Contraintes pour la table `permissions_group_user`
+--
+ALTER TABLE `permissions_group_user`
+  ADD CONSTRAINT `fk_sc_P_GroupUser_gid` FOREIGN KEY (`gid`) REFERENCES `permissions_group` (`gid`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_sc_P_GroupUser_uid` FOREIGN KEY (`uid`) REFERENCES `login` (`uid`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Contraintes pour la table `permissions_group_zone`
+--
+ALTER TABLE `permissions_group_zone`
+  ADD CONSTRAINT `fk_sc_P_GroupZone_gid` FOREIGN KEY (`gid`) REFERENCES `permissions_group` (`gid`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_sc_P_GroupZone_zid` FOREIGN KEY (`zid`) REFERENCES `permissions_zone` (`zid`) ON DELETE CASCADE ON UPDATE CASCADE;

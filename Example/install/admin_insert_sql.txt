@@ -1,0 +1,141 @@
+-- Serveur: localhost
+-- Généré le : Mar 10 Avril 2012 à 07:58
+-- Version du serveur: 5.1.61
+-- Version de PHP: 5.3.3-7+squeeze8
+
+SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
+
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8 */;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `login`
+--
+
+CREATE TABLE IF NOT EXISTS `login` (
+  `uid` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `time` datetime DEFAULT NULL,
+  `status` int(1) unsigned NOT NULL,
+  PRIMARY KEY (`uid`),
+  KEY `time` (`time`),
+  KEY `status` (`status`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=4 ;
+
+--
+-- Contenu de la table `login`
+--
+
+INSERT IGNORE INTO `login` (`uid`, `time`, `status`) VALUES
+(1, NULL, 1);
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `permissions_group`
+--
+
+CREATE TABLE IF NOT EXISTS `permissions_group` (
+  `gid` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) COLLATE utf8_bin NOT NULL,
+  PRIMARY KEY (`gid`),
+  UNIQUE KEY `name` (`name`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=3 ;
+
+--
+-- Contenu de la table `permissions_group`
+--
+
+INSERT IGNORE INTO `permissions_group` (`gid`, `name`) VALUES
+(1, 'group admin');
+
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `permissions_zone`
+--
+
+CREATE TABLE IF NOT EXISTS `permissions_zone` (
+  `zid` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) COLLATE utf8_bin NOT NULL,
+  PRIMARY KEY (`zid`),
+  UNIQUE KEY `name` (`name`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=3 ;
+
+--
+-- Contenu de la table `permissions_zone`
+--
+
+INSERT IGNORE INTO `permissions_zone` (`zid`, `name`) VALUES
+(1, 'zone admin');
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `permissions_group_user`
+--
+
+CREATE TABLE IF NOT EXISTS `permissions_group_user` (
+  `gid` bigint(20) unsigned NOT NULL,
+  `uid` bigint(20) unsigned NOT NULL,
+  `permission` int(3) unsigned DEFAULT NULL,
+  PRIMARY KEY (`gid`,`uid`),
+  UNIQUE KEY `unique` (`gid`,`uid`),
+  KEY `fk_sc_P_GroupUser_gid` (`gid`),
+  KEY `fk_sc_P_GroupUser_uid` (`uid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+--
+-- Contenu de la table `permissions_group_user`
+--
+
+INSERT IGNORE INTO `permissions_group_user` (`gid`, `uid`, `permission`) VALUES
+(1, 1, 1);
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `permissions_group_zone`
+--
+
+CREATE TABLE IF NOT EXISTS `permissions_group_zone` (
+  `gid` bigint(20) unsigned NOT NULL,
+  `zid` bigint(20) unsigned NOT NULL,
+  `permission` int(3) NOT NULL,
+  PRIMARY KEY (`gid`,`zid`),
+  UNIQUE KEY `unique` (`gid`,`zid`),
+  KEY `permission` (`permission`),
+  KEY `fk_sc_P_GroupZone_gid` (`gid`),
+  KEY `fk_sc_P_GroupZone_zid` (`zid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+--
+-- Contenu de la table `permissions_group_zone`
+--
+
+INSERT IGNORE INTO `permissions_group_zone` (`gid`, `zid`, `permission`) VALUES
+(1, 1, 1);
+
+
+--
+-- Contraintes pour les tables exportées
+--
+
+--
+-- Contraintes pour la table `permissions_group_user`
+--
+ALTER TABLE `permissions_group_user`
+  ADD CONSTRAINT `fk_sc_P_GroupUser_gid` FOREIGN KEY (`gid`) REFERENCES `permissions_group` (`gid`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_sc_P_GroupUser_uid` FOREIGN KEY (`uid`) REFERENCES `login` (`uid`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Contraintes pour la table `permissions_group_zone`
+--
+ALTER TABLE `permissions_group_zone`
+  ADD CONSTRAINT `fk_sc_P_GroupZone_gid` FOREIGN KEY (`gid`) REFERENCES `permissions_group` (`gid`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_sc_P_GroupZone_zid` FOREIGN KEY (`zid`) REFERENCES `permissions_zone` (`zid`) ON DELETE CASCADE ON UPDATE CASCADE;
