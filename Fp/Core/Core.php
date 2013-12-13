@@ -186,33 +186,6 @@ abstract class Core {
 			if ( is_dir($file) && is_file($file.'/index.php') ) include_once $file.'/index.php';
 			elseif ( is_file( $file.'.php') ) include_once $file.'.php';
 		}
-		
-		/*
-		// Psr module
-		if ( !$this->output() ) {			
-			$command_0 = $this->route()->getCommand(0);
-			$route = $this->route->getRoute();
-							
-			$module_path = array();
-			if ( $module_class = $this->moduleManager()->findByRoute($route) ) {
-				if ( !$mode = Filter::id('m', $_REQUEST) ) {
-					$mode = $this->route()->getCommand(1);
-				}
-			}			
-			if ( $module_class && class_exists($module_class) ) {			
-				$module = new $module_class($O);
-				if ( $module instanceof Module ) {
-					$module->setMode($mode);
-					if (  $module->getMode() ) {
-						$controller = $module->getController($module->getMode());
-						$controller->init();
-						$controller->render();
-					}
-					else throw new Exception('mode not found', 404);
-				}
-				else throw new Exception('module not found', 404);
-			}
-		}*/
 	}
 	
 	public function errorPage($code, $e_general) {
