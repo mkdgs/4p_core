@@ -127,21 +127,24 @@ abstract class Core {
 		        $module_entry = $this->glob('module_entry');
 		        $module_class = trim(str_replace('.', '\\', $module_class), '/');
 		        $mode = Filter::id('mode', $_REQUEST);
-		        
-		        if ( $module_class && class_exists($module_class) ) {
-		            $module = new $module_class($O);
-		            if ( $module instanceof \Fp\Module\Module ) {
-		                $module->setMode($mode);
-		                if (  $module->getMode() ) {
-		                    $controller = $module->getController($module->getMode());
-		                    $controller->setRequestParams($_GET);
-		                    $controller->init();
-		                    $controller->render();
-		                }
-		                else throw new Exception('mode not found', 404);
-		            }
-		            else throw new Exception('module not found', 404);
+		        if ( $module_class ) {
+		            if ( class_exists($module_class) ) {    		        
+    		            $module = new $module_class($O);
+    		            if ( $module instanceof \Fp\Module\Module ) {
+    		                $module->setMode($mode);
+    		                if (  $module->getMode() ) {
+    		                    $controller = $module->getController($module->getMode());
+    		                    $controller->setRequestParams($_GET);
+    		                    $controller->init();
+    		                    $controller->render();
+    		                }
+    		                else throw new Exception('mode not found', 404);
+    		            }
+    		            else throw new Exception('module not found', 404);
+    		        }
+    		        else throw new Exception('module not found', 404);
 		        }
+		        else throw new Exception('module not found', 404);
 		    }
 		    else {
     		    // ancienne méthode, déprécié 
