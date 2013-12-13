@@ -257,30 +257,18 @@ abstract class Core {
 				return require_once $this->glob('dir_lib').'init_config_javascript.php';
 			}
 			
-			if ( $this->stopProcess ) return $this->stopProcess = 0;
-			$this->db();
-
-			if ( $this->stopProcess ) return $this->stopProcess = 0;
-			$this->after_init();
-			$this->event()->trigger('after_init.core', $this);
-				
-			if ( $this->stopProcess ) return $this->stopProcess = 0;
-			$this->event()->trigger('before_login.core', $this);
-			$this->before_login();
-
-			if ( $this->stopProcess ) return $this->stopProcess = 0;
-			$this->login();
-			$this->event()->trigger('after_login.core', $this);
-
-			if ( $this->stopProcess ) return $this->stopProcess = 0;
-			$this->event()->trigger('before_controller.core', $this);
-			$this->before_controller();
-
-			if ( $this->stopProcess ) return $this->stopProcess = 0;
-			$this->controller();
-			$this->after_controller();
-			$this->event()->trigger('after_controller.core', $this);
-			
+			if ( !$this->stopProcess ) $this->db();
+			if ( !$this->stopProcess ) $this->after_init();
+			if ( !$this->stopProcess ) $this->event()->trigger('after_init.core', $this);
+			if ( !$this->stopProcess ) $this->event()->trigger('before_login.core', $this);
+			if ( !$this->stopProcess ) $this->before_login();
+			if ( !$this->stopProcess ) $this->login();
+			if ( !$this->stopProcess ) $this->event()->trigger('after_login.core', $this);
+			if ( !$this->stopProcess ) $this->event()->trigger('before_controller.core', $this);
+			if ( !$this->stopProcess ) $this->before_controller();
+			if ( !$this->stopProcess ) $this->controller();
+			if ( !$this->stopProcess ) $this->after_controller();
+			if ( !$this->stopProcess ) $this->event()->trigger('after_controller.core', $this);
 			if ( $this->stopProcess ) return $this->stopProcess = 0;
 			
 			if ( !$this->output() ) throw new Exception('not found', 404);
