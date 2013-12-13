@@ -24,10 +24,9 @@ class SessionEvent {
 		return self::$i;
 	}
 	
-	public static function getInstance()  {
-		if ( self::$i !== null ) {
-			return self::$i;
-		}
+	public static function getInstance(Core $O)  {
+		return self::load($O);
+		
 	}
 	
 	public function listen() { 		

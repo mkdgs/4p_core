@@ -196,7 +196,7 @@ abstract class Module {
 		
 		$t = $c.'\\'.$controller;
 		if( class_exists($t) ) {
-			$class= $t;
+			$class= $t;	
 			return $class = new $class($this);
 		}
 	}
@@ -206,17 +206,21 @@ abstract class Module {
 	 */
 	protected function loadController($controller) {		
 		$c = get_class($this);
-		if ( $classController = $this->getControllerClass($c, $controller) ) {
-			
+		
+		
+		if ( $classController = $this->getControllerClass($c, $controller) ) {		  
 			return $classController;
 		}
+		
+		
 		// check parent class
-		$c = get_parent_class($this);
-		if ( $classController = $this->getControllerClass($c, $controller) ) {
+		$c1 = get_parent_class($this);
+		if ( $classController = $this->getControllerClass($c1, $controller) ) {
 			return $classController;
 		}
-
-		throw new Exception($c.' has no '.$controller);
+		
+		
+		throw new Exception(addslashes($c).' and '.addslashes($c1).' has no '.$controller);
 	}
 	
 	/**
