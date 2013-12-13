@@ -303,23 +303,29 @@ if (!$4p) {
                     if ( !scope ) scope = 'root';
                     try {
                         if (typeof f.cache[scope] != 'function') {
-                            var strFunc = "var p=[],print=function(){p.push.apply(p,arguments);};"
-                                    + "with(obj){p.push('"
-                                    + f.tpl.replace(/[\r\t\n]/g, " ")
-                                            .split("'")
-                                            .join("\\'")
-                                            .replace(/{{=(.+?)}}/g, "',$1,'")
-                                            .split("{{")
-                                            .join("');")
-                                            .split("}}")
-                                            .join("p.push('")+ "');}return p.join('');";
+                         // put all data in function scope
+                            // i don't know if it's better than with(), but with can be "not forwad compatble"
+                            // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/with
+                            var strFunc = "for ( var x in arguments[0] ) {"
+                            +" eval('var ' + x + ' = arguments[0][x];'); "
+                            +"} ";                            
+                            strFunc +="var p=[]; var print = function(str) { p.push(str); }; p.push('"
+                                    + f.scope[scope].replace(/[\r\t\n]/g, " ")
+                                     .split("'")
+                                     .join("\\'")
+                                    .replace(/<script>/g, "{{")
+                                    .replace(/<\/script>/g, "}}")
+                                    .replace(/{{=([^}{2}]+)}}/g, function (m, p1) { return "'+"+p1.split("\\'").join("'")+"+'"; })
+                                    .replace(/{{(.+?)}}/g, function (m, p1) { return "');"+p1.split("\\'").join("'")+";p.push('"; })
+                                    +"');return p.join('');";
+                            f.cache[scope] = new Function('template_data', strFunc);
                             f.cache[scope] = new Function("obj", strFunc);
-                        }
+                        }                        
                         return f.cache[scope](data);
                     } catch (e) {
                         err = e.message;
                     }
-                    return "< # ERROR: " + err + scope +"-- ok # >";
+                    return "< # ERROR: " + err +' '+ scope +" # >";
                 };
                 return f;
             },
