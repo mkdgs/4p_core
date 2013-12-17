@@ -398,12 +398,11 @@ class Template {
 		
 		if ( !$this->noHeader ) {
 		    $this->head()->make(1);
-		    echo "</head>\n";		    
+		    echo "</head>\n";	
 		}
 		
+		echo '<body>';
 		if ( $this->debug ) {
-		    $body = preg_replace('#</body>$#','',$body);
-		    
 			$txt = '';
 			$d = array();
 			$d['stats'] 	 = Debug::point();			
@@ -439,9 +438,11 @@ class Template {
 				var_dump($e);		
 				die('----');
 			}	
-			$body .= $txt.'</body>';
+			$body .= $txt;
 		}
 		echo $body;
+		$this->head()->makeJs(1);
+		echo '</body>';
 		
 		if ( !$this->noHeader ) {
 			echo "\r\n</html>";

@@ -301,7 +301,9 @@ class TemplateHeader {
             }
         }
         $this->cachedCss = array();
-        
+
+        foreach ( $this->css  as $v	) echo $v.$line_cr;
+        $this->css = array();
         
         if  ( $debug_level >= 2 && $this->O->glob('cache') ) {
             foreach ( $this->cachedJsMaster as $k => $files ) {
@@ -310,19 +312,12 @@ class TemplateHeader {
                 }
             }
             $this->cachedJsMaster = array();
-        
-            foreach ( $this->cachedJs as $key => $files ) {
-                foreach ( $files as $file ) {
-                    echo '<script src="'.$this->rw_cache($file).'" type="text/javascript" ></script>'.$line_cr;
-                }
-            }
-            $this->cachedJs = array();
         }
         else {
             foreach ( $this->cachedJsMaster as $k => $files ) {
                 $sorted_files_ref = $files;
                 sort($sorted_files_ref);
-                
+        
                 $key = 'jsMaster_'.md5(implode('',$sorted_files_ref)).'_'.count($files).'_'.$this->O->glob('version').self::$cache.'.js';
                 if ( !$cache = $Cdn->exist($key) ) {
                     foreach ( $files as $file ) {
@@ -337,18 +332,49 @@ class TemplateHeader {
                         }
                         $cache .= $js.$line_cr;
                     }
-
+        
                     $Cdn->put($key, $cache);
                 }
                 echo '<script src="'.$Cdn->url($key).'" type="text/javascript" ></script>'.$line_cr;
                 break;
             }
             $this->cachedJsMaster = array();
+        }
 
+        if ( $last ) {
+            foreach ( $this->link as $v ) echo $v.$line_cr;
+            foreach ( $this->meta as $v ) echo $v.$line_cr;
+        }
+         
+        ob_flush();
+        flush();
+    }
+    
+    public function makeJs() {
+        require_once __DIR__.'/../../Lib/JSMin.php';
+        require_once __DIR__.'/../../Lib/CSSmin.php';
+        $Cdn  = new Cdn($this->O);
+        $less = new LessCss();
+        $debug_level = $this->O->glob('debug');
+        
+        if ( $debug_level > 2 ) $line_cr = "\r\n";
+        else $line_cr = null;
+               
+        
+        if  ( $debug_level >= 2 && $this->O->glob('cache') ) {
+        
+            foreach ( $this->cachedJs as $key => $files ) {
+                foreach ( $files as $file ) {
+                    echo '<script src="'.$this->rw_cache($file).'" type="text/javascript" ></script>'.$line_cr;
+                }
+            }
+            $this->cachedJs = array();
+        }
+        else {
             foreach ( $this->cachedJs as $key => $files ) {
                 $sorted_files_ref = $files;
                 sort($sorted_files_ref);
-                
+        
                 $key = 'js_'.md5(implode('', $sorted_files_ref)).'_'.count($files).'_'.$this->O->glob('version').self::$cache.'.js';
                 if ( !$cache = $Cdn->exist($key) ) {
                     foreach ( $files as $file ) {
@@ -373,19 +399,8 @@ class TemplateHeader {
             }
             $this->cachedJs = array();
         }
-
+        
         foreach ( $this->scriptInline as $v ) echo $v.$line_cr;
         $this->scriptInline = array();
-
-        foreach ( $this->css  as $v	) echo $v.$line_cr;
-        $this->css = array();
-
-        if ( $last ) {
-            foreach ( $this->link as $v ) echo $v.$line_cr;
-            foreach ( $this->meta as $v ) echo $v.$line_cr;
-        }
-         
-        ob_flush();
-        flush();
     }
 }
