@@ -73,24 +73,22 @@ class Permission {
     protected $prefix       = '';
     
 	protected static $level = array('administration'=>1, 'gestion'=>20, 'edition'=>30, 'publication'=>40, 'consultation'=>50, 'ban'=>999);
-		
 	protected static $cache = array();
+	
 	protected function isInCache($key) {
-		if ( array_key_exists("$key", self::$cache) ) {			
-			true;
-		}
+		if ( array_key_exists("$key", self::$cache) ) return true;
 	}	
+	
 	protected function getCache($key) {
-		if ( array_key_exists("$key", self::$cache) ) {
-			return self::$cache["$key"];
-		}
+		if ( array_key_exists("$key", self::$cache) ) return self::$cache["$key"];
 	} 
+	
 	protected function setCache($key, $value) {
 		return self::$cache["$key"] = $value;
 	}
 	
 	protected function clearCache() {
-		self::$cache["$key"] = array();
+		self::$cache = array();
 	}
 	
 	public function __construct(Core $O) {
@@ -252,7 +250,7 @@ class Permission {
 	 */
 	public function getUserLevelOnZone($uid, $zone) {
 		$key = 'getUserLevelOnZone_'.$uid.'_'.$zone;		
-		if ( !$this->isInCache($key)  ) {			
+		if ( !$this->isInCache($key)  ) {		
 			$zid = $this->sanitizeIdZone($zone);
 			$uid = Db::quote($uid);
 			$zid = Db::quote($zid);
@@ -522,6 +520,7 @@ class Permission {
 	 */
 	public function isUserInGroup($uid, $group) { 	
 		$key = 'isUserInGroup_'.$uid.'_'.$group;
+		
 		if ( !$this->isInCache($key) ) {
 			$gid = $this->idGroup($group);
 			$uid = Filter::int($uid);

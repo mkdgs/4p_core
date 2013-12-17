@@ -301,8 +301,24 @@ class TemplateHeader {
             }
         }
         $this->cachedCss = array();
-
-        if  ( $debug_level < 4 ) {
+        
+        
+        if  ( $debug_level >= 2 && $this->O->glob('cache') ) {
+            foreach ( $this->cachedJsMaster as $k => $files ) {
+                foreach ( $files as $file ) {
+                    echo '<script src="'.$this->rw_cache($file).'" type="text/javascript" ></script>'.$line_cr;
+                }
+            }
+            $this->cachedJsMaster = array();
+        
+            foreach ( $this->cachedJs as $key => $files ) {
+                foreach ( $files as $file ) {
+                    echo '<script src="'.$this->rw_cache($file).'" type="text/javascript" ></script>'.$line_cr;
+                }
+            }
+            $this->cachedJs = array();
+        }
+        else {
             foreach ( $this->cachedJsMaster as $k => $files ) {
                 $sorted_files_ref = $files;
                 sort($sorted_files_ref);
@@ -354,22 +370,6 @@ class TemplateHeader {
                 }
                 echo '<script src="'.$Cdn->url($key).'" type="text/javascript" ></script>'.$line_cr;
                 break;
-            }
-            $this->cachedJs = array();
-        }
-
-        else {           
-            foreach ( $this->cachedJsMaster as $k => $files ) {
-                foreach ( $files as $file ) {
-                    echo '<script src="'.$this->rw_cache($file).'" type="text/javascript" ></script>'.$line_cr;
-                }
-            }
-            $this->cachedJsMaster = array();
-
-            foreach ( $this->cachedJs as $key => $files ) {
-                foreach ( $files as $file ) {
-                    echo '<script src="'.$this->rw_cache($file).'" type="text/javascript" ></script>'.$line_cr;
-                }
             }
             $this->cachedJs = array();
         }

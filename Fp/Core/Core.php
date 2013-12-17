@@ -398,7 +398,7 @@ abstract class Core {
 	 * @return \Fp\Permission\PermissionUser
 	 */
 	public function permission() {
-		if ( !isset($this->permission) ) {	
+		if ( !isset($this->permission) ) {		    
 			$this->permission = new \Fp\Permission\PermissionUser($this);
 		}
 		return $this->permission;
@@ -559,11 +559,12 @@ abstract class Core {
 		// debug option
 		if ( $this->global['debug'] >= 2 ) {
 			$session_console = $newsession_console = ( is_object($this->session) ) ? $this->session()->get('console') : 0;
+			
 			//show block data ?
 			if ( Filter::id('console',$_GET) == 'off' ) {
 				$newsession_console = 0;
 			}
-			elseif (isset($_GET['console']) ) {
+			elseif ( Filter::id('console',$_GET) == '1' ) {
 				$newsession_console = 1;
 			}
 				
@@ -571,10 +572,31 @@ abstract class Core {
 				if( is_object($this->session) ) $this->session()->set('console', $newsession_console);
 				$session_console = $newsession_console;
 			}
-			if ( $session_console ) {
-			    $this->global['cache'] = $session_console;			
+			
+			if ( $session_console ) {			   
 			    $this->tpl()->setDebug($session_console);
 			}
+			
+			// reset cache
+			if ( Filter::id('console',$_GET) == 'cache_reset' ) {
+			    $dir_cache = $this->glob('dir_cache');
+			    \Fp\File\Dir::emptyDir($dir_cache.'cdn/');
+			    \Fp\File\Dir::emptyDir($dir_cache.'pool/');
+			}
+			
+			// stop cache
+			$cache = $new_cache = ( is_object($this->session) ) ? $this->session()->get('console_cache') : $this->glob('cache');
+			if ( Filter::id('console',$_GET) == 'cache_stop' ) {
+			    $new_cache = 1;
+			}
+			elseif ( Filter::id('console',$_GET) == 'cache_start' ) {
+			    $new_cache = 0;
+			}
+			if ( $new_cache != $cache ) {
+			    if( is_object($this->session) ) $this->session()->set('console_cache', $new_cache);
+			    $cache = $new_cache;
+			}
+			$this->global['cache'] = $cache;
 		}
 	}	
 	

@@ -49,6 +49,22 @@ class Dir {
 		}
 		return true;
 	}
+	
+	static public function emptyDir($dir) {
+	    $it = new \RecursiveDirectoryIterator($dir);
+	    $files = new \RecursiveIteratorIterator($it,
+	            \RecursiveIteratorIterator::CHILD_FIRST);
+	    foreach($files as $file) {
+	        if ($file->getFilename() === '.' || $file->getFilename() === '..') {
+	            continue;
+	        }
+	        if ($file->isDir()){
+	            rmdir($file->getRealPath());
+	        } else {
+	            unlink($file->getRealPath());
+	        }
+	    }
+	}
 
 	static public function remove($remove_path) {
 		if (!file_exists($remove_path)) {
