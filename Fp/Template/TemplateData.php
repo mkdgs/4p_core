@@ -57,7 +57,7 @@ class TemplateData implements \ArrayAccess , \Iterator , \Countable {
 	 */
 	public function __construct($vars = array(), $key=null) {		
 		$this->key  = $key;
-		if ( !($vars instanceof TemplateData) AND is_array($vars) ) {		
+		if ( !($vars instanceof TemplateData) AND is_array($vars) ) {
 			foreach ( $vars as $k => $v ) {	
 				$this->vars[$k] = new TemplateData($v, $k);
 			}
@@ -85,7 +85,7 @@ class TemplateData implements \ArrayAccess , \Iterator , \Countable {
 	public function __call($name, $args) {		
 		try {
 			array_unshift($args, $this);
-			return call_user_func_array(array('\Fp\Template\TemplateDataMethod', $name), $args );
+			return call_user_func_array("\Fp\Template\TemplateDataMethod::$name", $args );
 		}
 		catch (Exception $e) {
 			$log = new Logger();			

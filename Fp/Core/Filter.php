@@ -324,7 +324,7 @@ class Filter {
 
 	public static function decodeHtmlChars($var, $array=null, $default='') {
 		$var = (string) self::getVal($var, $array, $default);
-		$var = Filter::utf8($var);
+		//$var = Filter::utf8($var);
 		return html_entity_decode($var, ENT_QUOTES,'UTF-8');
 		return self::setVal($var, $default);
 	}
@@ -332,14 +332,14 @@ class Filter {
 	// réencode les entité pour pouvoir afficher du code source
 	public static function encodeHtmlChars($var, $array=null, $default='') {
 		$var = (string) self::getVal($var, $array, $default);
-		$var = Filter::utf8($var);
+		//$var = Filter::utf8($var);
 		return htmlspecialchars($var, ENT_NOQUOTES,'UTF-8',true);
 		return self::setVal($var, $default);
 	}
 
 	public static function htmlDoubleQuote($var, $array=null, $default='') {
 		$var = (string) self::getVal($var, $array, $default);
-		$var = Filter::utf8($var);
+		//$var = Filter::utf8($var);
 		$var = preg_replace('/"/i','&quot;', $var);
 		return self::setVal($var, $default);
 	}
@@ -354,9 +354,7 @@ class Filter {
 	// TODO fix Xss and make a white list tag/attr
 	public static function html($var, $array=null, $default='') {
 		$var = (string) self::getVal($var, $array, $default);
-		
-		$var = Filter::utf8($var);
-		
+		//$var = Filter::utf8($var);		
 		if ( !preg_match('/\S/', $var) )	return $default;
 		// corrige les </li>&#13;
 		$var = preg_replace('#>[\r\n]+#m', '>',$var);
@@ -417,7 +415,7 @@ class Filter {
 
 	public static function htmlToText($var, $array=null, $default='') {
 		$var = (string) self::getVal($var, $array, $default);
-		$var = Filter::utf8($var);
+		//$var = Filter::utf8($var);
 
 		$text = '';
 		if ( !preg_match('/\S/', $var) ) return $default;
@@ -462,7 +460,7 @@ class Filter {
 	 */
 	public static function repetition($var, $array=null, $default='') {
 		$var = (string) self::getVal($var, $array, $default);
-		$var = Filter::utf8($var);
+		//$var = Filter::utf8($var);
 		return preg_replace('/([^0-9])\\1{2,}/i','$1', $var);
 	}
 
@@ -471,7 +469,7 @@ class Filter {
 	 */
 	public static function spam($var, $array=null, $default='') {
 		$var = (string) self::getVal($var, $array, $default);
-		$var = Filter::utf8($var);
+		//$var = Filter::utf8($var);
 		$var = preg_replace('/id=[0-9]*/i','**##**', $var);
 		$var = preg_replace('/.[a-z]*\.(biz|com|fr|org|info|be|tv|it|nu|me|pro)/i','**- No Pub -**', $var);
 		return self::setVal($var, $default);
@@ -494,7 +492,7 @@ class Filter {
 
 	public static function accent($var, $array=null, $default='') {
 		$var = trim((string) self::getVal($var, $array, $default));
-		$var = Filter::utf8($var);
+		//$var = Filter::utf8($var);
 		$table = array(
 	        'Š'=>'S', 'š'=>'s', 'Đ'=>'Dj', 'đ'=>'dj', 'Ž'=>'Z', 'ž'=>'z', 'Č'=>'C', 'č'=>'c', 'Ć'=>'C', 'ć'=>'c',
 	        'À'=>'A', 'Á'=>'A', 'Â'=>'A', 'Ã'=>'A', 'Ä'=>'A', 'Å'=>'A', 'Æ'=>'AE', 'Ç'=>'C', 'È'=>'E', 'É'=>'E',
@@ -510,7 +508,7 @@ class Filter {
 
 	public static function htmlspecialchars($var, $array=null, $default='') {
 		$var = trim((string) self::getVal($var, $array, $default));
-		$var = Filter::utf8($var);
+		//$var = Filter::utf8($var);
 		$var = htmlspecialchars($var, ENT_QUOTES,'UTF-8',true);
 		return self::setVal($var, $default);
 	}

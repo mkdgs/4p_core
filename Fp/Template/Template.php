@@ -129,7 +129,7 @@ class Template {
 	}
 
 	public function setDebug($debug=null) {
-		$this->debug=$debug;		
+		$this->debug = $debug;		
 		return $this;
 	}
 
