@@ -244,13 +244,11 @@ class TemplateHeader {
     }
     
     protected function isAssetsInclude($url) {
-         if ( array_key_exists($url, self::$assets_include) ) return true;
+        if ( array_key_exists($url, self::$assets_include) ) return true;
     }
 
     protected $headerStarted = null;
     
-  
-
     function make($last = null) {
         require_once __DIR__.'/../../Lib/JSMin.php';
         require_once __DIR__.'/../../Lib/CSSmin.php';
@@ -382,7 +380,7 @@ class TemplateHeader {
                             // lazy loading fix
                             $srcfile = json_encode($file);
                             $cache .= "var src = $srcfile;".$line_cr;
-                            $cache .= "( typeof document.currentScript != 'undefined' ) ? document.currentScript.src = src : document.currentScript = { 'src' : src };".$line_cr;
+                            $cache .= "( typeof document.currentScript != 'undefined') ? document.currentScript.src = src : document.currentScript = { 'src' : src };".$line_cr;
                             $js = @file_get_contents($file);
                             if  ( $this->O->glob('debug') < 3 ) {
                                 $jsmin = new \JSMin($js);

@@ -55,6 +55,9 @@ class Template {
 	protected $tpl_dir 		= '';
 	protected $header;
 	protected $processing = false;
+	
+	public $html_body_open = '<body>';
+	public $html_body_close = '</body>';
 
 	public function __construct(Core $O) {
 		$this->O = $O;
@@ -283,7 +286,7 @@ class Template {
 					echo 'error in:'.$file."\r\n";
 					echo $e->getMessage();
 				} 
-				 */
+				*/
 			}	
 		}
 	}
@@ -397,11 +400,11 @@ class Template {
 		}			
 		
 		if ( !$this->noHeader ) {
-		    $this->head()->make(1);
+		    $this->head()->make(1);		    
 		    echo "</head>\n";	
 		}
 		
-		echo '<body>';
+		echo $this->html_body_open;
 		if ( $this->debug ) {
 			$txt = '';
 			$d = array();
@@ -442,7 +445,7 @@ class Template {
 		}
 		echo $body;
 		$this->head()->makeJs(1);
-		echo '</body>';
+		echo $this->html_body_close;
 		
 		if ( !$this->noHeader ) {
 			echo "\r\n</html>";
