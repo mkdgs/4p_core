@@ -213,8 +213,9 @@ class TemplateDataMethod {
 		$params = array_merge($oldParams, $params);		
 		$url['query'] =  http_build_query($params);			
 		
-		$scheme   = isset($url['scheme']) ? $url['scheme'] . '://' : '//';
+		$scheme   = isset($url['scheme']) ? $url['scheme'] . '://' : '';
 		$host     = isset($url['host']) ? $url['host'] : '';
+		if ( $host && !$scheme ) $scheme = '//';
 		$port     = isset($url['port']) ? ':' . $url['port'] : '';
 		$user     = isset($url['user']) ? $url['user'] : '';
 		$pass     = isset($url['pass']) ? ':' . $url['pass']  : '';

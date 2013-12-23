@@ -142,12 +142,12 @@ $(function(){
 </script>
 <div id="console-4p" >
 	<hr style="clear: both;" />
-	<a style="color: #FF1119;" href="./?console=off">Désactiver</a> | 	
-	<a style="color: #FF1119;" href="./?console=cache_reset">Vider le cache</a> |
+	<a style="color: #FF1119;" href="./?console=off&redirect=<?php echo urlencode($_SERVER['REQUEST_URI']) ?>">Désactiver</a> | 	
+	<a style="color: #FF1119;" href="./?console=cache_reset&redirect=<?php echo urlencode($_SERVER['REQUEST_URI']) ?>">Vider le cache</a> |
 	<?php if( !$O->glob('cache') )  {?>
-	    <a style="color: #FF1119;" href="./?console=cache_stop">désactiver le cache</a> |
+	    <a style="color: #FF1119;" href="./?console=cache_stop&redirect=<?php echo urlencode($_SERVER['REQUEST_URI']) ?>">désactiver le cache</a> |
 	<?php } else {?>
-	    <a style="color: #FF1119;" href="./?console=cache_start">activer le cache</a> |
+	    <a style="color: #FF1119;" href="./?console=cache_start&redirect=<?php echo urlencode($_SERVER['REQUEST_URI']) ?>">activer le cache</a> |
 	<?php } ?>
 	<a style="color: #FF1119;" href="<?php $G->url->e() ?>/mod/FpModule%5CCrud%5CModule">Crud</a> |
 	<a style="color: #FF1119;" href="<?php $G->url->e() ?>/mod/FpModule%5CWebservice%5CModule">WebService</a>

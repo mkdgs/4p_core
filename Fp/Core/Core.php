@@ -146,33 +146,6 @@ abstract class Core {
 		        }
 		        else throw new Exception('module not found', 404);
 		    }
-		    else {
-    		    // ancienne méthode, déprécié 
-    			$command_0 = $this->route()->getCommand(0);
-    			if ( $command_0 == 'mod' ) {
-    				
-    				$module_entry = $this->glob('module_entry');
-    				$module_class = null;				
-    				$module_class = $this->route()->getCommand(1);				
-    				if ( !$mode = Filter::id('m', $_REQUEST) ) {
-    					$mode = $this->route()->getCommand(2);
-    				}							
-    				if ( $module_class && class_exists($module_class) ) {				
-    					$module = new $module_class($O);	
-    					if ( $module instanceof \Fp\Module\Module ) {						
-    						$module->setMode($mode);
-    						if (  $module->getMode() ) {			
-    							$controller = $module->getController($module->getMode());
-    							$controller->setRequestParams($_GET);
-    							$controller->init();
-    							$controller->render();								
-    						}
-    						else throw new Exception('mode not found', 404);
-    					}
-    					else throw new Exception('module not found', 404);
-    				}			
-    			}
-		    }
 		}
 
 		if ( !$this->output() ) {			
@@ -186,6 +159,37 @@ abstract class Core {
 			if ( is_dir($file) && is_file($file.'/index.php') ) include_once $file.'/index.php';
 			elseif ( is_file( $file.'.php') ) include_once $file.'.php';
 		}
+		
+		if ( !$this->output() ) {
+		    // ancienne méthode, déprécié
+		    // encore utilisé par le module facebook ( voir redirect_uri )		    
+		    $command_0 = $this->route()->getCommand(0);
+		    if ( $command_0 == 'mod' ) {
+		    
+		        $module_entry = $this->glob('module_entry');
+		        $module_class = null;
+		        $module_class = $this->route()->getCommand(1);
+		        $module_class = trim(str_replace('.', '\\', $module_class), '/');
+		        if ( !$mode = Filter::id('m', $_REQUEST) ) {
+		            $mode = $this->route()->getCommand(2);
+		        }
+		        if ( $module_class && class_exists($module_class) ) {
+		            $module = new $module_class($O);
+		            if ( $module instanceof \Fp\Module\Module ) {
+		                $module->setMode($mode);
+		                if (  $module->getMode() ) {
+		                    $controller = $module->getController($module->getMode());
+		                    $controller->setRequestParams($_GET);
+		                    $controller->init();
+		                    $controller->render();
+		                }
+		                else throw new Exception('mode not found', 404);
+		            }
+		            else throw new Exception('module not found', 404);
+		        }
+		    }
+		}
+		
 	}
 	
 	public function errorPage($code, $e_general) {
@@ -560,11 +564,13 @@ abstract class Core {
 		if ( $this->global['debug'] >= 2 ) {
 			$session_console = $newsession_console = ( is_object($this->session) ) ? $this->session()->get('console') : 0;
 			
+			
+			$consoleGet = Filter::id('console',$_GET);
 			//show block data ?
-			if ( Filter::id('console',$_GET) == 'off' ) {
+			if ( $consoleGet == 'off' ) {
 				$newsession_console = 0;
 			}
-			elseif ( Filter::id('console',$_GET) == '1' ) {
+			elseif ( $consoleGet == '1' ) {
 				$newsession_console = 1;
 			}
 				
@@ -578,7 +584,7 @@ abstract class Core {
 			}
 			
 			// reset cache
-			if ( Filter::id('console',$_GET) == 'cache_reset' ) {
+			if ( $consoleGet == 'cache_reset' ) {
 			    $dir_cache = $this->glob('dir_cache');
 			    \Fp\File\Dir::emptyDir($dir_cache.'cdn/');
 			    \Fp\File\Dir::emptyDir($dir_cache.'pool/');
@@ -586,17 +592,22 @@ abstract class Core {
 			
 			// stop cache
 			$cache = $new_cache = ( is_object($this->session) ) ? $this->session()->get('console_cache') : $this->glob('cache');
-			if ( Filter::id('console',$_GET) == 'cache_stop' ) {
+			if ( $consoleGet == 'cache_stop' ) {
 			    $new_cache = 1;
 			}
-			elseif ( Filter::id('console',$_GET) == 'cache_start' ) {
+			elseif ( $consoleGet == 'cache_start' ) {
 			    $new_cache = 0;
 			}
 			if ( $new_cache != $cache ) {
 			    if( is_object($this->session) ) $this->session()->set('console_cache', $new_cache);
 			    $cache = $new_cache;
-			}
+			}		
+			
 			$this->global['cache'] = $cache;
+			
+			if ( $consoleGet && $redirect = Filter::custom('redirect',$_GET, function ($var) { return urldecode($var); } ) ) {
+			    $this->header()->redirect($redirect);
+			}
 		}
 	}	
 	

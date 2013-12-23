@@ -128,8 +128,9 @@ class TemplateHeader {
         $this->script[md5($str)] =  ''.$str.'';
     }
 
-    function javascriptCode($code) {
-        $this->scriptInline[md5($code)] =  '<script type="text/javascript">'.$code.'</script>';
+    function javascriptCode($code, $addTag=null) {
+        if ( $addTag ) $code = '<script type="text/javascript">'.$code.'</script>';
+        $this->scriptInline[md5($code)] =  $code;
         return $this;
     }
     function jsTemplate($id,$file) {

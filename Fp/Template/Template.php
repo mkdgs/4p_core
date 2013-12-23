@@ -445,8 +445,7 @@ class Template {
 		}
 		echo $body;
 		$this->head()->makeJs(1);
-		echo $this->html_body_close;
-		
+		echo $this->html_body_close;		
 		if ( !$this->noHeader ) {
 			echo "\r\n</html>";
 		}

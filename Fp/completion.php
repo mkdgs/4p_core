@@ -34,10 +34,6 @@ class A_T_Data_Method extends TemplateData {
 	public static function getEcho( $name, $default=null) {}
 	public static function toArray() {}
 	public static function toJson() {}
-	/**
-	 * @deprecated
-	 */
-	public static function json_encode() {}
 	public static function e() {}
 	public static function es() {}
 	public static function count() {}
@@ -48,6 +44,12 @@ class A_T_Data_Method extends TemplateData {
 	public static function replace() {}
 	public static function filter($list) {}
 	public static function filterNot($list) {}
+	
+	/**
+	 * @deprecated
+	 */
+	public static function json_encode() {}
+	
 	/**
 	 * @param unknown_type $args
 	 * @return A_T_Data_Method
