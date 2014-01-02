@@ -191,7 +191,7 @@ class TemplateHeader {
         return $this;
     }
     function title($s) {
-        $this->meta['title'] =  '<title>'.$s.'</title>';
+        $this->meta['title'] =  '<title>'.Filter::htmlspecialchars($s).'</title>';
         return $this;
     }
 
