@@ -58,7 +58,7 @@ class TemplateData implements \ArrayAccess , \Iterator , \Countable {
 	public function __construct($vars = array(), $key=null) {		
 		$this->key  = $key;
 		if ( !($vars instanceof TemplateData) AND is_array($vars) ) {
-			foreach ( $vars as $k => $v ) {	
+			foreach ( $vars as $k => $v ) {
 				$this->vars[$k] = new TemplateData($v, $k);
 			}
 		}
