@@ -71,7 +71,7 @@ abstract class Module {
 	public function __construct(Core $O, $defaultMode='html', $defaultUrl=null) {
 		$this->O = $O;		
 		if ( !$defaultUrl ) {
-			$this->url = $this->data['url'] = trim($this->O->route()->getRoute(),'/');
+			$this->url = $this->data['url'] = trim($this->O->route()->getRoute(),'/');			
 		}
 		else {
 			$this->url = $this->data['url'] = $defaultUrl;

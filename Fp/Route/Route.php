@@ -100,14 +100,17 @@ class Route {
 			else {
 				// on nettoie un peu
 				$this->command[$i++] = preg_replace('#([^a-z0-9_%,\.\\\].*)#i','', urldecode($v));
-				
-				//on laisse la forme urlencoded
+				// on laisse la forme urlencoded
 				if ( !empty($v) ) {
-					$_GET[$k] = preg_replace('/\..*/', '', $v);
-					$route[$k] = preg_replace('/\..*/', '', $v);
+					// ce code supprime les . nécessaire au nom de module ex: dans mod/Sceno.Permission.Module/html
+					// il devait permettre de supprimer l'extension d'un nom de fichier ex: index.html
+					// méthode déprécié et obsolète
+				    // $_GET[$k] = preg_replace('/\..*/', '', $v);
+				    // $route[$k] = preg_replace('/\..*/', '', $v);
+				    $_GET[$k] = $route[$k] = $v;
 				}
 			}
-			$this->route = implode('/', $route);
+			$this->route = implode('/', $route);			
 		}
 	}
 
