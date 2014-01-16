@@ -64,18 +64,19 @@ abstract class ModelNode {
 
 		/* Db 2 */
 		$tabledbNode   = $this->O->glob('prefix').'node';
-		$columndbNode  = array('id_node','type_node','uid','gid','zid','etat','rank','data','date_creation','date_modification');
+		$columndbNode  = array('id_node','type_node','uid','gid','zid','etat','rank','data','date_creation','date_modification', 'date_publication');
 		$this->tableNode  = Table::set(Db::get_link(), $tabledbNode, $columndbNode);
 		$this->tableNode->setPrimary('id_node');
 		$this->tableNode->setUnique(array());
-		$this->tableNode->setSortable(array('id_node','uid','gid','zid','etat','rank','type_node','date_creation','date_modification'));
+		$this->tableNode->setSortable(array('id_node','uid','gid','zid','etat','rank','type_node','date_creation','date_modification','date_publication'));
 		$this->tableNode->setSearchable(array (
 		  'id_node' => 'bigint',
 		  'uid' => 'bigint',
 		  'gid' => 'bigint',
 		  'type_node' => 'varchar',
 		  'date_creation' => 'timestamp',
-		  'date_modification' => 'timestamp'
+		  'date_modification' => 'timestamp',
+		  'date_publication' => 'timestamp'
 		));
 		$this->tableNode->setAutoIncrement(true);
 		$this->dbNode = new Table_query($this->tableNode,'n');
@@ -198,23 +199,31 @@ abstract class ModelNode {
 		return $q->delete();
 	}
 
+
 	/**
-	 * @param int $start
-	 * @param int $end
-	 * @param array $orderBy
-	 * @param array $search
+	 * @param string $start
+	 * @param string $end
+	 * @param unknown $orderBy
 	 * @param string $where
-	 * @return Ambigous <multitype:, multitype:unknown_type number Ambigous <unknown_type, number> Ambigous <number, unknown> >
+	 * @param unknown $orSearch
+	 * @param unknown $andSearch
+	 * @param callable $function function args [Query $dbNode, array $args]
+	 * @return Ambigous <multitype:, multitype:array unknown_type number Ambigous <unknown_type, number> Ambigous <number, unknown> >
 	 */
-	public function listNode($start=null, $end=null, $orderBy=array(), $where=null, $orSearch=array(), $andSearch=array(), $groupBy=null) {
+	public function listNode($start=null, $end=null, $orderBy=array(), $where=null, $orSearch=array(), $andSearch=array(), $function=null) {
 		if ( !$where ) $where = true;
 		$q = $this->dbNode->duplicate()
 					->limitSelect($start, $end)
 					->orderBy($orderBy);
 		$condition = $q->andWhere($where);
 
-		if ( $groupBy ) {
-			$q->groupBy($groupBy);
+
+		
+		if ( $function && is_callable($function) ) {		    
+		    $function($q, func_get_args());
+		}
+		else if ( $function ) { // backwards deprecated	
+		        $q->groupBy($function);
 		}
 
 		if ( is_array($andSearch) && !empty($andSearch) ) {
@@ -336,7 +345,7 @@ abstract class ModelNode {
 	 * @throws Exception
 	 * create node, if id_node is specified it replace the existing
 	 */
-	protected function createNode($id_node=null, $uid=null, $group=null, $zone=null, $etat=0, $rank=500, $data=array()) {
+	protected function createNode($id_node=null, $uid=null, $group=null, $zone=null, $etat=0, $rank=500, $data=array(), $date_publication=null) {
 		if ( !$rank ) $rank = 500;
 		if ( !$etat ) $etat = 0;
 		if ( !trim($this->type_node) ) {
@@ -358,6 +367,8 @@ abstract class ModelNode {
 				if ( $permission->existGroup($group) )	$zid = $permission->idGroup($zone);
 			}
 			$date_creation = Date::fromUnixTime(time())->mysqlDateTime();
+			
+			if ( !$date_publication ) $date_publication = $date_creation;
 				
 			$data = array(
 					'type_node'  	    => $this->type_node,
@@ -368,7 +379,8 @@ abstract class ModelNode {
 					'etat'  		    => $etat,
 					'data'  		    => filter::DbSafe($this->serializeData($data)),
 					'date_creation'     => $date_creation,
-					'date_modification' => $date_creation
+					'date_modification' => $date_creation,
+			        'date_publication' => $date_publication
 			);
 				
 			$req = $this->dbNode->duplicate();
@@ -592,9 +604,14 @@ abstract class ModelNode {
 	 * @param int $id_node
 	 * @param classname $type_node
 	 */
-	public function getChildren($id_node,$type_node=null) {
+	public function getChildren($id_node,$type_node=null, $function=null) {
+	    
 		$q = $this->dbNode->duplicate();
 		$q->innerJoin($this->tableRelation, 'r', ' n.id_node=r.id_node_enfant ');
+		
+		if ( $function && is_callable($function) ) {
+		    $function($q, func_get_args());
+		}
 
 		if ( $type_node ) $q->andWhere(array('n.type_node'=>$type_node));
 		$q->andWhere(array('r.id_node_parent'=>$id_node));
