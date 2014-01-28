@@ -402,8 +402,6 @@ abstract class ModelNode {
 		}
 	}
 
-
-
 	// Link
 	private function id_ord($id_1,$id_2) {
 		return ( $id_1 < $id_2 ) ? array($id_1,$id_2) : array($id_2,$id_1);
@@ -605,7 +603,6 @@ abstract class ModelNode {
 	 * @param classname $type_node
 	 */
 	public function getChildren($id_node,$type_node=null, $function=null) {
-	    
 		$q = $this->dbNode->duplicate();
 		$q->innerJoin($this->tableRelation, 'r', ' n.id_node=r.id_node_enfant ');
 		

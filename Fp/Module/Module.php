@@ -51,17 +51,19 @@ abstract class Module {
 	 * @var Model
 	 */
 	public $model;
+	public $var_module		= 'module';
 	public $var_mode        = 'm';	
 	public $var_method 		= 'a';
 	public $url;
 
 	public $url_static = '';
-	public $url_html;	
+	public $url_html;
 	public $url_json;
 	public $url_xml;
 	public $url_raw;
-	public $url_media;	
-	
+	public $url_media;
+
+	public $is_routed = false;	
 	public $data = array();	
 
 	protected $mode;
@@ -70,17 +72,11 @@ abstract class Module {
 	
 	public function __construct(Core $O, $defaultMode='html', $defaultUrl=null) {
 		$this->O = $O;		
-		if ( !$defaultUrl ) {
-			$this->url = $this->data['url'] = trim($this->O->route()->getRoute(),'/');			
-		}
-		else {
-			$this->url = $this->data['url'] = $defaultUrl;
-		}		
 		if( !$mode = $this->detectMode() ) {
 			$mode = $defaultMode;
 		}
 		$this->setMode($mode);			
-		$this->setUrl($this->mode);
+		$this->setUrl($this->mode, $defaultUrl);
 		$this->config();		
 		$this->data['url_static'] = $this->url_static;
 		// on appel after_config une seul fois  
@@ -97,6 +93,14 @@ abstract class Module {
 			return $mode;
 		}
 	}
+	
+	public function addQueryDelimiter($url) {
+	    $url = rtrim($url, '?&');
+	    if ( strpos($url, '?') !== false ) {
+	        return $url.'&';
+	    }
+	    return $url.'?';
+	}
 		
 	final protected function dataMerge(array $data=array()) {
 		$this->data = array_merge($this->data, $data);
@@ -110,7 +114,15 @@ abstract class Module {
 		return $this->O->route()->getWebPath($mod_dir);
 	}
 		
-	public function setUrl($mode=null) {
+	public function setUrl($mode=null, $defaultUrl=null) {	    
+	    if ( !$defaultUrl ) {
+	        $this->url = $this->data['url'] = trim($this->O->route()->getRoute(),'/').'?'.$this->var_module.'='.trim(preg_replace('#\\\#', '.', get_called_class()), '\\');
+	    }
+	    else {	    
+	        $this->is_routed = true;
+	        $this->url = $this->data['url'] = $defaultUrl;
+	    }
+	    
 		$m=0;
 		$mode = ( $mode ) ? $mode : $this->mode;
 		$sp = ( preg_match("#\?#", $this->url) ) ? '&' : '?';		
