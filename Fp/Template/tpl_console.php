@@ -59,7 +59,12 @@ if( !$O->tpl()->processing() ) return;
 	padding-right:4px;
 	color: #000;
 }
-#console-4p .spoiler {}
+#console-4p .spoiler {
+    display: none;
+}
+#console-4p .spoiler.show {
+    display: block;
+}
 
 #console-4p ul {
 	padding-left: 10px; 
@@ -101,10 +106,13 @@ if( !$O->tpl()->processing() ) return;
 </style>
 <script type="text/javascript">
 $(function(){
+    var $console = $('#console-4p');
+    
 	// fix for jquery mobile
 	// @todo orientationchange
+	 
 	if ( $('.ui-page-active').length ) {			
-		$('#console-4p').css('top',$('.ui-page-active')
+	    $console.css('top',$('.ui-page-active')
 				.height()+'px')
 				.css('position','relative');
 		//$(document).bind('pagechange', function(ev,o){			 
@@ -112,13 +120,14 @@ $(function(){
 		//});
 	}
 	
-	$('.console-line h1', $('#console-4p')).click(function() {
-		$(this).parent().find('.spoiler').toggle();
+	$('.console-line h1', $console).click(function() {
+		var $spoiler = $(this).parent().find('.spoiler');
+		$spoiler.toggleClass('show');
 	});
 
-	$('.spoiler', $('#console-4p')).not(':first').toggle();
 
-	$('#console-4p li').on('click', function(ev) {
+
+	$('li', $console).on('click', function(ev) {
 		ev.stopPropagation();
 		var fx = {
 				addOpen: function ($el) {						
@@ -130,7 +139,7 @@ $(function(){
 			$(this).removeClass('open');	
 			if ( !$(this).siblings('li.open').length ) {
 				$(this).parent('ul').parent('pre').parent('li').trigger('click');	
-			} 		
+			}
 		} 
 		else {
 			$(this).addClass('open');
