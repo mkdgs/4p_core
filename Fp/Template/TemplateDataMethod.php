@@ -414,19 +414,21 @@ class TemplateDataMethod {
 		$c->vars = preg_replace($r, '$1', $c->vars);
 		
 		
-		$rgxAttr = '({(?P<css>((width|height|margin|padding)+:[0-9]+(px|%);)*)})?';
+		$rgxAttr = '(?:{(?P<css>((width|height|margin|padding)+:[0-9]+(px|%);)*)})?';
+		$rgxCredit = '(?:\[(?P<credit>[^\]]*)\])?';
+		$rgxUrl    = '(?P<url>([0-9]*|[/?\pL0-9-_\.+&%:#=;,]*))';
 		$regex = array(
-				'/(!image:([0-9]*))/u',				
-				"@!video$rgxAttr:(?P<url>[/?\pL0-9-_\.+&%:#=;,]*)@u",
-				"@!music:(?P<url>[/?\pL0-9-_\.+&%:#=;,]*)@u",
-				"@!link:(?P<url>[/?\pL0-9-_\.+&%:#=;,]*)@u"
+				"@(!image$rgxAttr:$rgxUrl$rgxCredit)@u",				
+				"@!video$rgxAttr:$rgxUrl$rgxCredit@u",
+				"@!music$rgxAttr:$rgxUrl$rgxCredit@u",
+				"@!link$rgxAttr:$rgxUrl$rgxCredit@u"
 		);		
 		
 		$replace = array(
-				"<div data-linked-media=\"$1\"></div>",
-				'<div data-embed-video="(?P=url)" style="(?P=css)"></div>',
-				'<div data-embed-music="(?P=url)" style="(?P=css)"></div>',
-				'<a data-embed-link="(?P=url)" href="(?P=url)" style="(?P=css)">(?P=url)</a>'
+				'<div data-linked-media="(?P=url)" data-embed-image="(?P=url)" style="(?P=css)" data-credit="(?P=credit)"></div>',
+				'<div data-embed-video="(?P=url)" data-credit="(?P=credit)" ></div>',
+				'<div data-embed-music="(?P=url)" style="(?P=css)" data-credit="(?P=credit)"></div>',
+				'<a   data-embed-link="(?P=url)" href="(?P=url)" style="(?P=css)" data-credit="(?P=credit)">(?P=url)</a>'
 		);
 		//$c->vars = preg_replace($regex, $replace, $c->vars);
 		
@@ -436,10 +438,10 @@ class TemplateDataMethod {
 						
 				foreach ( $matches as $k => $v ) {					
 					if ( !ctype_digit("$k") ) {
-						$replace = str_replace("(?P=$k)", $v, $replace);	
+						$replace = str_replace("(?P=$k)", htmlspecialchars($v, ENT_QUOTES, 'UTF-8', true), $replace);	
 					}
 					else {						
-						$replace = str_replace("$$k", $v, $replace);
+						$replace = str_replace("$$k", htmlspecialchars($v, ENT_QUOTES, 'UTF-8', true), $replace);
 					}
 				}
 				return $replace;
