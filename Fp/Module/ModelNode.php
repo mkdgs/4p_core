@@ -157,7 +157,7 @@ abstract class ModelNode {
 		$this->tableNodeTags->setPrimary('tags');
 		$this->tableNodeTags->setUnique(array());
 		$this->tableNodeTags->setSortable(array('id_node','tag'));
-		$this->tableNodeTags->setSearchable(array (
+		$this->tableNodeTags->setSearchable(array(
 		  'tag' => 'varchar',
 		  'id_node' => 'bigint',
 		  'priority'=> 'int'

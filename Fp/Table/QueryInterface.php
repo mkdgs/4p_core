@@ -96,4 +96,6 @@ interface QueryInterface {
 	 * @return Table_query
 	 */
 	public function limitUpdate($start=false);	
+	
+
 }
