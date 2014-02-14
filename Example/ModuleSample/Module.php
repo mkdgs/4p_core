@@ -13,6 +13,7 @@ class Module extends \Fp\Module {
 		//$url = $this->M->addQueryDelimiter($url_r).$this->var_method;
 	}
 
+	/* Set Controller, otherwise it's automatically loaded if exist */
 	public function html($id=null, $params=array()) {
 		return new Controller_html($this, $id, $params);
 	}
