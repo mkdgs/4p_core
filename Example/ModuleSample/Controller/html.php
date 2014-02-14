@@ -16,6 +16,8 @@ class Controller_html extends \Fp\Module\Controller_html {
 		$params				= $this->getRequestParams();
 		$this->data['id_node']            = Filter::Int($this->M->var_id_node , $this->getRequestId());
 		
+		
+		//$url = $this->M->addQueryDelimiter($url_r).$this->var_method;
 	}	
 	
 	private function checkPublishPermission() {

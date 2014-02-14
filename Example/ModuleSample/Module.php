@@ -6,15 +6,11 @@ use \Exception;
 class Module extends \Fp\Module {
 
 	public function config() {
-		$this->setAllRenderMode(array('html','json'));
-		$this->setUrl($this->mode);
 		$r = $this->getWebPath(__DIR__);
 		$this->url_static = $this->O->glob('url').$r.'/1_static';
 		$this->model = new Model($this->O);
-	}
-
-	public function setUrl($mode=null) {
-		parent::setUrl($mode);		
+		
+		//$url = $this->M->addQueryDelimiter($url_r).$this->var_method;
 	}
 
 	public function html($id=null, $params=array()) {
