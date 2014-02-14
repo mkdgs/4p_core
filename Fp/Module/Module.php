@@ -78,11 +78,15 @@ abstract class Module {
 		}
 		$this->setMode($mode);			
 		$this->setUrl($this->mode, $defaultUrl);
+				
 		$this->config();		
 		$this->data['url_static'] = $this->url_static;
+		
+		if ( $this->model ) $this->loadModel(); // try yo load model if there is no
+		
 		// on appel after_config une seul fois  
 		// à la fin de la construction de l'objet 
-	 	$this->after_config();		 	
+	 	$this->after_config();
 	}
 	
 	public function detectMode() {
@@ -230,6 +234,40 @@ abstract class Module {
 		
 		
 		throw new Exception(addslashes($c).' and '.addslashes($c1).' has no '.$controller);
+	}
+	
+	
+	private function getModelClass($c) {
+	    $c = explode('\\', $c);
+	    array_pop($c);
+	    $c = implode('\\', $c);
+	
+	    $t = $c.'\\Model';
+	    if ( $t == 'Fp\Module\Model' ) return;
+	    if( class_exists($t) ) {
+	        $class= $t;
+	        try {
+	            echo $t.'<br/>';
+	            return $class = new $class($this->O);
+	        } catch (\Exception $e) { /* no class found or is abstract */};
+	    }
+	}
+	
+	/**
+	 * @return Model
+	 */
+	protected function loadModel() {
+	    $c = get_class($this);
+	    
+	    if ( $classModel = $this->getModelClass($c) ) {
+	       return $this->model = $classModel;
+	    }
+	    
+	    // check parent class
+	    $c1 = get_parent_class($this);
+	    if ( $classModel = $this->getModelClass($c1) ) {
+	       return $this->model = $classModel;
+	    }
 	}
 	
 	/**
