@@ -41,15 +41,15 @@ use \Exception;
  * @link			http://4publish.com
  */
 class Db {
-	private static $DB = array();
+	protected static $DB = array();
 	public static $link_id = null;
-	private static $last_link_id = null;
-	private static $DEBUG = 1;
-	private static $LogReq = array();
+	protected static $last_link_id = null;
+	protected static $DEBUG = 1;
+	protected static $LogReq = array();
 
-	private static $inTransaction = false;
+	protected static $inTransaction = false;
 
-	private function __construct() { die('Don\'t tell '.__CLASS__.' in '.__FILE__ ); }
+	protected function __construct() { die('Don\'t tell '.__CLASS__.' in '.__FILE__ ); }
 
 	// connection a une base de donnée 
 	// et stockage dans la listes des connections disponible
