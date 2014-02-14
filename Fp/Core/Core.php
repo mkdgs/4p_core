@@ -505,7 +505,8 @@ abstract class Core {
 		        $fileName  = str_replace('\\', DIRECTORY_SEPARATOR, $namespace) . DIRECTORY_SEPARATOR;
 		    }
 		    $fileName .= str_replace('_', DIRECTORY_SEPARATOR, $className) . '.php';	
-		    //echo $dir.$fileName.'<br />'."\r\n";	
+		    // be carreful if class is not found before autoload is define it's not a bug... 
+		    // echo $dir.$fileName.'<br />'."\r\n";	
 		    // debug_print_backtrace();
 		    if ( is_file($dir.$fileName) ) return require_once $dir.$fileName;
 	}
