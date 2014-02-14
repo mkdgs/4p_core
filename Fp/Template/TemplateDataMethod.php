@@ -416,13 +416,13 @@ class TemplateDataMethod {
 		
 		$rgxAttr = '(?:{(?P<css>((width|height|margin|padding)+:[0-9]+(px|%);)*)})?';
 		$rgxCredit = '(?:\[(?P<credit>[^\]]*)\])?';
-		$rgxUrl    = '(?P<url>([0-9]*|[/?\pL0-9-_\.+&%:#=;,]*))';
+		$rgxUrl    = '(?P<url>([0-9]+|[/?\pL0-9-_\.+&%:#=;,]+))';
 		$regex = array(
 				"@(!image$rgxAttr:$rgxUrl$rgxCredit)@u",				
 				"@!video$rgxAttr:$rgxUrl$rgxCredit@u",
 				"@!music$rgxAttr:$rgxUrl$rgxCredit@u",
 				"@!link$rgxAttr:$rgxUrl$rgxCredit@u"
-		);		
+		);
 		
 		$replace = array(
 				'<div data-linked-media="(?P=url)" data-embed-image="(?P=url)" style="(?P=css)" data-credit="(?P=credit)"></div>',
@@ -436,7 +436,7 @@ class TemplateDataMethod {
 			$extendReplace = function ($matches) use ($replace) {	
 				$string = array_shift($matches);	
 						
-				foreach ( $matches as $k => $v ) {					
+				foreach ( $matches as $k => $v ) {
 					if ( !ctype_digit("$k") ) {
 						$replace = str_replace("(?P=$k)", htmlspecialchars($v, ENT_QUOTES, 'UTF-8', true), $replace);	
 					}

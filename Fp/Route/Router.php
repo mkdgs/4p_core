@@ -27,16 +27,20 @@ class Router extends Route {
 	 * 		'param_opt => '[0-9]+'
 	 * )
 	 * 
-	 * $callback est une function à éxécuté si $route correspond à l'url analysée
-	 * le premier argument est une instance de Core, le second la liste des correspondants au résultat de $namedCapture:
+	 * $callback est une function à éxécuté si $route correspond à l'url analysée:
 	 * function(Core $O, $params) { code ... }
+	 * 
+	 * le premier argument est une instance de Core
+	 * le second la liste des correspondants au résultat de $namedCapture
+	 * le troisiéme contient un array contenant les informations sur la route qui à concordé
+	 * le quatrième l'url qui a concordé
 	 * 
 	 * ex:
 	 * ->connect('myurl', '^/foo:id:slug?$',
 	 *           array(
 	 *	             'id' 	=> '[0-9]+',	
 	 *	             'slug' => '[^/]*'),
-	 *		 	 function(Core $O, $params) {					
+	 *		 	 function(Core $O, $params, $route) {					
 	 *				$module   = ModuleManager::load($O, '\My\Module');
 	 *				$controller = $module->autoMode();
 	 *				$controller->setRequestParams($params)->config();

@@ -152,12 +152,17 @@ class Image {
 	 * @TODO $name first and $dir second
 	 * make fix separate of name and dir for testDir()
 	 */
-	public function save($dir=false,$name=false,$type=false) {
+	public function save($dir=false,$name=false,$type=false, $quality=75) {
 		imageinterlace($this->resTmp, true);
 		$this->set_type($type);
 		$my=$this->functionSave;
-		$this->testDir($dir,$name);
-		if ( !$my($this->resTmp,$dir.$name) ) throw new Exception($dir.$name);
+		if ( $my == 'ImagePNG' ) {
+		    $quality = 9-round(( 9/100 )*$quality);
+		}
+		else if ( $my == 'ImageJpeg' ) {
+		    $quality = $quality;
+		}
+		if ( !$my($this->resTmp, $dir.$name, $quality) ) throw new Exception($dir.$name);
 	}
 	
 	protected function testDir($dir, $name) {

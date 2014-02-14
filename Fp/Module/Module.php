@@ -3,6 +3,7 @@ namespace Fp\Module;
 use Fp\Core\Core;
 use Fp\Core\Filter;
 use \Exception;
+use Fp\Core\Utils;
 /**
  * Copyright Desgranges Mickael
  * mickael@4publish.com
@@ -94,12 +95,8 @@ abstract class Module {
 		}
 	}
 	
-	public function addQueryDelimiter($url) {
-	    $url = rtrim($url, '?&');
-	    if ( strpos($url, '?') !== false ) {
-	        return $url.'&';
-	    }
-	    return $url.'?';
+	public function addQueryDelimiter($url) {	    
+	    return Utils::addQueryDelimiter($url);
 	}
 		
 	final protected function dataMerge(array $data=array()) {
@@ -115,7 +112,7 @@ abstract class Module {
 	}
 		
 	public function setUrl($mode=null, $defaultUrl=null) {	    
-	    if ( !$defaultUrl ) {
+	    if ( !$defaultUrl ) {	        
 	        $this->url = $this->data['url'] = trim($this->O->route()->getRoute(),'/').'?'.$this->var_module.'='.trim(preg_replace('#\\\#', '.', get_called_class()), '\\');
 	    }
 	    else {	    

@@ -399,15 +399,17 @@ if (!$4p) {
             },
             urlAddParams : function(url, data) {
                 var i, urlp, queryp = '', anchorp = '';
-                if ((i = url.lastIndexOf("#")) && (i > 0)) {
+                i = url.lastIndexOf("#");
+                if ( i >= 0 ) {
                     url = url.substring(0, i);
                     anchorp = url.substring(i);
                 }
-                if ((i = url.indexOf("?")) && (i > 0)) {
+                i = url.indexOf("?");
+                if ( i >= 0 ) {
                     urlp = url.substring(0, i);
                     queryp = url.substring(i + 1);
-                } else
-                    urlp = url;
+                }
+                else urlp = url;
                 // merge with url data data
                 var pair, vars = queryp.split("&");
                 for (i = 0; i < vars.length; i++) {
