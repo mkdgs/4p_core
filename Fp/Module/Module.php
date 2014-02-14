@@ -159,6 +159,38 @@ abstract class Module {
 	abstract protected function config();
 	protected function after_config() {}
 	
+	private function getModelClass($c) {
+	    $c = explode('\\', $c);
+	    array_pop($c);
+	    $c = implode('\\', $c);
+	
+	    $t = $c.'\\Model';
+	    if ( $t == 'Fp\Module\Model' ) return;
+	    if( class_exists($t) ) {
+	        $class= $t;
+	        try {
+	            return $class = new $class($this->O);
+	        } catch (\Exception $e) { /* no class found or is abstract */};
+	    }
+	}
+	
+	/**
+	 * @return Model
+	 */
+	protected function loadModel() {
+	    $c = get_class($this);
+	     
+	    if ( $classModel = $this->getModelClass($c) ) {
+	        return $this->model = $classModel;
+	    }
+	     
+	    // check parent class
+	    $c1 = get_parent_class($this);
+	    if ( $classModel = $this->getModelClass($c1) ) {
+	        return $this->model = $classModel;
+	    }
+	}
+	
 	/**
 	 * @param $mod type of controller
 	 * @return \Fp\Module\Controller
@@ -236,39 +268,6 @@ abstract class Module {
 		throw new Exception(addslashes($c).' and '.addslashes($c1).' has no '.$controller);
 	}
 	
-	
-	private function getModelClass($c) {
-	    $c = explode('\\', $c);
-	    array_pop($c);
-	    $c = implode('\\', $c);
-	
-	    $t = $c.'\\Model';
-	    if ( $t == 'Fp\Module\Model' ) return;
-	    if( class_exists($t) ) {
-	        $class= $t;
-	        try {
-	            echo $t.'<br/>';
-	            return $class = new $class($this->O);
-	        } catch (\Exception $e) { /* no class found or is abstract */};
-	    }
-	}
-	
-	/**
-	 * @return Model
-	 */
-	protected function loadModel() {
-	    $c = get_class($this);
-	    
-	    if ( $classModel = $this->getModelClass($c) ) {
-	       return $this->model = $classModel;
-	    }
-	    
-	    // check parent class
-	    $c1 = get_parent_class($this);
-	    if ( $classModel = $this->getModelClass($c1) ) {
-	       return $this->model = $classModel;
-	    }
-	}
 	
 	/**
 	 * @return \Fp\Module\Controller
