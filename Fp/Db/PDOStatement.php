@@ -55,8 +55,8 @@ class PDOStatement extends \PDOStatement {
 	}
 	
 	public function fetchAll($fetch_style = \PDO::FETCH_ASSOC, $col = 0,$ctor_args = array() ) {	
-		if ( $fetch_style == \PDO::FETCH_ASSOC ) { 
-			// bug 	PDO::FETCH_ASSOC n'accepte pas $col = 0,$ctor_args = array()
+		if ( $fetch_style == \PDO::FETCH_ASSOC || $fetch_style == \PDO::FETCH_OBJ ) { 
+			// bug 	PDO::FETCH_ASSOC et FETCH_OBJ n'accepte pas $col = 0,$ctor_args = array()
 			// SQLSTATE[HY000]: General error: Extraneous additional parameters
 			return parent::fetchAll($fetch_style);
 		}
