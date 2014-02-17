@@ -115,11 +115,12 @@ abstract class Module {
 		return $this->O->route()->getWebPath($mod_dir);
 	}
 		
-	public function setUrl($mode=null, $defaultUrl=null) {	    
-	    if ( !$defaultUrl ) {	        
+	public function setUrl($mode=null, $defaultUrl=null) {
+	    
+	    if ( !$this->url && !$defaultUrl ) {	       
 	        $this->url = $this->data['url'] = trim($this->O->route()->getRoute(),'/').'?'.$this->var_module.'='.trim(preg_replace('#\\\#', '.', get_called_class()), '\\');
-	    }
-	    else {	    
+	    }	    
+	    else if ( $defaultUrl ) {
 	        $this->is_routed = true;
 	        $this->url = $this->data['url'] = $defaultUrl;
 	    }
