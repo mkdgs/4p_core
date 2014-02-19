@@ -462,7 +462,7 @@ abstract class Core {
 			elseif ( $try ) $this->event()->trigger('login_fail.core');
 		}
 		else {
-			if ( isset($_GET['logout']) || Filter::id('a',$_GET) == 'logout' ) {
+			if ( isset($_GET['logout']) || Filter::id('a',$_GET) == 'logout' || Filter::id('action',$_GET) == 'logout'  ) {
 				$uid = $auth->uid();
 				$auth->logout();
 				$this->event()->trigger('logout.core', $uid);
