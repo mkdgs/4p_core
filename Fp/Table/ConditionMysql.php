@@ -9,7 +9,7 @@ class ConditionMysql extends ConditionAbstract {
 	 */
 	protected function searchParser($search) {
 		$rs = array();			
-		$rs =  preg_split('#\s*("[^"]*")\s*|\s+#', $search, -1 , PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);			
+		$rs =  preg_split('#\s*"([^"]*)"\s*|\s+#', $search, -1 , PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);			
 		return $rs;
 	}
 	
