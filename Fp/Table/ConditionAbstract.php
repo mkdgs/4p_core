@@ -51,8 +51,8 @@ abstract class ConditionAbstract {
 			if ( empty($where) ) $w = 'true';
 			else {
 				$c = array();
-				foreach ( $where as $k => $v  ) {	
-					//if 	( is_array($v) ) $this->addCondition($type, $v); // not supported
+				foreach ( $where as $k => $v ) {
+					//if ( is_array($v) ) $this->addCondition($type, $v); // not supported
 					if ( $col = $this->existColumn($k) ) {
 					 	$v   = $this->quote($v);
 						$c[] = 	"$col=$v";

@@ -24,15 +24,8 @@ class ConditionMysql extends ConditionAbstract {
 					$tmp = array();
 					foreach ( $sp  as $search ) {
 						if ( $search ) {		
-							/* score pertinence ? 
-							$v = $this->quote("$search %");
-							$tmp[] = "$column COLLATE utf8_general_ci LIKE $v ";
-							
-							$v = $this->quote("% $search %");
-							$tmp[] = "$column COLLATE utf8_general_ci LIKE $v ";	
-							*/
 							$v = $this->quote("%$search%");
-							$tmp[] = "$column COLLATE utf8_general_ci LIKE $v ";							
+							$this->searchCase[] = $tmp[] = "$column COLLATE utf8_general_ci LIKE $v ";
 						}
 					}
 					$r = implode(" $type ", $tmp);
@@ -40,7 +33,7 @@ class ConditionMysql extends ConditionAbstract {
 				else {
 					if ( $search ) {
 						$v = $this->quote("$search");
-						$r = " $column=$v ";		
+						$this->searchCase[] = $r = " $column=$v ";		
 					}			
 				}
 			}
@@ -51,7 +44,7 @@ class ConditionMysql extends ConditionAbstract {
 				}
 			}
 		}			
-		$this->searchCase[] = $r;
+		//$this->searchCase[] = $r;
 		return $r;
 	}
 	
