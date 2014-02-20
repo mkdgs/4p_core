@@ -54,7 +54,7 @@ abstract class Module {
 	public $model;
 	public $var_module		= 'module';
 	public $var_mode        = 'm';	
-	public $var_method 		= 'a';
+	public $var_method 		= 'action';
 	public $url;
 
 	public $url_static = '';
