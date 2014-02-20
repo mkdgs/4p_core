@@ -55,7 +55,7 @@ class PDOmysql extends PDO {
 				throw new Exception($message, $code, $prev);
 			}
 		}
-		$this->connect = 1;
+		else $this->connect = 1;
 		
 		return $this->link;
 	}
@@ -119,5 +119,14 @@ class PDOmysql extends PDO {
 	public function quote($string, $paramtype = NULL) {
 		$this->connect();
 		return $this->link->quote($string);
+	}
+	
+	public function lastInsertId() {
+	    $this->connect();
+	    try {
+	        return$this->link->lastInsertId();
+	    } catch  (PDOException  $e) {
+	        Db::debug($e."\r\n ".$sql."\r\n ");
+	    }
 	}
 }
