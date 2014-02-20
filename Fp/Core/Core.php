@@ -482,13 +482,13 @@ abstract class Core {
 		if ( $name === null ) {
 			return $this->global;
 		}
-		if ( $value !== null )  return $this->global[$name]=$value;
+		if ( func_num_args() == 2 )  return $this->global[$name]=$value;
 		elseif ( isset($this->global[$name]) ) return $this->global[$name];
 	}
 
 	public function globPrivate($name=null,$value=null) {
 		if ( $name !== null ) {
-			if ( $value !== null )  return $this->global_private[$name]=$value;
+			if ( func_num_args() == 2 )  return $this->global_private[$name]=$value;
 			elseif ( isset($this->global_private[$name]) ) return $this->global_private[$name];
 			throw new Exception('global private '.$name.' is not set');
 		}
