@@ -134,7 +134,7 @@ abstract class ConditionAbstract {
 
 	final public function addCondition($type, $where, $data) {
 		$r =  $this->child[] = new ConditionMysql($this->query, $type);
-		if ( $where != null ) {
+		if ( $where !== null ) {
 			$r->condition = $this->_where_($where, $type, $data);
 		}
 		return $r;
