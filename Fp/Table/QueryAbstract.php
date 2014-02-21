@@ -410,6 +410,11 @@ abstract class QueryAbstract {
 			$alias = ( $this->table_alias ) ? $this->table_alias : $this->dbTable->table;
 			return $this->fqcn($alias,$col['name'], $fqcn);
 		}
+		
+		// si l'alias correspond au nom réel de la table
+		if ( $col['table_alias'] == $this->dbTable->table && $this->dbTable->existColumn($col['name']) )  {
+		    return $this->fqcn($col['table_alias'], $col['name'], $fqcn);
+		}
 	
 	
 		else  {
