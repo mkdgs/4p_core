@@ -78,7 +78,7 @@ abstract class Controller_json extends Controller {
 		else $params = $_POST;
 		
 		$this->rpc_data   = Filter::array_($params);
-		$this->rpc_method = Filter::id('method', $this->rpc_data);
+		$this->rpc_method = Filter::id('method', $this->rpc_data, Filter::id($this->var_method, $_REQUEST));
 		$this->rpc_id     = Filter::id('id', $this->rpc_data);
 		$this->rpc_params = Filter::array_('params',  $this->rpc_data);
 		
@@ -98,8 +98,8 @@ abstract class Controller_json extends Controller {
 	final public function render() {
 		// batching Support
 		// batch mode
-		if( is_array($this->rpc_data) && !$this->rpc_method && !$this->rpc_id ) {			
-			foreach ($this->rpc_data as $jrpc ) {				
+		if( is_array($this->rpc_data) && !$this->rpc_method && !$this->rpc_id ) {	    		
+			foreach ($this->rpc_data as $jrpc ) {		
 				$this->rpc_method = Filter::id('method',  $jrpc);
 				$this->rpc_id     = Filter::id('id',  $jrpc);
 				$this->rpc_params = ( isset($jrpc['params']) ) ?  $jrpc['params'] : array();
