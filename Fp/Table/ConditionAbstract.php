@@ -119,10 +119,10 @@ abstract class ConditionAbstract {
 		foreach ( $this->child as $c) {
 			if ( $t = $c->build($c) ) {
 				if ( $i !=0) { // ignore le type de la première condition
-					$r .= $c->type;
+					$r .= ' '.$c->type;
 				}
 				else if( $parent && $parent->condition ) {  // si le parent est un nouveau groupe on ajoute le type de la condition
-					$r .= $c->type;
+					$r .= ' '.$c->type;
 				}
 				$r .= " ( $t ) ";
 				$i++; // on ne compte que les condition non null
