@@ -87,7 +87,7 @@ class TemplateData implements \ArrayAccess , \Iterator , \Countable {
 			array_unshift($args, $this);
 			return call_user_func_array("\Fp\Template\TemplateDataMethod::$name", $args );
 		}
-		catch (Exception $e) {
+		catch (\Exception $e) {
 			$log = new Logger();			
 			$log->notice($e->getMessage(), array($e));	
 		}

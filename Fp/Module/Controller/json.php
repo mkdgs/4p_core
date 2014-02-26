@@ -118,11 +118,11 @@ abstract class Controller_json extends Controller {
 				if ( !$this->methodIsCallable($this->method ) ) {	
 					throw new Exception('Procedure not found', -32601);
 				}
-				$this->data = call_user_func_array(array($this, $this->method),array());
+				$this->data = $this->{$this->method}();//call_user_func_array(array($this, $this->method),array());
 				$this->rpc->setData($this->data);
 				$this->rpc->respond();
 						
-			} catch (Exception $e) {
+			} catch (\Exception $e) {
 				$this->rpc->setError($e);	
 				$this->rpc->respond();		
 			}

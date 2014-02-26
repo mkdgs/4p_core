@@ -53,7 +53,7 @@ class SessionEvent {
 								$class->rpc_params = Filter::array_('params',  $class->rpc_data);									
 								$r = json_decode($class->renderReturn(), 1);
 				
-							} catch (Exception $e) {
+							} catch (\Exception $e) {
 								Debug::report($e);
 							}
 							unset($e->bindEv[$ev['bind'][1]][$k]);

@@ -372,7 +372,7 @@ class Filter {
             //http://stackoverflow.com/questions/3548880/php-dom-utf-8-problem
             $dom->loadHTML('<?xml encoding="UTF-8">'.$var); // hack fix utf-8
             $dom->encoding = 'UTF-8';
-        } catch ( Exception $e) {
+        } catch ( \Exception $e) {
         }
         if ( !function_exists('filterHtmlCleanChild') ) {
             function filterHtmlCleanChild(DOMElement $p, $removeTag, $removeAttr) {
@@ -430,7 +430,7 @@ class Filter {
         // http://stackoverflow.com/questions/3548880/php-dom-utf-8-problem
         $d = '<?xml encoding="UTF-8"><div>';
         try { $dom->loadHTML($d.$var.'</div>');
-        } catch ( Exception $e) {
+        } catch ( \Exception $e) {
         }
 
         // remove hack

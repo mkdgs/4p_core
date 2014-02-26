@@ -121,14 +121,14 @@ class Db {
 		try {
 			$result =  self::get_link()->query($query);
 			if ( is_object($result) ) return $result;
-		} catch  (PDOException  $e) { self::debug($e); }
+		} catch  (\PDOException  $e) { self::debug($e); }
 	}
 
 	// execute une requéte sans traitement en retour
 	public static function exec($query) {
 		try {
 			return self::get_link()->exec($query);
-		} catch  (PDOException  $e) { self::debug($e);	}
+		} catch  (\PDOException  $e) { self::debug($e);	}
 	}
 
 	/**
@@ -139,7 +139,7 @@ class Db {
 		try {
 			$result = self::get_link()->prepare($query);
 			if ( is_object($result) ) return  $result;
-		} catch  (PDOException  $e) { self::debug($e); }
+		} catch  (\PDOException  $e) { self::debug($e); }
 	}
 
 	// @todo global transaction over all db
@@ -152,13 +152,19 @@ class Db {
 	}
 
 	public static function endTransaction($tid) {
-		if ( $tid == self::$inTransaction ) return  self::get_link()->endTransaction($tid);
+		if ( $tid == self::$inTransaction ) {
+		    if ( self::get_link()->inTransaction() ) {		    
+		        return  self::get_link()->endTransaction($tid);
+		    }
+		}
 	}
 
 	public static function rollback() {
 		try {
-			return  self::get_link()->rollBack();
-		} catch (Exception $e ) { }
+		    if ( self::get_link()->inTransaction() ) {
+		       return  self::get_link()->rollBack();
+		    }			
+		} catch (\Exception $e ) { }
 	}
 
 	public static function commit() {
@@ -205,8 +211,12 @@ class Db {
 		return self::$LogReq;
 	}
 
-	public static function debug($e) {
-		if ( self::$DEBUG ) throw new Exception($e);
+	public static function debug($e) {	    
+		if ( self::$DEBUG ) {
+		     if ( $e instanceof \Exception ) throw $e; 
+		     else throw new \Exception($e);
+		    
+		}
 	}
 
 	/**

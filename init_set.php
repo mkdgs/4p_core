@@ -74,7 +74,7 @@ if ( !function_exists('exception_error_handler') ) {
 			else {				
 				throw new \Exception($errstr, $errno);
 			}
-		} catch(Exception $e) {
+		} catch(\Exception $e) {
 			throw $e;
 		}
 	}

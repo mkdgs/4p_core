@@ -81,7 +81,7 @@ class Dir {
 					return;
 				}
 			}
-			catch(Exception $e) {
+			catch(\Exception $e) {
 				return;
 			}
 			while (($file = readdir($dh)) !== false) {

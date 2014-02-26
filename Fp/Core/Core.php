@@ -252,12 +252,12 @@ abstract class Core {
 
 			$this->render();
 
-		} catch (Exception $e_general) {
+		} catch (\Exception $e_general) {
 			try {
 				$this->before_error();
 				Debug::ExceptionHandler($e_general);
 				$this->errorPage($e_general->getCode(), $e_general);				
-			} catch ( Exception $a) {
+			} catch ( \Exception $a) {
 				$str = 'Error Handler Failure: <br />'
 						.'<pre>'.$a->getMessage()
 						."\r\n".$a->getFile().' - '.$a->getLine()

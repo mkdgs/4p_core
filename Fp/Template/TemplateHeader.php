@@ -287,7 +287,7 @@ class TemplateHeader {
                                 $css = $cssmin->run($css, 3000);
                             }
                             $cache .= $css.$line_cr;
-                        } catch (Exception $e) {
+                        } catch (\Exception $e) {
                              if  ( $debug_level > 2 ) {
                                  throw $e;
                              }                            
@@ -388,7 +388,7 @@ class TemplateHeader {
                                 $js = $jsmin->min();
                             }
                             $cache .= $js.$line_cr;
-                        } catch (Exception $e) {
+                        } catch (\Exception $e) {
                         }
                     }
                     $Cdn->put($key, $cache);

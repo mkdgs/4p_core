@@ -52,7 +52,7 @@ class PDOpgsql extends PDO {
 				$this->link->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 				$this->link->setAttribute(\PDO::ATTR_STATEMENT_CLASS, array('Fp\Db\PDOStatement', array($this)));			
 				//$this->link->exec("SET NAMES utf8");			
-			} catch  (PDOException  $e) {	
+			} catch  (\PDOException  $e) {	
 				$message = preg_replace("/{$this->bdd_pass}/",'***password***',$e->getMessage());
 				$code = $e->getCode();
 				$prev = $e->getPrevious();				
@@ -73,8 +73,8 @@ class PDOpgsql extends PDO {
 			$r = $this->link->query($sql);
 			$this->logReqEnd($rid);
 			return $r;
-		} catch  (PDOException  $e) {
-			Db::debug($e."\r\n ".$sql."\r\n ");
+		} catch  (\PDOException  $e) {
+			Db::debug($e."\r\n ".$sql."\r\n ");			
 		}
 		$this->logReqEnd($rid);
 	}
@@ -85,7 +85,7 @@ class PDOpgsql extends PDO {
 			$r = $this->link->prepare($sql,$driver_options);
 			$this->logReqEnd($rid);
 			return $r;
-		} catch  (PDOException  $e) {
+		} catch  (\PDOException  $e) {
 			Db::debug($e."\r\n ".$sql."\r\n ");
 		}
 	}
@@ -96,7 +96,7 @@ class PDOpgsql extends PDO {
 			$r = $this->link->exec( $sql );
 			$this->logReqEnd($rid);
 			return $r;
-		} catch  (PDOException  $e) {
+		} catch  (\PDOException  $e) {
 			Db::debug($e."\r\n ".$sql."\r\n ");
 		}
 	}
@@ -109,7 +109,7 @@ class PDOpgsql extends PDO {
 			$r = $this->link->exec( $sql );
 			$this->logReqEnd($rid);
 			return true;
-		} catch  (PDOException  $e) {
+		} catch  (\PDOException  $e) {
 			Db::debug($e."\r\n ".$sql."\r\n ");
 		}
 	}

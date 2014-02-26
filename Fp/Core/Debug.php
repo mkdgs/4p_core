@@ -67,8 +67,8 @@ class Debug {
 	public static function switch_off() {
 		if ( self::$switch ) {
 			self::$switch = 0;
-			restore_exception_handler();
-			restore_error_handler();
+			//restore_exception_handler();
+			//restore_error_handler();
 		}
 	}
 
@@ -105,7 +105,7 @@ class Debug {
 		$uid = '0';
 		try {			
 			$uid = self::$O->auth()->uid();
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 
 		}
 		return $uid;
@@ -149,7 +149,7 @@ class Debug {
 					$req = Db::prepare($req)->execute($d);
 				}
 			}
-		} catch (Exception $e ) {
+		} catch (\Exception $e ) {
 			throw new Exception('Debug Error :'.$e->getMessage(), 666);
 		}
 	}

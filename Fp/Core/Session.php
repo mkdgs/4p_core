@@ -57,7 +57,7 @@ class Session {
 		if ( self::$mode == 'sql' ) {	
 			try {				
 				$this->sessionStore = new sqlSessionStore($O);			
-			} catch (Exception $e) {
+			} catch (\Exception $e) {
 				echo $e->getMessage();			
 			}
 		}

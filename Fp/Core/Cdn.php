@@ -66,7 +66,7 @@ class Cdn {
                 flock($f, LOCK_UN);
                 fclose($f);
                 return;                
-            } catch ( Exception $e ) {
+            } catch ( \Exception $e ) {
                 //throw $e;
             }
             if ( is_file($file) ) @unlink($file);

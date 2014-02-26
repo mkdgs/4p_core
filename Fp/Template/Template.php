@@ -279,7 +279,7 @@ class Template {
 					include $this->getFile($file.'_hook.php');
 				}
 				
-			} catch (Exception $e) {					
+			} catch (\Exception $e) {					
 				$this->logError($e);
 				/*
 				if ( $this->debug ) {
@@ -303,7 +303,7 @@ class Template {
 		    if( $this->getFile($file.'_hook.php') ) {					
 				include $this->getFile($file.'_hook.php');
 			}
-		} catch (Exception $e) {			
+		} catch (\Exception $e) {			
 			$this->logError($e);
 			//	echo 'error in:'.$file;
 		}		
@@ -319,7 +319,7 @@ class Template {
 			$this->get_include_contents($file,$A);		
 			$t = ob_get_contents();
 			ob_end_clean();
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			$this->logError($e);
 			//	echo 'error in:'.$file;				
 		}		
@@ -338,7 +338,7 @@ class Template {
 			$body = ob_get_contents();
 			$this->logBlockEnd('HTML');
 			ob_end_clean();
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			ob_end_clean();
 			throw $e;
 		}
@@ -394,7 +394,7 @@ class Template {
 			$body = ob_get_contents();
 			$this->logBlockEnd('HTML');
 			ob_end_clean();
-		} catch (Exception $e) {		
+		} catch (\Exception $e) {		
 			ob_end_clean();
 			throw $e;
 		}			
@@ -437,7 +437,7 @@ class Template {
 			$data  = new TemplateData($d);
 			try {
 			$txt = $this->parse($data,$file);		
-			} catch (Exception $e ) {				
+			} catch (\Exception $e ) {				
 				var_dump($e);		
 				die('----');
 			}	
@@ -491,7 +491,7 @@ class Template {
 		$O  = $this->O;		
 		try {
 			include $file;
-		} catch (Exception $e) {						
+		} catch (\Exception $e) {						
 			$this->logError($e);
 		}
 	}
