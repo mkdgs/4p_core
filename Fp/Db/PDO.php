@@ -160,28 +160,20 @@ class PDO {
 	final public function endTransaction($tid) {
 		$this->connect();
 		if ( self::$inTransaction  == $tid) {
-		    
-		    if ( !$this->link->inTransaction() ) {
-		        self::$inTransaction = false;
-		        return false;
+		    self::$inTransaction = false;		    
+		    if ( $this->link->inTransaction() ) {
+    			return $this->link->commit();
 		    }
-		    
-			if ( $this->link->commit() ) {
-				self::$inTransaction = false;
-				return true;
-			}
-			throw new Exception(__METHOD__);
 		}
 	}
 
 	final public function rollback() {
 		$this->connect();
-		//if ( self::$inTransaction ) {			
+		if ( $this->link->inTransaction() ) {
 			self::$inTransaction = false;
 			$this->link->rollBack();
 			return true;
-		//}
-		throw new Exception(__METHOD__);
+		}
 	}
 	
 	final protected function logReq($method,$req) {

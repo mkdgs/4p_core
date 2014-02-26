@@ -282,7 +282,7 @@ abstract class ModelNode {
         if ( !$id_node ) return null;
         $q = $this->dbNode->duplicate()->limitSelect(1);
         $q->andWhere($id_node);
-        	
+         
         $rows = $q->getAssoc();
         $data =  $this->unserializeData($rows);
         if ( !empty($data) ) {
@@ -351,68 +351,60 @@ abstract class ModelNode {
         if ( !trim($this->type_node) ) {
             throw new Exception('type_node is missing',500);
         }
-        
-        
+
+
         // transaction -> addGroupe
         try {
-            
-            try  {
-                
-                $tid = Db::startTransaction();
-                	
-                $permission = new Permission($this->O);
+             
+            $tid = Db::startTransaction();
+             
+            $permission = new Permission($this->O);
 
-                //if ( $uid==null ) $uid = 'null';
-                $gid = null;
-                if ( $group ) {
-                    if ( $permission->existGroup($group) )	$gid = $permission->idGroup($group);
-                }
-
-                $zid = null;
-                if ( $zone ) {
-                    if ( $permission->existGroup($group) )	$zid = $permission->idGroup($zone);
-                }
-                $date_creation = Date::fromUnixTime(time())->mysqlDateTime();
-                	
-                if ( !$date_publication ) $date_publication = $date_creation;
-
-                $data = array (
-                        'type_node'  	    => $this->type_node,
-                        'uid'  			    => $uid,
-                        'gid'  			    => $gid,
-                        'zid'  			    => $zid,
-                        'rank'			    => $rank,
-                        'etat'  		    => $etat,
-                        'data'  		    => filter::DbSafe($this->serializeData($data)),
-                        'date_creation'     => $date_creation,
-                        'date_modification' => $date_creation,
-                        'date_publication' => $date_publication
-                );
-                	
-                $req = $this->dbNode->duplicate();
-                $r = null;
-                if ( $id_node ) {
-                    $r = $this->updateNode($id_node, $data);
-                }
-                	
-                	
-                if( !$r ) {
-                    if ( $id_node ) $data['id_node'] = $id_node;
-                    if ( $id = $req->insert($data) ) {
-                        $id_node = ( $id_node ) ? $id_node : $id;
-                    }
-                }
-               
-                
-               // echo '--- ??';
-            } catch (\Exception $e ) {
-               throw $e;
+            //if ( $uid==null ) $uid = 'null';
+            $gid = null;
+            if ( $group ) {
+                if ( $permission->existGroup($group) )	$gid = $permission->idGroup($group);
             }
-            //echo '----- bug';
+
+            $zid = null;
+            if ( $zone ) {
+                if ( $permission->existGroup($group) )	$zid = $permission->idGroup($zone);
+            }
+            $date_creation = Date::fromUnixTime(time())->mysqlDateTime();
+             
+            if ( !$date_publication ) $date_publication = $date_creation;
+
+            $data = array (
+                    'type_node'  	    => $this->type_node,
+                    'uid'  			    => $uid,
+                    'gid'  			    => $gid,
+                    'zid'  			    => $zid,
+                    'rank'			    => $rank,
+                    'etat'  		    => $etat,
+                    'data'  		    => filter::DbSafe($this->serializeData($data)),
+                    'date_creation'     => $date_creation,
+                    'date_modification' => $date_creation,
+                    'date_publication' => $date_publication
+            );
+             
+            $req = $this->dbNode->duplicate();
+            $r = null;
+            if ( $id_node ) {
+                $r = $this->updateNode($id_node, $data);
+            }
+             
+             
+            if( !$r ) {
+                if ( $id_node ) $data['id_node'] = $id_node;
+                if ( $id = $req->insert($data) ) {
+                    $id_node = ( $id_node ) ? $id_node : $id;
+                }
+            }
+
             Db::endTransaction($tid);
-            //return $id_node;
+            return $id_node;
         } catch (\Exception $e ) {
-           // die('---');
+
             Db::rollback();
             throw $e;
         }
@@ -896,7 +888,7 @@ abstract class ModelNode {
                 $q->andWhere(array('tag'=> $v));
             }
         }
-        	
+         
         $total = 0;
         if ( $rows  = $q->getAll() ) {
             $total = $q->foundRows();
