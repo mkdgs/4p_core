@@ -140,7 +140,7 @@ class PDO {
 	 */
 	public function quote($string, $paramtype = NULL) {
 	    $this->connect();
-		return $this->link->quote($string);
+		return $this->link->quote($string, $paramtype);
 	}
 	
 	final public function inTransaction() {
