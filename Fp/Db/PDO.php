@@ -91,7 +91,7 @@ class PDO {
 			$r = $this->link->query($sql);
 			$this->logReqEnd($rid);
 			return $r;
-		} catch  (\Exception  $e) {
+		} catch  (\PDOException  $e) {
 			Db::debug($e, $sql);
 		}
 		$this->logReqEnd($rid);
@@ -157,13 +157,13 @@ class PDO {
 		}
 	}
 
-	final public function endTransaction($tid) {
+	final public function endTransaction($tid) { 
 		$this->connect();
 		if ( self::$inTransaction  == $tid) {
 		    self::$inTransaction = false;		    
-		    //if ( $this->link->inTransaction() ) {
+		    if ( $this->link->inTransaction() ) { 
     			return $this->link->commit();
-		    //}
+		    }
 		}
 	}
 
