@@ -1,6 +1,8 @@
 <?php 
 namespace Fp\Table;
 
+use \Exception;
+
 abstract class QueryAbstract {
 	/**
 	 * @deprecated

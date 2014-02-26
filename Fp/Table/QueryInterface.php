@@ -1,5 +1,8 @@
 <?php
 namespace Fp\Table;
+
+use \Exception;
+
 /**
  * 
  * Enter description here ...

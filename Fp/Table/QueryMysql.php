@@ -1,5 +1,6 @@
 <?php
 namespace Fp\Table;
+
 use \Exception;
 
 class QueryMysql extends QueryAbstract implements QueryInterface {
@@ -17,9 +18,9 @@ class QueryMysql extends QueryAbstract implements QueryInterface {
 	
 	protected $join = true;
 
-	protected $limitSelect = '';
-	protected $limitUpdate = '';
-	protected $table_alias = '';
+	protected $limitSelect  = '';
+	protected $limitUpdate  = '';
+	protected $table_alias  = '';
 
 	protected $lastInsertId = null;
 	protected $rowCount     = null;

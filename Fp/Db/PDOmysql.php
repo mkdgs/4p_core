@@ -1,5 +1,8 @@
 <?php
 namespace Fp\Db;
+
+use \Exception;
+
 /**
 * Copyright Desgranges Mickael 
 * mickael@4publish.com
@@ -121,10 +124,10 @@ class PDOmysql extends PDO {
 		return $this->link->quote($string);
 	}
 	
-	public function lastInsertId() {
+	public function lastInsertId($seqname = NULL) {
 	    $this->connect();
 	    try {
-	        return$this->link->lastInsertId();
+	        return$this->link->lastInsertId($seqname);
 	    } catch  (PDOException  $e) {
 	        Db::debug($e."\r\n ".$sql."\r\n ");
 	    }

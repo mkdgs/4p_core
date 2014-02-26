@@ -1,5 +1,6 @@
 <?php
 namespace Fp\Table;
+
 use \Exception;
 
 class QueryPgsql extends QueryAbstract {

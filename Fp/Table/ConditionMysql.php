@@ -1,5 +1,7 @@
 <?php
 namespace Fp\Table;
+use \Exception;
+
 class ConditionMysql extends ConditionAbstract {
 	
 	/**

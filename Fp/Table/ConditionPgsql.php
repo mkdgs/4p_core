@@ -1,6 +1,8 @@
 <?php
 namespace Fp\Table;
 
+use \Exception;
+
 class ConditionPgsql extends ConditionAbstract {
 
 	public function orSearch(array $arraySearch = array()) {

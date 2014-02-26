@@ -1,6 +1,9 @@
 <?php
 namespace Fp\Db;
+
 use \Exception;
+
+
 /**
  * Copyright Desgranges Mickael
  * mickael@4publish.com

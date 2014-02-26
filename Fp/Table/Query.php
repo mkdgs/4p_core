@@ -1,5 +1,7 @@
 <?php 
 namespace Fp\Table;
+
+use \Exception;
 use Fp\Db\PDOStatement;
 //require_once 'core_Query_interface.php';
 //require_once 'core_QueryAbstract.php';

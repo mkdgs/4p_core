@@ -1,5 +1,6 @@
 <?php 
 namespace Fp\Table;
+use \Exception;
 
 abstract class ConditionAbstract {
 	public $child   	 	= array();

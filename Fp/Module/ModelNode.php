@@ -8,8 +8,9 @@ use Fp\Db\Db;
 use Fp\Table\Table;
 use Fp\Table\Query as Table_Query;
 use Fp\Module\Utils as Module_Utils;
-
 use \FpModule\Media\Model as MediaModel;
+
+use \Exception;
 
 abstract class ModelNode {
 	/**
@@ -354,6 +355,7 @@ abstract class ModelNode {
 		// transaction -> addGroupe
 		try {
 			$tid = Db::startTransaction();
+			
 			$permission = new Permission($this->O);
 
 			//if ( $uid==null ) $uid = 'null';
@@ -370,7 +372,7 @@ abstract class ModelNode {
 			
 			if ( !$date_publication ) $date_publication = $date_creation;
 				
-			$data = array(
+			$data = array (
 					'type_node'  	    => $this->type_node,
 					'uid'  			    => $uid,
 					'gid'  			    => $gid,
@@ -382,10 +384,10 @@ abstract class ModelNode {
 					'date_modification' => $date_creation,
 			        'date_publication' => $date_publication
 			);
-				
+			
 			$req = $this->dbNode->duplicate();
 			$r = null;
-			if ( $id_node ) {
+			if ( $id_node ) {			  
 				$r = $this->updateNode($id_node, $data);
 			}
 			if( !$r ) {
@@ -394,9 +396,10 @@ abstract class ModelNode {
 					$id_node = ( $id_node ) ? $id_node : $id;
 				}
 			}
+
 			Db::endTransaction($tid);
 			return $id_node;
-		} catch ( Exception $e ) {
+		} catch (Exception $e ) {
 			Db::rollback();
 			throw $e;
 		}

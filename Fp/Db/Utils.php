@@ -1,5 +1,8 @@
 <?php
 namespace Fp\Db;
+
+use \Exception;
+use \PDOException;
 /**
 * Copyright Desgranges Mickael 
 * mickael@4publish.com
