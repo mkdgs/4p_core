@@ -62,10 +62,8 @@ class PDOpgsql extends PDO {
 		$this->connect = 1;
 		return $this->link;
 	}
-	/**
-	 * @return Db_Extend_PDOStatement
-	 * 
-	 */
+
+	/*
 	public function query($sql) {
 		$this->connect();		
 		$rid = $this->logReq(__METHOD__,$sql);
@@ -113,13 +111,10 @@ class PDOpgsql extends PDO {
 			Db::debug($e."\r\n ".$sql."\r\n ");
 		}
 	}
-	
-	/**
-	 * @param unknown_type $string
-	 * @return string
-	 */
+
 	public function quote($string, $paramtype = NULL) {
 		$this->connect();
 		return $this->link->quote($string);
 	}
+	*/
 }

@@ -161,9 +161,9 @@ class PDO {
 		$this->connect();
 		if ( self::$inTransaction  == $tid) {
 		    self::$inTransaction = false;		    
-		    if ( $this->link->inTransaction() ) {
+		    //if ( $this->link->inTransaction() ) {
     			return $this->link->commit();
-		    }
+		    //}
 		}
 	}
 
