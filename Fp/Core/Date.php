@@ -101,14 +101,17 @@ class Date {
 		}
 		$timeZone = new \DateTimeZone($this->timezone);
 		switch ($type) {
-			case 'mysql_date':
+			case 'mysql_date':			    
 				if ( !$timestamp || $timestamp == '0000-00-00')	$timestamp = '1900-01-01';	
-				$timestamp = preg_replace('#0000-00-00#', '1900-01-01',  $timestamp);			
+				$timestamp = preg_replace('#0000-00-00#', '1900-01-01',  substr(trim($timestamp), 0 ,10));			
 				$this->dateTime = date_create_from_format('!Y-m-d', $timestamp);				
 				break;
 				
 			case 'mysql_datetime':
-				$timestamp = preg_replace('#0000-00-00#', '1900-01-01',  $timestamp);				
+				$timestamp = preg_replace('#0000-00-00#', '1900-01-01',  trim($timestamp));					
+				if( strlen($timestamp) == 10 ) { // is mysql date ?
+				    $timestamp .= ' 00:00:00';
+				}			
 				if ( !$timestamp ) $timestamp = '1900-01-01 00:00:00';				
 				$this->dateTime = date_create_from_format('!Y-m-d H:i:s', $timestamp);				
 				break;
