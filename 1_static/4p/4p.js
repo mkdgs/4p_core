@@ -1056,6 +1056,20 @@ if (!$4p) {
                 else
                     str = $4p.base64_decode(str);
                 return decodeURIComponent(str);
+            },            
+            dateFromMysqlDate: function (strTime) {  
+                    if ( !strTime ) return null;
+                    if ( typeof strTime == 'object' ) return strTime;
+                    var t = strTime.split(/[- :]/);
+                    if ( t.length >= 3 ) {
+                            return new Date(t[0], t[1]-1, t[2], t[3] || 0, t[4] || 0, t[5] || 0);
+                    }
+                    return null;
+            },
+            dateToMysqlDate : function(dateObj) {
+                            return dateObj.getFullYear() + '-' +
+                                      (dateObj.getMonth() < 9 ? '0' : '') + (dateObj.getMonth()+1) + '-' +
+                                      (dateObj.getDate() < 10 ? '0' : '') + dateObj.getDate();          
             }
         };
     })(jQuery);
