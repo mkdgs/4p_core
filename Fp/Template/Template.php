@@ -496,7 +496,7 @@ class Template {
 		}
 	}
 	
-	protected function logError(Exception $e) {	
+	protected function logError(\Exception $e) {	
 		$log = new Logger();	
 		$log->notice('error on method '. $name);
 		//print_r($e->getMessage());
