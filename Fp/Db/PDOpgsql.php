@@ -47,11 +47,11 @@ class PDOpgsql extends PDO {
 
 	public function connect() { 		
 		if ( !$this->connect ) { 
-			try {				 		
+			try {		
 				$this->link = new \PDO($this->dsn,$this->bdd_login,$this->bdd_pass);					
 				$this->link->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 				$this->link->setAttribute(\PDO::ATTR_STATEMENT_CLASS, array('Fp\Db\PDOStatement', array($this)));			
-				//$this->link->exec("SET NAMES utf8");			
+				$this->connect = 1;
 			} catch  (\PDOException  $e) {	
 				$message = preg_replace("/{$this->bdd_pass}/",'***password***',$e->getMessage());
 				$code = $e->getCode();
@@ -59,7 +59,7 @@ class PDOpgsql extends PDO {
 				throw new Exception($message, $code, $prev);
 			}
 		}
-		$this->connect = 1;
+		
 		return $this->link;
 	}
 
