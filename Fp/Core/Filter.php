@@ -462,7 +462,7 @@ class Filter {
                 }
             }
             else {
-                $text .= $functionConvertNode($c);
+                $text = $functionConvertNode($c, $dom);
             }
             	
         }
