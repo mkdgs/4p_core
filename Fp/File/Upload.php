@@ -264,6 +264,10 @@ class Upload {
 		return array_pop($ext);
 	}
 
+	public function getPath() {
+	    return $this->file;
+	}
+	
 	public function getName() {
 		return $this->name;
 	}
