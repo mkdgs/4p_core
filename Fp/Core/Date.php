@@ -62,41 +62,51 @@ class Date {
 	 * @param mysql date
 	 * @return Date
 	 */
-	public static function fromMysqlDate($timestamp) {
+	public static function fromFormat($format, $timestamp, $timeZone=null) {
+	    $class = __CLASS__;
+	    return new $class($timestamp, 'format', $timeZone, $format);
+	}
+	
+	
+	/**
+	 * @param mysql date
+	 * @return Date
+	 */
+	public static function fromMysqlDate($timestamp, $timeZone=null) {
 		$class = __CLASS__; 
-		return new $class($timestamp, 'mysql_date');
+		return new $class($timestamp, 'mysql_date', $timeZone);
 	}
 	
 	/**
 	 * @param string strtotime
 	 * @return Date
 	 */
-	public static function fromStrtotime($time) { 
+	public static function fromStrtotime($time, $timeZone=null) { 
 		$class = __CLASS__;
-		return new $class($time, 'strtotime');
+		return new $class($time, 'strtotime', $timeZone);
 	} 
 	
 	/**
 	 * @param mysql datetime
 	 * @return Date
 	 */
-	public static function fromMysqlDateTime($timestamp) { 
+	public static function fromMysqlDateTime($timestamp, $timeZone=null) { 
 		$class = __CLASS__;
-		return new $class($timestamp, 'mysql_datetime');
+		return new $class($timestamp, 'mysql_datetime', $timeZone);
 	} 
 	
 	/**
 	 * @param mysql unix time
 	 * @return Date
 	 */
-	public static function fromUnixTime($timestamp) { 
+	public static function fromUnixTime($timestamp, $timeZone=null) { 
 		$class = __CLASS__;		
-		return new $class($timestamp, 'unix_time');
+		return new $class($timestamp, 'unix_time', $timeZone);
 	} 
 	
 	
-	public function __construct($timestamp=null,$type=null, $timeZone=null) {	
-		if( $timeZone ) {
+	public function __construct($timestamp=null,$type=null, $timeZone=null, $format=null) {	
+		if ( $timeZone ) {
 			$this->timezone = $timeZone;
 		}
 		$timeZone = new \DateTimeZone($this->timezone);
@@ -126,7 +136,13 @@ class Date {
 				if ( !$timestamp ) $timestamp = time();	
 				if ( intval($timestamp) <0 ) $timestamp 	= time() - intval($timestamp);		
 				$this->dateTime = date_create_from_format('U',(string) $timestamp);
-				break;				
+				break;	
+
+			case 'format':
+			    if ( !$timestamp ) $timestamp = time();
+			    $this->dateTime = date_create_from_format($format,(string) $timestamp);
+			    
+			    break;
 		}	
 		if ( !$timestamp && !$type ) {
 			$timestamp = time();
