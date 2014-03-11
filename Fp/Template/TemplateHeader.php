@@ -146,7 +146,7 @@ class TemplateHeader {
         return $this;
     }
 
-    function css($s,$media='all') {
+    function css($s, $media='all') {
         if ( $this->isAssetsInclude($s) ) return $this;
         self::$assets_include[$s] =true;
         
@@ -154,10 +154,8 @@ class TemplateHeader {
         return $this;
     }
 
-
-    function linkRel($ref,$type="canonical") {
-        // !!no prevent cache ex:rel="canonical" must not change
-        $this->link[md5($ref)] = '<link rel="'.Filter::htmlAttr($type).'" href="'.Filter::htmlAttr($ref).'"  />';
+    function linkRel($ref, $type="canonical") {
+        $this->link[md5($ref)] = '<link rel="'.Filter::htmlAttr($type).'" href="'.Filter::htmlAttr($ref).'" />';
         return $this;
     }
 
