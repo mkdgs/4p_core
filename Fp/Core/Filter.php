@@ -347,10 +347,10 @@ class Filter {
         return self::setVal($var, $default);
     }
 
-    // on ne réencode pas les entités car on veux jamais afficher du code dans les attribut.
+    // on ne ne réencode pas les entités car on ne veux jamais afficher du code dans les attribut.
     public static function htmlAttr($var, $array=null, $default='') {
         $var = (string) self::getVal($var, $array, $default);
-        return self::addSlashes(htmlspecialchars($var, ENT_QUOTES,'UTF-8',false));
+        return htmlspecialchars($var, ENT_QUOTES, 'UTF-8', false);
         return self::setVal($var, $default);
     }
 

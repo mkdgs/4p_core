@@ -77,10 +77,6 @@ class TemplateHeader {
         //return str_replace($this->O->glob('url'), $this->O->glob('url_relative'), $url);
     }
 
-    function escape($s) {
-        return Filter::htmlAttr($s);
-    }
-
     function noCache($val) {
         if ( $val && !self::$cache ) self::$cache = time();
         else self::$cache = '';
@@ -154,40 +150,40 @@ class TemplateHeader {
         if ( $this->isAssetsInclude($s) ) return $this;
         self::$assets_include[$s] =true;
         
-        $this->css[md5($s)] = '<link rel="stylesheet" href="'.$this->rw_cache($s).'" type="text/css" media="'.$media.'" />';
+        $this->css[md5($s)] = '<link rel="stylesheet" href="'.Filter::htmlAttr($this->rw_cache($s)).'" type="text/css" media="'.$media.'" />';
         return $this;
     }
 
 
     function linkRel($ref,$type="canonical") {
         // !!no prevent cache ex:rel="canonical" must not change
-        $this->link[md5($ref)] = '<link rel="'.$type.'" href="'.$ref.'"  />';
+        $this->link[md5($ref)] = '<link rel="'.Filter::htmlAttr($type).'" href="'.Filter::htmlAttr($ref).'"  />';
         return $this;
     }
 
     function touchIcon($s) {
-        $this->link['touch_icon'] = '<link rel="apple-touch-icon-precomposed" href="'.$this->rw_cache($s).'" />';
+        $this->link['touch_icon'] = '<link rel="apple-touch-icon-precomposed" href="'.Filter::htmlAttr($this->rw_cache($s)).'" />';
         return $this;
     }
     function shortcutIcon($s) {
-        $this->link['shortcut_icon'] = '<link rel="shortcut icon" href="'.$this->rw_cache($s).'" type="image/x-icon" />';
+        $this->link['shortcut_icon'] = '<link rel="shortcut icon" href="'.Filter::htmlAttr($this->rw_cache($s)).'" type="image/x-icon" />';
         return $this;
     }
     function icon($s) {
-        $this->link['icon'] = '<link rel="icon" href="'.$this->rw_cache($s).'" />';
+        $this->link['icon'] = '<link rel="icon" href="'.Filter::htmlAttr($this->rw_cache($s)).'" />';
         return $this;
     }
     function rss($titre,$url) {
-        $this->link[md5($url)] =  '<link rel="alternate" type="application/rss+xml" title="'.$titre.'" href="'.$this->rw_cache($url).'" />';
+        $this->link[md5($url)] =  '<link rel="alternate" type="application/rss+xml" title="'.Filter::htmlAttr($titre).'" href="'.Filter::htmlAttr($this->rw_cache($url)).'" />';
         return $this;
     }
     function atom($titre,$url) {
-        $this->link[md5($url)] = '<link href="'.$this->rw_cache($url).'" type="application/atom+xml" rel="alternate" title="'.$titre.'" />';
+        $this->link[md5($url)] = '<link href="'.Filter::htmlAttr($this->rw_cache($url)).'" type="application/atom+xml" rel="alternate" title="'.Filter::htmlAttr($titre).'" />';
         return $this;
     }
 
     function base($s) {
-        $this->meta['base'] = '<base href="'.$s.'"/>';
+        $this->meta['base'] = '<base href="'.Filter::htmlAttr($s).'"/>';
         return $this;
     }
     function title($s) {
@@ -197,21 +193,21 @@ class TemplateHeader {
 
     // for open graph http://ogp.me/
     function metaProperty($name,  $content) {
-        $this->meta['property '.$name] = 	'<meta property="'.$name.'" content="'.$content.'" />';
+        $this->meta['property '.$name] = 	'<meta property="'.Filter::htmlAttr($name).'" content="'.Filter::htmlAttr($content).'" />';
         return $this;
     }
 
     function metaName($name,  $content) {
-        $this->meta['name '.$name] = 	'<meta name="'.$name.'" content="'.$content.'" />';
+        $this->meta['name '.$name] = 	'<meta name="'.Filter::htmlAttr($name).'" content="'.Filter::htmlAttr($content).'" />';
         return $this;
     }
 
     function metaDescription($s)  {
-        $this->meta['description'] = '<meta name="description" content="'.$this->escape($s).'" />';
+        $this->meta['description'] = '<meta name="description" content="'.Filter::htmlAttr($s).'" />';
         return $this;
     }
     function metaAuthor($s) {
-        $this->meta['author'] = '<meta name="author" content="'.$s.'" />';
+        $this->meta['author'] = '<meta name="author" content="'.Filter::htmlAttr($s).'" />';
         return $this;
     }
     function metaCharset($s='utf-8') {
@@ -223,24 +219,24 @@ class TemplateHeader {
         return $this;
     }
     function metaCopyright($s) {
-        $this->meta['copyright'] = 	'<meta name="copyright" content="'.$s.'" />';
+        $this->meta['copyright'] = 	'<meta name="copyright" content="'.Filter::htmlAttr($s).'" />';
         return $this;
     }
     function metaRobots($s='NOODP,index,follow') {
-        $this->meta['robots'] = 	'<meta name="robots" content="'.$s.'" />';
+        $this->meta['robots'] = 	'<meta name="robots" content="'.Filter::htmlAttr($s).'" />';
         return $this;
     }
     function metaRevisit($s='3 days') {
-        $this->meta['revisit'] = 	'<meta name="revisit-after" content="'.$s.'" />';
+        $this->meta['revisit'] = 	'<meta name="revisit-after" content="'.Filter::htmlAttr($s).'" />';
         return $this;
     }
     function metaDistribution($s='Global') {
-        $this->meta['distribution'] = 	'<meta name="distribution" content="'.$s.'" />';
+        $this->meta['distribution'] = 	'<meta name="distribution" content="'.Filter::htmlAttr($s).'" />';
         return $this;
     }
 
     function metaHttpEquiv($name,$content) {
-        $this->meta['http_equiv'.$name.$content] =  '<meta  http-equiv="'.$name.'" content="'.$content.'" />';
+        $this->meta['http_equiv'.$name.$content] =  '<meta  http-equiv="'.Filter::htmlAttr($name).'" content="'.Filter::htmlAttr($content).'" />';
         return $this;
     }
     
