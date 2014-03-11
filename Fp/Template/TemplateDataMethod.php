@@ -428,7 +428,7 @@ class TemplateDataMethod {
 				'<div data-linked-media="(?P=url)" data-embed-image="(?P=url)" style="(?P=css)" data-credit="(?P=credit)"></div>',
 				'<div data-embed-video="(?P=url)" data-credit="(?P=credit)" ></div>',
 				'<div data-embed-music="(?P=url)" style="(?P=css)" data-credit="(?P=credit)"></div>',
-				'<a   data-embed-link="(?P=url)" href="(?P=url)" style="(?P=css)" data-credit="(?P=credit)">(?P=url)</a>'
+				'<a data-embed-link="(?P=url)" href="(?P=url)" style="(?P=css)" data-credit="(?P=credit)">(?P=url)</a>'
 		);
 		//$c->vars = preg_replace($regex, $replace, $c->vars);
 		

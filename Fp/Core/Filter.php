@@ -429,9 +429,7 @@ class Filter {
         // hack to preserve UTF-8 characters
         // http://stackoverflow.com/questions/3548880/php-dom-utf-8-problem
         $d = '<?xml encoding="UTF-8"><div>';
-        try { $dom->loadHTML($d.$var.'</div>');
-        } catch ( \Exception $e) {
-        }
+        try { $dom->loadHTML($d.$var.'</div>'); } catch ( \Exception $e) {}
 
         // remove hack
         $dom->encoding = 'UTF-8';
@@ -469,6 +467,8 @@ class Filter {
         $text = html_entity_decode( $text , ENT_QUOTES,'UTF-8');
         return self::setVal($text, $default);
     }
+    
+    
 
     /**
      * @deprecated
