@@ -199,7 +199,6 @@ abstract class ModelNode {
         return $q->delete();
     }
 
-
     /**
      * @param string $start
      * @param string $end
