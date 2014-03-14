@@ -40,10 +40,9 @@ class QueryPgsql extends QueryAbstract {
 	 * @return Table_query
 	 */
 	public function __construct(Table $table, $table_alias=null) {
-		$this->table_alias = $table_alias;
+		$this->table_alias =  ( $table_alias ) ? $table_alias : $table->table;
 		$this->dbTable = $table;
 		$this->condition = new ConditionPgsql($this);
-		//$this->selectColumn('*');
 	}
 
 	protected function sanitzeSelectColumn($col) {
