@@ -227,6 +227,7 @@ class Template {
 			$this->logBlockCore($name);
 			$data = ( $data === null ) ? $this->block[$name]['data'] : $data;			
 			if ( !$data instanceof TemplateData ) $data = new TemplateData($data);
+			$this->block[$name]['data'] = $data;
 
 			if ($this->debug) echo '<!-- [BLOCK_START:'.$name.':'.htmlentities(substr($this->block[$name]['file'], 0, 300), null, 'UTF-8').'] -->';
 			$this->renderBlock($this->block[$name]);
