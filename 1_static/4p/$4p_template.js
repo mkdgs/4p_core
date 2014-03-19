@@ -1,4 +1,17 @@
-$4p.tpl = function(tpl) {
+/*
+* 4p javascript template ports 
+* version : 0.3
+* Copyright Desgranges Mickael
+* mickael@mkdgs.fr
+* 
+* note : 
+* - commentaire javascript sur une ligne non supporté
+* - mettre des commentaire html autour des instructions pour quels ne soient pas éffacer par le DOM (ex code entre <table> et <tr>) 
+* 
+* todo:
+* - prefixer les nom de propriété dans template_data pour éviter des soucis de collisions
+*/
+$4p.template = function(tpl) {
     var f = {};
     if (typeof tpl == 'string') {
         if (tpl.substring(0, 4) == 'http') {
@@ -22,18 +35,22 @@ $4p.tpl = function(tpl) {
     f.scope = {
         root : f.tpl
     };
-    f.element = $('<div />').append(f.tpl);
+    
+    f.element = document.createElement('div');
+    f.element.innerHTML = f.tpl;
+    f.element = $(f.element);
     f.element.find('[data-fp-scope]').each(
             function() {
-                f.scope[$(this).attr('data-fp-scope')] = $('<div />').append(
+                f.scope[$(this).attr('data-fp-scope')] = $('<textarea />').append(
                         $(this)).html();
             });
 
     f.cache = {};
+    
     f.render = function(data, scope, data_key) {
         var err = "", func;
         if (!scope)    scope = 'root';
-        if (!data_key) data_key = 'root';
+        if (!data_key) data_key = 'data';
         var tpl_data = {};
         tpl_data[data_key] = new $4p.templateData(data);
         try {
@@ -41,8 +58,9 @@ $4p.tpl = function(tpl) {
                 // inspired by http://www.west-wind.com/weblog/posts/509108.aspx
                 // put all data in function scope
                     
-                var strFunc =  "for ( var x in  arguments[0] ) {"
-                +"   if (arguments[0].hasOwnProperty(x)) eval('var ' + x + ' = '+arguments[0][x]+';'); "
+                var strFunc =  "var args = arguments;" 
+                +"for ( var x in  args[0] ) {"
+                +"   if (args[0].hasOwnProperty(x)) eval('var ' + x + ' = args[0][x];'); "
                 +"}"
                 +"var p=[];var print = function(str) { p.push(str); }; p.push('"
                         + f.tpl.replace(/[\r\t\n]/g, " ")
@@ -60,10 +78,11 @@ $4p.tpl = function(tpl) {
         } catch (e) {
             err = e.message;
         }
-        return "< # ERROR: " + err + scope + "-- ok # >";
+        return "< # ERROR: " + err +" "+ scope + "-- ok # >";
     };
+    
     return f;
-
+    
 };
 
 $4p.templateData = function(vars, key) {
@@ -73,19 +92,29 @@ $4p.templateData = function(vars, key) {
     this.i_total = null;
     this.i_position = null;
     this.instanceOfTemplateData = true;
+    // iterator
+    this.currentKey = 0;
+    this.keys = [];
 
     this.constructor = function(vars, key) {
         var k, v;
         this.key = (key) ? key : null;
-        if (vars.instanceOfTemplateData) {
+        if ( vars == null ) {
+            this.vars = vars;
+        }
+        else if (vars.instanceOfTemplateData) {
             this.vars = vars.vars;
+            this.keys = this.vars.keys;
         } else if ((/boolean|number|string/).test(typeof vars)) {
             this.vars = vars;
         } else {
-            for (k in vars) {
+            for (k in vars) {               
                 if (vars.hasOwnProperty(k)) {
                     v = vars[k];
                     this.vars[k] = new $4p.templateData(v, k);
+                    this.keys.push(k);
+                    // reference the data index
+                    if ( !this[k] ) this[k] = this.vars[k];
                 }
             }
         }
@@ -118,24 +147,14 @@ $4p.templateData = function(vars, key) {
         return this.value();
     };
     this.e = function() {
-        document.write(this.value());
+        return this.value();
+    };
+    
+    this.toString = function () {
+      return this.value();  
     };
 
-    /*
-     * ITERATOR
-     */
-    this.currentKey = 0;
-    if (!this.vars.instanceOfTemplateData) {
-        this.keys = [];
-        for ( var key in this.vars) {
-            if (this.vars.hasOwnProperty(key)) {
-                this.keys.push(key);
-            }
-        }
-    } else {
-        this.keys = this.vars.keys;
-    }
-
+    // iterator
     this.end = function() {
         this.currentKey = (this.keys.length - 1);
     };
@@ -208,20 +227,6 @@ $4p.templateData = function(vars, key) {
         }
         this.i_total = this.i_iterate = null;
         this.reset();
-    };
+ };
 
 };
-
-/*
-var arr = {
-    1 : 1,
-    2 : 2,
-    3 : 3,
-    'ba' : 'youpi',
-    lit : [ 'hop', 'hip', 'hap' ]
-};
-
-var str = "my loop n't <script> while ( l = data.is('lit').iterate() ) { print(l.v()+'<br />'); </script> {{=l.v()+'uoo' }}  <script> } </script>";
-var my_tpl = $4p.tpl(str);
-console.log(my_tpl.render(arr));
-*/
