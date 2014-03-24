@@ -12,7 +12,7 @@ $url_node_jeux_delete = $A->url_node_jeux_delete->r($A->id_node_jeux);
 
 	<ul>
 <?php 	while ( $l = $A->page->iterate() ) {?>
-		<?php if ( $l->iteratePosition() == 0 ) { ?> 
+		<?php if ( $l->iteratePosition() == 0 ) { ?> 
 			<li data-active-on="^<?php $l->route->e();?>$" >
 		<?php } else { ?>
 			<li data-active-on="<?php $l->route->e();?>" >

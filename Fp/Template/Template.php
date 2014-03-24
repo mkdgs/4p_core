@@ -56,7 +56,7 @@ class Template {
 	protected $header;
 	protected $processing = false;
 	
-	public $html_body_open = '<body>';
+	public $html_body_open  = '<body>';
 	public $html_body_close = '</body>';
 
 	public function __construct(Core $O) {

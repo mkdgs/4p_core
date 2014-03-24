@@ -71,7 +71,9 @@ abstract class Controller_json extends Controller {
 		$this->after_config();	
 			
 		$this->rpc->debug = $this->O->glob('debug');
+
 		if ( $this->rpc->debug ) $this->rpc->debug_html = Filter::int('debug',$_GET);
+		
 		if ( $_SERVER['REQUEST_METHOD'] == 'GET' ) {
 			$params = $_GET;
 		}
@@ -123,7 +125,7 @@ abstract class Controller_json extends Controller {
 				$this->rpc->respond();
 						
 			} catch (\Exception $e) {
-				$this->rpc->setError($e);	
+				$this->rpc->setError($e);					
 				$this->rpc->respond();		
 			}
 		}
