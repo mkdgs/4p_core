@@ -9,8 +9,8 @@ class Module extends \Fp\Module {
 		$r = $this->getWebPath(__DIR__);
 		$this->url_static = $this->O->glob('url').$r.'/1_static';
 		$this->model = new Model($this->O);
-		
-		//$url = $this->M->addQueryDelimiter($url_r).$this->var_method;
+
+		$this->data['url_my_method'] = $this->M->addQueryDelimiter($this->data['url_html']).$this->var_method.'=myMethod';
 	}
 
 	/* Set Controller, otherwise it's automatically loaded if exist */
