@@ -140,7 +140,7 @@ class Date {
 
 			case 'format':
 			    if ( !$timestamp ) $timestamp = time();
-			    $this->dateTime = date_create_from_format($format,(string) $timestamp);
+			    $this->dateTime = date_create_from_format($format,(string) $timestamp, $timeZone);
 			    
 			    break;
 		}	

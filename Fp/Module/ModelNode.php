@@ -819,7 +819,7 @@ abstract class ModelNode {
         $req->andWhere(array('id_node'=>$id_node));
         $req->selectColumn('tag');
         $req->selectFunction("count('tags') as ct");
-        $req->limitSelect($start,$end);
+        $req->limitSelect($start, $end);
         $req->groupBy('tags.tag');
         $req->orderBy(array('priority'=>'DESC'));
         return $req->getAllColumn();
