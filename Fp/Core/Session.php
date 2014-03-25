@@ -96,7 +96,8 @@ class Session {
 		return session_name($name);
 	} 
 	public function id($id=null) {
-		return session_id($id);
+	    if ( $id ) return session_id($id);
+	    else return session_id();
 	} 
 	
 	static public function load(Core $O) {
