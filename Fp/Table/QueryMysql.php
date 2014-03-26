@@ -42,13 +42,13 @@ class QueryMysql extends QueryAbstract implements QueryInterface {
 	 */
 	public function __construct(Table $table, $table_alias=null) {
 		$this->table_alias =  ( $table_alias ) ? $table_alias : $table->table;
-		$this->dbTable = $table;
+		$this->dbTable = $table;		
 		$this->condition = new ConditionMysql($this);
 	}
 
 	
-	protected function sanitzeSelectColumn($col) {	
-		$kc = $col;
+	protected function sanitzeSelectColumn($col) {
+		$kc = trim($col);
 		if ( !isset($this->cacheSanitizeSelectedColumn[$kc]) ) {				
 			$col = trim(str_replace('`', '', $col));
 			$col = explode(' ', $col);
@@ -56,7 +56,7 @@ class QueryMysql extends QueryAbstract implements QueryInterface {
 			foreach ( $col as $k => $v ) {
 				$v = trim($v);
 				if ( $k == 0 ) {
-					$t = explode('.',$v);
+					$t = explode('.', $v);
 					if( count($t) == 2 ) {
 						$r['table_alias'] = $t[0];
 						$r['name'] = $t[1];

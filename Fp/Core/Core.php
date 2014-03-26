@@ -499,7 +499,7 @@ abstract class Core {
 		    $className = ltrim($className, '\\');
 		    $fileName  = '';
 		    $namespace = '';
-		    if ($lastNsPos = strrpos($className, '\\')) {
+		    if ( $lastNsPos = strrpos($className, '\\')) {
 		        $namespace = substr($className, 0, $lastNsPos);
 		        $className = substr($className, $lastNsPos + 1);
 		        $fileName  = str_replace('\\', DIRECTORY_SEPARATOR, $namespace) . DIRECTORY_SEPARATOR;
@@ -508,7 +508,10 @@ abstract class Core {
 		    // be carreful if class is not found before autoload is define it's not a bug... 
 		    // echo $dir.$fileName.'<br />'."\r\n";	
 		    // debug_print_backtrace();
-		    if ( is_file($dir.$fileName) ) return require_once $dir.$fileName;
+		    if ( is_file($dir.$fileName) ) {
+		        require_once $dir.$fileName;
+		        return true;
+		    }
 	}
 
 	static $autoload_loop = array();

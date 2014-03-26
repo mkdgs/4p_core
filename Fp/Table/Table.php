@@ -19,7 +19,7 @@ class Table {
 	public $auto_increment	= false;
 	public $unique 			= array();
 	public $validateRules   = array();
-	public $filterRules     = array();	
+	public $filterRules     = array();
 	
 	protected function __construct(\Fp\Db\PDO $DbLink, $table, $column=null) {
 		$this->DbLink  = $DbLink;		
