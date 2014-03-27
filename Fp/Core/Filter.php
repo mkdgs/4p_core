@@ -42,27 +42,33 @@ namespace Fp\Core;
 class Filter {
     private function __construct() {
     }
-
+    
+    
+    /*
+     * @todo fix odd when two parameter and array is null it's like sigle parameter and return val index string instead null
+     * for check in array always use Filter::xx('index', (array) $dirt_value); 
+     */
     private static function getVal($var=null, $array=null) {
-        // @todo get val by array index
-        //if ( is_array($var) ) {}
+        
         if (  is_array($array)  ) {
-            if ( !array_key_exists($var, $array) ) return null;
-            $var = $array[$var];
+            if ( is_array($var)  ) { // get val by array index
+                $arr = &$array;
+                foreach ( $var as $k => $v ) {
+                    if (!isset($arr[$v]))  return null;
+                    $arr = &$arr[$v];
+                }
+                $var = $arr;
+            }
+            else {
+                if ( !array_key_exists($var, $array) ) return null;
+                $var = $array[$var];
+            }
         }
         if ( get_magic_quotes_gpc() && is_string($var) ) return stripslashes($var);
         return $var;
     }
-
-    // @todo get val by array index
-    private function getValIndex(array $var, $array) {
-        foreach ( $var as $v ) {
-            if ( is_array($array) AND array_key_exists($v, $array) ) $val = $array[$val];
-            else return null;
-        }
-        return $val;
-    }
-
+    
+    
     private static function setVal($var, $default) {
         if ( $var === null  )	return $default;
         if ( strlen((string) $var) ) return $var;
