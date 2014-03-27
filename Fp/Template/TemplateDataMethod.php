@@ -135,7 +135,7 @@ class TemplateDataMethod {
 	public static function toJson($t) {
 		$v = $t->v();
 		if ( is_scalar($v) ) return json_encode($v);
-		return json_encode($t->toAarray());
+		return json_encode($t->toArray());
 	}
 
 	/**
