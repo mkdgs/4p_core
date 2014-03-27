@@ -45,7 +45,7 @@ class Filter {
     
     
     /*
-     * @todo fix odd when two parameter and array is null it's like sigle parameter and return val index string instead null
+     * @todo fix odd when two parameter and array is null it's like single parameter and return val index string instead null
      * for check in array always use Filter::xx('index', (array) $dirt_value); 
      */
     private static function getVal($var=null, $array=null) {
