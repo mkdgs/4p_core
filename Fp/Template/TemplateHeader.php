@@ -325,7 +325,7 @@ class TemplateHeader {
                         // lazy loading fix
                         $srcfile = json_encode($file);
                         $cache .= "var src = $srcfile;".$line_cr;
-                        $cache .= "( typeof document.currentScript != 'undefined' ) ? document.currentScript.src = src : document.currentScript = { 'src' : src };".$line_cr;
+                        $cache .= "( typeof document.currentScript == 'string' ) ? document.currentScript.src = src : document.currentScript = { 'src' : src };".$line_cr;
                         $js = @file_get_contents($file);
                         if  ( $this->O->glob('debug') < 3 ) {
                             $jsmin = new \JSMin($js);
@@ -386,7 +386,7 @@ class TemplateHeader {
                             // lazy loading fix
                             $srcfile = json_encode($file);
                             $cache .= "var src = $srcfile;".$line_cr;
-                            $cache .= "( typeof document.currentScript != 'undefined') ? document.currentScript.src = src : document.currentScript = { 'src' : src };".$line_cr;
+                            $cache .= "( typeof document.currentScript == 'string' ) ? document.currentScript.src = src : document.currentScript = { 'src' : src };".$line_cr;
                             $js = @file_get_contents($file);
                             if  ( $this->O->glob('debug') < 3 ) {
                                 $jsmin = new \JSMin($js);
