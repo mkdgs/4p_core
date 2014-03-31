@@ -46,7 +46,13 @@ class Filter {
     
     /*
      * @todo fix odd when two parameter and array is null it's like single parameter and return val index string instead null
-     * for check in array always use Filter::xx('index', (array) $dirt_value); 
+     * for check in array always use 
+     *  Filter::xx('key_of_value', (array) $dirt_array_value); 
+     * or
+     *  Filter::xx(['key_of_value'], $dirt_array_value); 
+     * otherwise
+     * Filter::xx('key_of_value', $dirt_array_value=null);
+     * return the string 'key_of_value'
      */
     private static function getVal($var=null, $array=null) {
         
@@ -63,6 +69,9 @@ class Filter {
                 if ( !array_key_exists($var, $array) ) return null;
                 $var = $array[$var];
             }
+        }
+        else if ( is_array($var) ) {
+            return null;
         }
         if ( get_magic_quotes_gpc() && is_string($var) ) return stripslashes($var);
         return $var;
