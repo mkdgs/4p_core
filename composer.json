@@ -1,0 +1,8 @@
+{
+    "name": "Mkdgs/Fp",
+    "description": "Four Publish is a web application framework",
+    "homepage": "http://www.4publish.com/",
+    "require": {
+        "php": ">=5.3.0"        
+    }
+}

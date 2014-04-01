@@ -40,9 +40,8 @@ namespace Fp\Core;
  * @link			http://4publish.com
  */
 class Filter {
-    private function __construct() {
-    }
     
+    private function __construct() {}
     
     /*
      * @todo fix odd when two parameter and array is null it's like single parameter and return val index string instead null
@@ -54,8 +53,7 @@ class Filter {
      * Filter::xx('key_of_value', $dirt_array_value=null);
      * return the string 'key_of_value'
      */
-    private static function getVal($var=null, $array=null) {
-        
+    private static function getVal($var=null, $array=null) {        
         if (  is_array($array)  ) {
             if ( is_array($var)  ) { // get val by array index
                 $arr = &$array;
