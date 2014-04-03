@@ -43,7 +43,6 @@ use \Exception;
 */
 class Date {
 	/**
-	 * Enter description here ...
 	 * @var DateTime
 	 */
 	private $dateTime;
@@ -114,7 +113,7 @@ class Date {
 			case 'mysql_date':			    
 				if ( !$timestamp || $timestamp == '0000-00-00')	$timestamp = '1900-01-01';	
 				$timestamp = preg_replace('#0000-00-00#', '1900-01-01',  substr(trim($timestamp), 0 ,10));			
-				$this->dateTime = date_create_from_format('!Y-m-d', $timestamp);				
+				$this->dateTime = date_create_from_format('!Y-m-d', $timestamp, $timeZone);
 				break;
 				
 			case 'mysql_datetime':
@@ -123,30 +122,30 @@ class Date {
 				    $timestamp .= ' 00:00:00';
 				}			
 				if ( !$timestamp ) $timestamp = '1900-01-01 00:00:00';				
-				$this->dateTime = date_create_from_format('!Y-m-d H:i:s', $timestamp);				
+				$this->dateTime = date_create_from_format('!Y-m-d H:i:s', $timestamp, $timeZone);				
 				break;
 							
 			case 'strtotime':				
 				$timestamp = strtotime($timestamp);			
 				if ( !$timestamp ) $timestamp = time();	
-				$this->dateTime = date_create_from_format('U',(string) $timestamp);
+				$this->dateTime = date_create_from_format('!U',(string) $timestamp, $timeZone);
 				break;
 				
 			case 'unix_time':				
 				if ( !$timestamp ) $timestamp = time();	
-				if ( intval($timestamp) <0 ) $timestamp 	= time() - intval($timestamp);		
-				$this->dateTime = date_create_from_format('U',(string) $timestamp);
+				if ( intval($timestamp) < 0 ) $timestamp 	= time() - intval($timestamp);	                                
+				$this->dateTime = date_create_from_format('U',(int) $timestamp, $timeZone);
 				break;	
 
 			case 'format':
 			    if ( !$timestamp ) $timestamp = time();
-			    $this->dateTime = date_create_from_format($format,(string) $timestamp, $timeZone);
+			    $this->dateTime = date_create_from_format('!'.$format,(string) $timestamp, $timeZone);
 			    
 			    break;
 		}	
 		if ( !$timestamp && !$type ) {
 			$timestamp = time();
-			$this->dateTime = date_create_from_format('U',(string) $timestamp);			
+			$this->dateTime = date_create_from_format('!U',(string) $timestamp);			
 		}
 		else if ( !$this->dateTime ) throw new \Exception(__METHOD__.' unknow date '.print_r($timestamp, true));
 		$this->dateTime->setTimezone($timeZone);

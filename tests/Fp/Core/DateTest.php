@@ -32,22 +32,16 @@ class DateTest extends \PHPUnit_Framework_TestCase {
      * @covers Fp\Core\Date::fromFormat
      * @todo   Implement testFromFormat().
      */
-    public function testFromFormat() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
+    public function testFromFormat() {        
+        $this->assertEquals('1998-12-25 10:09:08', \Fp\Core\Date::fromFormat('d/m/Y H:i:s', '25/12/1998 10:09:08')->mysqlDateTime());
     }
 
     /**
      * @covers Fp\Core\Date::fromMysqlDate
      * @todo   Implement testFromMysqlDate().
      */
-    public function testFromMysqlDate() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
+    public function testFromMysqlDate() {        
+        $this->assertEquals('25/12/1998', \Fp\Core\Date::fromMysqlDate('1998-12-25')->format('d/m/Y'));
     }
 
     /**
@@ -55,10 +49,7 @@ class DateTest extends \PHPUnit_Framework_TestCase {
      * @todo   Implement testFromStrtotime().
      */
     public function testFromStrtotime() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
+         $this->assertEquals('25/12/1998', \Fp\Core\Date::fromStrtotime('25 december 1998')->format('d/m/Y'));
     }
 
     /**
@@ -77,17 +68,15 @@ class DateTest extends \PHPUnit_Framework_TestCase {
      * @todo   Implement testFromUnixTime().
      */
     public function testFromUnixTime() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
+        $this->assertEquals('25/12/1998', \Fp\Core\Date::fromUnixTime(914544000)->format('d/m/Y'));
+        
     }
 
     /**
      * @covers Fp\Core\Date::day_short
      * @todo   Implement testDay_short().
      */
-    public function testDay_short() {
+    public function testDay_short() { 
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
                 'This test has not been implemented yet.'
@@ -264,10 +253,8 @@ class DateTest extends \PHPUnit_Framework_TestCase {
      * @todo   Implement testUnixTime().
      */
     public function testUnixTime() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
+       $this->assertEquals(914544000, \Fp\Core\Date::fromFormat('d/m/Y','25/12/1998', 'GMT')->unixTime());
+       $this->assertEquals(914544000, \Fp\Core\Date::fromMysqlDate('1998-12-25', 'GMT')->unixTime());
     }
 
     /**
@@ -275,10 +262,7 @@ class DateTest extends \PHPUnit_Framework_TestCase {
      * @todo   Implement testFormat().
      */
     public function testFormat() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
+        $this->assertEquals('25/12/1998 01:00', \Fp\Core\Date::fromUnixTime(914544000)->format('d/m/Y h:i'));
     }
 
     /**
