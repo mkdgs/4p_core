@@ -346,7 +346,7 @@ class TemplateHeader {
             foreach ( $this->meta as $v ) echo $v.$line_cr;
         }
         
-        ob_flush();
+        if ( ob_get_level() ) ob_flush();
         flush();
     }
 
