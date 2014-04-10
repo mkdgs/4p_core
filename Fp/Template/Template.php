@@ -499,7 +499,7 @@ class Template {
 	
 	protected function logError(\Exception $e) {	
 		$log = new Logger();	
-		$log->notice('exception: '.$e->getMessage(), ['exception' => $e]);
+		$log->notice('exception: '.$e->getMessage(), array('exception' => $e));
 		//print_r($e->getMessage());
 	}
 
