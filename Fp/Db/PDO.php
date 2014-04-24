@@ -61,10 +61,12 @@ class PDO {
 		$this->link = '';
 		$this->type = $type;
 	}
-	
+/*
 	public function connect() {	   
 		if ( !$this->connect ) {
-			try {			 
+			try {			
+                            
+                          
 				$this->link = new \PDO($this->dsn, $this->bdd_login, $this->bdd_pass);
 				$this->link->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 				$this->link->setAttribute(\PDO::ATTR_STATEMENT_CLASS, array('PDOStatement', array($this)));
@@ -79,6 +81,7 @@ class PDO {
 		}		
 		return $this->link;
 	}
+*/
 
 	/**
 	 * @return Db_Extend_PDOStatement

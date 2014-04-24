@@ -64,7 +64,9 @@ class PDOStatement extends \PDOStatement {
 			// SQLSTATE[HY000]: General error: Extraneous additional parameters
 			return parent::fetchAll($fetch_style);
 		}
-		else return parent::fetchAll($fetch_style,$col,$ctor_args);
+		else {
+                    return parent::fetchAll($fetch_style,$col,$ctor_args);
+                }
 	}
 	
 	public function fetchAllColumn($column_number = 0) {

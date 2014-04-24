@@ -212,9 +212,11 @@ abstract class Core {
 				break;
 		
 			case '500':
-			default:
-				include_once $this->dir_route.'error/500.php';
+                                include_once $this->dir_route.'error/500.php';
 				break;
+			default:
+                            throw new Exception('General Error', 503, $e_general);
+                    
 		}	
 		$this->render();
 	}
@@ -227,13 +229,12 @@ abstract class Core {
 			$this->global['dir_route']  = $this->glob('dir_data').'route/';
 		}
 		$this->dir_route  = $this->global['dir_route'];
-		try {	
-					
+		try {						
 			// c'est le fichier de config pour $4p.js
 			if ( $this->route()->getCommand(-1) == 'config_javascript.php' ) {				
-				return require_once $this->glob('dir_lib').'init_config_javascript.php';
+			    return require_once $this->glob('dir_lib').'init_config_javascript.php';
 			}
-			
+                        
 			if ( !$this->stopProcess ) $this->db();
 			if ( !$this->stopProcess ) $this->after_init();
 			if ( !$this->stopProcess ) $this->event()->trigger('after_init.core', $this);
@@ -253,10 +254,11 @@ abstract class Core {
 			$this->render();
 
 		} catch (\Exception $e_general) {
-			try {
-				$this->before_error();
-				Debug::ExceptionHandler($e_general);
-				$this->errorPage($e_general->getCode(), $e_general);				
+			//try {
+				//$this->before_error();
+				//Debug::ExceptionHandler($e_general);
+				$this->errorPage($e_general->getCode(), $e_general);
+                        /*
 			} catch ( \Exception $a) {
 				$str = 'Error Handler Failure: <br />'
 						.'<pre>'.$a->getMessage()
@@ -270,8 +272,10 @@ abstract class Core {
 						.'</pre>';
 				//$str .= 'backtrace: <br /><pre>'.print_r(debug_backtrace(),true).'</pre>';
 				die($str);
-			}
+			}*/
 		}
+ 
+
 	}
 
 

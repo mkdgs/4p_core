@@ -323,10 +323,10 @@ class TemplateHeader {
                 if ( !$cache = $Cdn->exist($key) ) {
                     foreach ( $files as $file ) {
                         // lazy loading fix
-                        $srcfile = json_encode($file);
-                        $cache .= "var src = $srcfile;".$line_cr;
-                        $cache .= "( typeof document.currentScript == 'string' ) ? document.currentScript.src = src : document.currentScript = { 'src' : src };".$line_cr;
-                        $js = @file_get_contents($file);
+                            $srcfile = json_encode($file);
+                            $cache .= "document.currentScript = document.createElement('script');";
+                            $cache .= "document.currentScript.src = $srcfile;";
+                            $js = @file_get_contents($file);
                         if  ( $this->O->glob('debug') < 3 ) {
                             $jsmin = new \JSMin($js);
                             $js = $jsmin->min();
@@ -385,8 +385,8 @@ class TemplateHeader {
                         try {
                             // lazy loading fix
                             $srcfile = json_encode($file);
-                            $cache .= "var src = $srcfile;".$line_cr;
-                            $cache .= "( typeof document.currentScript == 'string' ) ? document.currentScript.src = src : document.currentScript = { 'src' : src };".$line_cr;
+                            $cache .= "document.currentScript = document.createElement('script');";
+                            $cache .= "document.currentScript.src = $srcfile;";
                             $js = @file_get_contents($file);
                             if  ( $this->O->glob('debug') < 3 ) {
                                 $jsmin = new \JSMin($js);

@@ -46,7 +46,7 @@ class PDOmysql extends PDO {
 
 	public function connect() { 		
 		if ( !$this->connect ) {
-			try {	
+			try {	                             
 				$this->link = new \PDO($this->dsn,$this->bdd_login,$this->bdd_pass);					
 				$this->link->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 				$this->link->setAttribute(\PDO::ATTR_STATEMENT_CLASS, array('Fp\Db\PDOStatement', array($this)));			
@@ -61,69 +61,4 @@ class PDOmysql extends PDO {
 		}
 		return $this->link;
 	}
-	
-	/*
-	public function query($sql) {
-		$this->connect();		
-		$rid = $this->logReq(__METHOD__,$sql);		
-		try {
-			$r = $this->link->query($sql);
-			$this->logReqEnd($rid);
-			return $r;
-		} catch  (\Exception  $e) {
-			Db::debug($e."\r\n ".$sql."\r\n ");			
-		}
-		$this->logReqEnd($rid);
-	}
-	public function prepare($sql,$driver_options=array()){
-		$this->connect();
-		$rid = $this->logReq(__METHOD__,$sql);
-		try {
-			$r = $this->link->prepare($sql,$driver_options);
-			$this->logReqEnd($rid);
-			return $r;
-		} catch  (\PDOException  $e) {
-			Db::debug($e."\r\n ".$sql."\r\n ");
-		}
-	}
-	public function exec($sql){
-		$this->connect();
-		$rid = $this->logReq(__METHOD__,$sql);
-		try { 
-			$r = $this->link->exec( $sql );
-			$this->logReqEnd($rid);
-			return $r;
-		} catch  (\PDOException  $e) {
-			Db::debug($e."\r\n ".$sql."\r\n ");
-		}
-	}
-	
-	public function select_db($db_name){
-		$this->connect();
-		$sql = "USE $db_name";
-		$rid = $this->logReq(__METHOD__,$sql);
-		try { 
-			$r = $this->link->exec( $sql );
-			$this->logReqEnd($rid);
-			return true;
-		} catch  (\PDOException  $e) {
-			Db::debug($e."\r\n ".$sql."\r\n ");
-		}
-	}
-	
-
-	public function quote($string, $paramtype = NULL) {
-		$this->connect();
-		return $this->link->quote($string);
-	}
-	
-	public function lastInsertId($seqname = NULL) {
-	    $this->connect();
-	    try {
-	        return$this->link->lastInsertId($seqname);
-	    } catch  (\PDOException  $e) {
-	        Db::debug($e."\r\n ".$sql."\r\n ");
-	    }
-	}
-	*/
 }

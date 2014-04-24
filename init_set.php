@@ -10,9 +10,7 @@ require_once 'Fp/Core/Init.php';
 #ini_set('arg_separator.output', '&amp;');
 // contre le vol de session
 ini_set("session.use_trans_sid", 0);
-// session via url utilisée pour le push avec streamxdr
-// https://github.com/flowersinthesand/jquery-socket/wiki/API/d059683b6908cfcb9c77db60fdf241761d9d9b98
-ini_set('session.use_only_cookies', 0);
+
 ini_set('default_charset',	$C_glob['charset']);
 ini_set('arg_separator.output','&'); 
 ini_set('arg_separator.input',';&'); 
@@ -80,9 +78,6 @@ if ( !function_exists('exception_error_handler') ) {
 	}
 }
 set_error_handler("exception_error_handler");
-
-// obsolete
-//if ( version_compare(PHP_VERSION, '5.3.0', '<') ) require_once 'init_php5.2.php';
 
 // Pour le mode CLI et les var affecté par le client
 if ( !isset($_SERVER['HTTPS'])) $_SERVER['HTTPS'] = '';
