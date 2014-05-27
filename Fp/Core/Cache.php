@@ -56,7 +56,7 @@ class Cache {
 	/**
 	 * @return Cache 
 	 */
-	public static function load(Core $O,$cacheType=null) {
+	public static function load(\Fp\Core\Init $O,$cacheType=null) {
 		if (self::$instance === null ) {
 			$c = __CLASS__;
 			self::$instance = new $c;

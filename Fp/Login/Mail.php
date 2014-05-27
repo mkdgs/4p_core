@@ -42,14 +42,14 @@ use Fp\Db\Db;
 * @license		CeciLL-B
 * @link			http://4publish.com
 */
-class Mail {
+class Mail extends \Fp\Module\Model {
 	public $table = 'login_mail';
 	/**
 	 * @var Table_query
 	 */
 	public $dbLoginMail;
 	
-	public function __construct(\Fp\Core\Core $O) { 		
+	public function __construct(\Fp\Core\Init $O) { 		
 		$tableLoginMail 	 = $O->glob('prefix').$this->table;
 		$columnLoginMail  = array('uid','mail','tmp_mail','status');
 		$this->tableLoginMail  = Table::set(Db::get_link(), $tableLoginMail, $columnLoginMail);

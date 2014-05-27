@@ -63,7 +63,7 @@ class Utils {
 		}
 	}
 	
-	public static function getWebPath(Core $O, $dir) {
+	public static function getWebPath(\Fp\Core\Init $O, $dir) {
 		return $O->route()->getWebPath($dir);
 	}
 	

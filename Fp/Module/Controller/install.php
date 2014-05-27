@@ -42,7 +42,7 @@ namespace Fp\Module;
 abstract class Controller_install { 
 	public $O;	
 	
-	abstract public function __construct(Core $O); 	
+	abstract public function __construct(\Fp\Core\Init $O); 	
 
 	abstract  public function setup();
 	

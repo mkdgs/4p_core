@@ -72,7 +72,7 @@ class Debug {
 		}
 	}
 
-	public static function set(Core $O) {
+	public static function set(\Fp\Core\Init $O) {
 		
 		self::$O = $O;
 		self::$TABLE = $O->glob('prefix').'debug';

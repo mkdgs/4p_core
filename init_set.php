@@ -3,8 +3,8 @@ use \Fp\Log\Logger;
 if ( version_compare(PHP_VERSION, '5.3.0', '<') ) {
 	die('bad php version' . PHP_VERSION);
 }
-require_once 'Fp/Core/Core.php';
 require_once 'Fp/Core/Init.php';
+require_once 'Fp/Core/Core.php';
 
 # paramètre php
 #ini_set('arg_separator.output', '&amp;');
@@ -44,7 +44,7 @@ setlocale(LC_COLLATE, 	  $C_glob['lc.collate']);
 ini_set('session.gc_probability', 0);
 
 // php msg error & warning
-ini_set('display_errors', false);
+ini_set('display_errors', 0);
 ini_set('html_errors',0);
 if ( !$C_glob['debug'] ) {
 	ini_set('error_reporting', 0);
@@ -53,6 +53,8 @@ elseif ( $C_glob['debug'] == 1 ) {
 	ini_set('error_reporting', E_ALL|E_STRICT);
 }
 else {
+        
+        ini_set('display_startup_errors', 1);
 	ini_set('error_reporting', -1);
 	ini_set('display_errors', 1);
 	ini_set('html_errors',1);	

@@ -41,18 +41,20 @@ use Fp\Core\Core;
  * @link			http://4publish.com
  */
 abstract class Model {
-	/**
-	 * @var Core
-	 */
+    
+	/** @var \Fp\Core\Init */
 	public $O;
+        
+        /** @return $this Description * */
+        public static function getInstance(\Fp\Core\Init $O) {
+            $classname = get_called_class();
+            if ( !$c=$O->getInstance($classname)) {
+                $c = new $classname($O);
+                $O->setInstance($classname, $c);
+            }
+            return $c;
+        }
+        
+        abstract public function __construct(\Fp\Core\Init $O);
 
-	abstract public function __construct(Core $O);
-	
-	/*
-	 * metre directement les methodes partagées dans le module
-	public function config(Module $M) {
-		$this->M = $M;	
-		$this->O = $M->O;	
-	}
-	*/	
 }

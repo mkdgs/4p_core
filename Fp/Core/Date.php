@@ -125,28 +125,30 @@ class Date {
 				$this->dateTime = date_create_from_format('!Y-m-d H:i:s', $timestamp, $timeZone);				
 				break;
 							
-			case 'strtotime':				
-				$timestamp = strtotime($timestamp);			
-				if ( !$timestamp ) $timestamp = time();	
-				$this->dateTime = date_create_from_format('!U',(string) $timestamp, $timeZone);
+			case 'strtotime':
+                                if ( !$timestamp ) $timestamp = time();	
+                                else if ( !ctype_digit("$timestamp") ) {                                        
+                                     $timestamp = strtotime("$timestamp");
+                                }   
+				$this->dateTime = date_create_from_format('!U', (string) $timestamp, $timeZone);
 				break;
 				
 			case 'unix_time':				
 				if ( !$timestamp ) $timestamp = time();	
 				if ( intval($timestamp) < 0 ) $timestamp 	= time() - intval($timestamp);	                                
 				$this->dateTime = date_create_from_format('U',(int) $timestamp, $timeZone);
-				break;	
+				break;
 
 			case 'format':
 			    if ( !$timestamp ) $timestamp = time();
-			    $this->dateTime = date_create_from_format('!'.$format,(string) $timestamp, $timeZone);
-			    
-			    break;
-		}	
+			    $this->dateTime = date_create_from_format('!'.$format,(string) $timestamp, $timeZone);			    
+			    break;                            
+		}
+               
 		if ( !$timestamp && !$type ) {
 			$timestamp = time();
 			$this->dateTime = date_create_from_format('!U',(string) $timestamp);			
-		}
+		}                
 		else if ( !$this->dateTime ) throw new \Exception(__METHOD__.' unknow date '.print_r($timestamp, true));
 		$this->dateTime->setTimezone($timeZone);
 	}

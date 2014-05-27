@@ -1,11 +1,12 @@
 <?php
 namespace Fp\Permission;
-use Fp\Core\Core;
+use Fp\Core;
 use Fp\Core\Filter;
 use Fp\Db\Db;
 use Fp\Table\Table;
 use Fp\Table\Query as Table_query;
 use \Exception;
+
 /**
 * Copyright Desgranges Mickael 
 * mickael@4publish.com
@@ -45,7 +46,7 @@ use \Exception;
 * @license		CeciLL-B
 * @link			http://4publish.com
 */
-class Permission {	
+class Permission extends \Fp\Module\Model {	
 	protected $table_Group        	= 'permissions_group';	
 	/**
 	 * @var Table_query
@@ -91,7 +92,7 @@ class Permission {
 		self::$cache = array();
 	}
 	
-	public function __construct(Core $O) {
+	public function __construct(\Fp\Core\Init $O) {
 		$this->O = $O; 
 		$this->prefix = $O->glob('prefix');
 		

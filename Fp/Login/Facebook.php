@@ -1,6 +1,6 @@
 <?php
 namespace Fp\Login;
-use Fp\Core\Core;
+use Fp\Core;
 use Fp\Core\Date;
 use Fp\Core\Filter;
 use Fp\Db\Db;
@@ -50,7 +50,7 @@ use \Exception;
 * @license		CeciLL-B
 * @link			http://4publish.com
 */
-class Facebook {
+class Facebook extends \Fp\Module\Model {
 	private $table   = 'login_facebook_2';
 	
 	/**
@@ -59,7 +59,7 @@ class Facebook {
 	 */
 	public $dbLoginFacebook;
 	
-	public function __construct(\Fp\Core\Core $O) {
+	public function __construct(\Fp\Core\Init $O) {
 		$tableLoginFacebook  =  $O->glob('prefix').$this->table;	
 		$columnLoginFacebook = array('uid','fb_uid','app_id');
 		$this->tableLoginFacebook  = Table::set(Db::get_link(), $tableLoginFacebook, $columnLoginFacebook);

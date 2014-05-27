@@ -1,6 +1,8 @@
 <?php
 namespace Fp\Permission;
-use Fp\Core\Core;
+use Fp\Core;
+
+require_once __DIR__.'/Permission.php';
 /**
 * Copyright Desgranges Mickael 
 * mickael@4publish.com
@@ -43,7 +45,7 @@ use Fp\Core\Core;
 class PermissionUser extends Permission { 
 	private $uid = 0;
 	 
-	public function __construct(Core $O) {
+	public function __construct(\Fp\Core\Init $O) {
 		parent::__construct($O);		
 		if ( $O->auth()->isAuth() ) $this->uid   = $O->auth()->uid();			
 	}

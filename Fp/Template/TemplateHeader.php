@@ -1,6 +1,6 @@
 <?php
 namespace Fp\Template;
-use \Fp\Core\Core;
+use \Fp\Core;
 use Fp\Core\Filter;
 use Fp\Core\LessCss;
 use Fp\Core\Cdn;
@@ -56,7 +56,7 @@ class TemplateHeader {
     private $base_url = null;
     private static $assets_include = array();
 
-    public function __construct(Core $O) {
+    public function __construct(\Fp\Core\Init $O) {
         $this->O = $O;
     }
 
@@ -280,7 +280,7 @@ class TemplateHeader {
                             $cb_replace = function($matches) use ($file) {
                                 $path = implode('/',array_slice(explode('/', $file), 0,-1));
                                 return  'url('.$matches[1].$path.'/'.$matches[2].$matches[3].')';
-                            };
+                            };                            
                             $css = @file_get_contents($file);
                             $css = preg_replace_callback("#url\((['\"]?)([^'\":)]+)(['\"]?)\)#i", $cb_replace, $css);
                             $css = $less->compile($css);

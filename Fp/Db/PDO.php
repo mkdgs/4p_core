@@ -3,6 +3,7 @@ namespace Fp\Db;
 
 use \Exception;
 
+require_once __DIR__.'/PDOStatement.php';
 
 /**
 * Copyright Desgranges Mickael 
@@ -51,9 +52,8 @@ class PDO {
 	 * @param unknown_type $dsn
 	 * @param unknown_type $bdd_login
 	 * @param unknown_type $bdd_pass
-	 *
 	 */
-	final public function __construct($dsn,$bdd_login,$bdd_pass,$type=null) {
+	final public function __construct($dsn, $bdd_login, $bdd_pass, $type=null) {
 		$this->dsn       = $dsn;
 		$this->bdd_login = $bdd_login;
 		$this->bdd_pass  = $bdd_pass;

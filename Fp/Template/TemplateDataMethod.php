@@ -1,6 +1,6 @@
 <?php
 namespace Fp\Template;
-use Fp\Core\Core;
+use Fp\Core;
 use Fp\Core\Filter;
 use Netcarver\Textile\Parser;
 
@@ -84,12 +84,23 @@ class TemplateDataMethod {
 		$o = &$t;
 		foreach ( $args as $v ) {
 			if ( is_array($o->vars) AND array_key_exists($v, $o->vars) AND $o->vars[$v] instanceof TemplateData ) $o = &$o->vars[$v];
-			else return new TemplateData('');
+			else return new TemplateData(null); // fix: set null because empty string return 1 on count() 
 		}
 		return $o;
 	}
-
-	public static function issetIf($t, $args=null) {
+                
+        public static function eq($t, $index=0) {
+		$o = &$t;	
+		if ( is_array($o->vars) ) {
+                    $array = array_slice($o->vars, $index, 1,  $preserve_keys = true);
+                    if ( !empty($array) ) {
+                        return current($array);
+                    }                    
+		}
+		return new TemplateData(null); 
+	}
+        
+        public static function exists($t, $args=null) {
 		if ( !is_array($args) )	$args = func_get_args(); array_shift($args);
 		$o = &$t;
 		foreach ( $args as $v ) {
@@ -97,6 +108,11 @@ class TemplateDataMethod {
 			else return false;
 		}
 		return true;
+	}
+        
+        /** @deprecated since 4.0  */
+	public static function issetIf($t, $args=null) {
+		return self::exists($t, $args);
 	}
 
 	public static function valueIf($t) {
@@ -177,7 +193,7 @@ class TemplateDataMethod {
 		return self::r($t);
 	}
 
-	public static function url($t, Core $O, $keyword=null) {
+	public static function url($t, \Fp\Core\Init $O, $keyword=null) {
 		$c = clone $t;
 		$c->vars = $O->route()->rewriteUrl($c->vars, $keyword);
 		return $c;
@@ -189,7 +205,7 @@ class TemplateDataMethod {
 	 * @return unknown
 	 * @deprecated
 	 */
-	public static function urlRelativ($t,Core $O, $url) {
+	public static function urlRelativ($t, \Fp\Core\Init $O, $url) {
 		$c = clone $t;
 		$r = $o->glob('url').'/'.$O->route()->getRoute();
 		$c->vars =  preg_replace("#$r#", '.', $c->vars);
@@ -251,40 +267,37 @@ class TemplateDataMethod {
 		if ( !is_array($t->vars) )   return null;
 		$groups = array();
 
-		// a remplacer par ->iterate ?
-		$array = $t->toArray();
-
 		if ( is_callable($group_key) ) {
-			$okey = null;
-			foreach ($array as $item) {
-				$key = $group_key($item);
-				if( !$key ) continue;
-				if ( !$okey || $key != $okey ) {
-					$okey = $key;
-					$groups[$key] = array($item);
-				}
-				else $groups[$key][] = $item;
-			}
+                        while ( $item = $t->iterate() ) {  
+                             $key = $group_key($item);
+                             if( !$key ) continue;
+                             
+                             if ( !array_key_exists($key, $groups) ) {
+                                  $groups[$key] = array();
+                             }
+                             $groups[$key][] = $item->vars;                         
+                        }
 		}
-		else if ( $group_function ) {
-			foreach ($array as $item) {
-				if ( !array_key_exists($group_key, $item) ) continue; // la clef n'existe pas
-				$key = $group_function($item[$group_key]);
-				if (!isset($groups[$key])) {
-					$groups[$key] = array($item);
-				}
-				else $groups[$key][] = $item;
-			}
+                else if ( $group_function ) { // déprécié	
+                        while ( $item = $t->iterate() ) {                              
+                             if ( !$item->exists($group_key) ) continue; 
+			     $key = $group_function($item[$group_key]);                            
+                             if ( !array_key_exists($key, $groups) ) {
+                                  $groups[$key] = array();
+                             }
+                             $groups[$key][] = $item->vars;                         
+                        }
 		}
 		else {
-			foreach ($array as $item) {
-				if ( !array_key_exists($group_key, $item) ) continue; // la clef n'existe pas
-				$key = $item[$group_key];
-				if (!isset($groups[$key])) {
-					$groups[$key] = array($item);
-				}
-				else $groups[$key][] = $item;
-			}
+                      while ( $item = $t->iterate() ) {                              
+                             if ( !$item->exists($group_key) ) continue; 
+			     $key = $item[$group_key];
+                             
+                             if ( !array_key_exists($key, $groups) ) {
+                                  $groups[$key] = array();
+                             }
+                             $groups[$key][] = $item->vars;                         
+                        }			
 		}
 		return new TemplateData($groups, 'groupBy');
 	}

@@ -44,7 +44,7 @@ use Fp\Core\Cookie;
 * @license		CeciLL-B
 * @link			http://4publish.com
 */
-class Password {
+class Password extends \Fp\Module\Model {
 	private $token   	  = null;
 	private $salt_token   = 'un_petit_grain_de_sel';
 	public $table 		  = 'login_password';	
@@ -56,7 +56,7 @@ class Password {
 	 */
 	public $dbLoginPassword = null;
 	
-	public function __construct(\Fp\Core\Core $O) { 
+	public function __construct(\Fp\Core\Init $O) { 
 		if ( $O->glob('crypt_function') ) { 
 			$this->crypt_function = $O->glob('crypt_function');
 		} 

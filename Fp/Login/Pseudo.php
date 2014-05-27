@@ -40,10 +40,10 @@ use Fp\Table\Table;
 * @license		CeciLL-B
 * @link			http://4publish.com
 */
-class Pseudo {
+class Pseudo extends \Fp\Module\Model {
 	private $table   = 'login_pseudo';
 	
-	public function __construct(\Fp\Core\Core $O) {  
+	public function __construct(\Fp\Core\Init $O) {  
 		$this->table      = $O->glob('prefix').$this->table;
 		return $this;
 	}

@@ -1,6 +1,6 @@
 <?php
 namespace Fp\Module;
-use Fp\Core\Core;
+use Fp\Core;
 use Fp\Core\Filter;
 use \Exception;
 use Fp\Core\Utils;
@@ -44,10 +44,9 @@ use Fp\Core\Utils;
  * @link			http://4publish.com
  */
 abstract class Module {
-	/**
-	 * @var Core
-	 */
+	/** @var \Fp\Core\Init */
 	public $O;
+        
 	/**
 	 * @var Model
 	 */
@@ -69,9 +68,19 @@ abstract class Module {
 
 	protected $mode;
 	protected $render_mode = array('html','json','raw','media','widget','xml');
+        
+        /** @return $this Description * */
+        public static function getInstance(\Fp\Core\Init $O) {
+            $classname = get_called_class();
+            if ( !$c=$O->getInstance($classname)) {
+                $c = new $classname($O);
+                $O->setInstance($classname, $c);
+            }
+            return $c;
+        }
 
 	
-	public function __construct(Core $O, $defaultMode='html', $defaultUrl=null) {
+	public function __construct(\Fp\Core\Init $O, $defaultMode='html', $defaultUrl=null) {
 		$this->O = $O;		
 		if( !$mode = $this->detectMode() ) {
 			$mode = $defaultMode;
@@ -82,7 +91,7 @@ abstract class Module {
 		$this->config();		
 		$this->data['url_static'] = $this->url_static;
 		
-		if ( $this->model ) $this->loadModel(); // try yo load model if there is no
+		if ( $this->model ) $this->loadModel(); // try yo load model 
 		
 		// on appel after_config une seul fois  
 		// à la fin de la construction de l'objet 
@@ -160,18 +169,17 @@ abstract class Module {
 	abstract protected function config();
 	protected function after_config() {}
 	
-	private function getModelClass($c) {
+	private function getModuleClass($c) {
 	    $c = explode('\\', $c);
 	    array_pop($c);
-	    $c = implode('\\', $c);
-	
+	    $c = implode('\\', $c);	
 	    $t = $c.'\\Model';
-	    if ( $t == 'Fp\Module\Model' ) return;
-	    if( class_exists($t) ) {
+	   // if ( $t == 'Fp\Module\Model' ) return;
+	    if ( class_exists($t) ) {
 	        $class= $t;
 	        try {
-	            return $class = new $class($this->O);
-	        } catch (\Exception $e) { /* no class found or is abstract */};
+	            return $class = $class::getInstance($O); //new $class($this->O);
+	        } catch (\Exception $e) { /* no class found or is abstract */ };
 	    }
 	}
 	
@@ -181,13 +189,13 @@ abstract class Module {
 	protected function loadModel() {
 	    $c = get_class($this);
 	     
-	    if ( $classModel = $this->getModelClass($c) ) {
+	    if ( $classModel = $this->getModuleClass($c) ) {
 	        return $this->model = $classModel;
 	    }
 	     
 	    // check parent class
 	    $c1 = get_parent_class($this);
-	    if ( $classModel = $this->getModelClass($c1) ) {
+	    if ( $classModel = $this->getModuleClass($c1) ) {
 	        return $this->model = $classModel;
 	    }
 	}
@@ -313,10 +321,10 @@ abstract class Module {
 	}
 	
 	/**
-	 * @param Core $O
+	 * @param \Fp\Core\Init $O
 	 * @return self
 	 */
-	final public static function invoke(Core $O) {
+	final public static function invoke(\Fp\Core\Init $O) {
 		$c = get_called_class();
 		return new $c($O);
 	}

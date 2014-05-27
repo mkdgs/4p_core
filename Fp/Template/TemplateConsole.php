@@ -13,29 +13,24 @@ class TemplateConsole {
 		return $t;
 	}
 	
-	static public function T_dump($var,$inc=0) {
-		$T_dump = '';
+	static public function T_dump($var,$inc=0) {		
 		if ( is_scalar($var) ) {	
 			return htmlentities(substr($var,0,250),ENT_COMPAT,'UTF-8');
 		}
-		elseif ( !($var instanceof TemplateData)  ) {
-			return 'error !?? '.print_r($var,true);
+		else if ( $var instanceof TemplateData ) {			
+                    return  self::name_div($var->key).self::data_div(self::T_dump($var->v()));                                              
 		}
-		elseif ( is_scalar($var->v()) ) {	
-			return $var->v();
-		}		
-		elseif ( is_object($var->v()) && !($var->v() instanceof TemplateData) ) { 
-			return '(object '.get_class($var->v()).')';
-		}		
-		$T_dump .= '<ul>';
-		foreach ( $var as $k => $v ) {
-			$T_dump .= '<li>';	
-			$T_dump .= self::name_div($k);
-			$T_dump .= self::data_div(self::T_dump($v));
-			$T_dump .= '</li>';
-		}
-		$T_dump .= '</ul>';
-		return $T_dump;
+                else if ( is_array($var) ) {		
+                    $T_dump = '<ul>';
+                    foreach ( $var as $k => $v ) {
+                            $T_dump .= '<li>';	
+                            $T_dump .= self::T_dump($v);
+                            $T_dump .= '</li>';
+                    }
+                    $T_dump .= '</ul>';
+                    return $T_dump;
+                }
+                return 'error ? '.print_r($var,true);
 	}
 
 	static public function V_dump($var) {

@@ -43,7 +43,7 @@ use Fp\Table\Query;
  * @license		CeciLL-B
  * @link			http://4publish.com
  */
-class Login {
+class Login extends \Fp\Module\Model {
 	public $table = 'login';
 
 	/**
@@ -65,7 +65,7 @@ class Login {
 	 * @param string $prefix
 	 * @return Auth
 	 */
-	public function __construct(\Fp\Core\Core $O) {
+	public function __construct(\Fp\Core\Init $O) {
 		$this->O 	= $O;
 		$this->data 	= array();
 		$this->table    = $O->glob('prefix').$this->table;

@@ -2,15 +2,16 @@
 namespace Fp\Log;
 use Psr\Log\LoggerInterface;
 use Fp\Core\Filter;
+use Fp\Core;
 
 class Logger implements LoggerInterface {
 	static $instance = null;
 	
 	/**
-	 * @param \Fp\Core\Core $O
+	 * @param \Fp\Core\Init $O
 	 * @return Logger
 	 */
-	public static function invoke(\Fp\Core\Core $O) {
+	public static function invoke(\Fp\Core\Init $O) {
 		if( !static::$instance ) { 			
 			static::$instance = new Logger();
 		}

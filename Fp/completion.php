@@ -1,5 +1,5 @@
 <?php 
-use \Fp\Core\Core as Core;
+use \Fp\Core;
 use \Fp\Template\TemplateData;
 use \Fp\Template\Template as T;
 use \Fp\Template\TemplateDataMethod;
@@ -54,13 +54,13 @@ class A_T_Data_Method extends TemplateData {
 	 * @param unknown_type $args
 	 * @return A_T_Data_Method
 	 */
-	public static function url(Core $O, $keyword=null) {}
+	public static function url(\Fp\Core\Init $O, $keyword=null) {}
 	/**
 	 * Enter description here ...
 	 * @param unknown_type $args
 	 * @return A_T_Data_Method
 	 */
-	public static function urlRelativ(Core $O, $url) {}
+	public static function urlRelativ(\Fp\Core\Init $O, $url) {}
 	/**
 	 * Enter description here ...
 	 * @param unknown_type $args
@@ -183,9 +183,9 @@ class G_completion extends A_T_Data_Method {
 }
 
 /**
- * @global Core $O
+ * @global \Fp\Core\Init $O
  */
-$O = new Core();
+$O = new \Fp\Core\Init();
 
 /**
  * Enter description here ...

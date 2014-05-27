@@ -5,7 +5,7 @@ use \Exception;
 class Cdn {
     protected $cache_dir;
 
-    public function __construct(Core $O) {
+    public function __construct(\Fp\Core\Init $O) {
         $this->cache_dir = $O->glob('dir_cache').'cdn/';
         $this->O = $O;     
         $this->noCache =  $O->glob('cache');   

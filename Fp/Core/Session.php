@@ -52,7 +52,7 @@ class Session {
 	public $session_name = 'PHPSESSID';
 	public $session_id   = null;
 	
-	private function __construct(Core $O) {		
+	private function __construct(\Fp\Core\Init $O) {		
 			
 		if ( self::$mode == 'sql' ) {	
 			try {				
@@ -100,7 +100,7 @@ class Session {
 	    else return session_id();
 	} 
 	
-	static public function load(Core $O) {
+	static public function load(\Fp\Core\Init $O) {
 		if ( !isset(self::$i) ) {			
 			$c = __CLASS__;
 			self::$i = new $c($O);			
@@ -191,7 +191,7 @@ class sqlSessionStore {
 	public $db;
 	public $table = 'sessions';
 	
-    public function __construct(Core $O) {  
+    public function __construct(\Fp\Core\Init $O) {  
     	$this->table = $O->glob('prefix').$this->table;   	
     	/*
         session_set_save_handler(

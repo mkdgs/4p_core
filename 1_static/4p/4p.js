@@ -318,7 +318,7 @@ if (!$4p) {
                                     .replace(/{{=([^}{2}]+)}}/g, function (m, p1) { return "'+"+p1.split("\\'").join("'")+"+'"; })
                                     .replace(/{{(.+?)}}/g, function (m, p1) { return "');"+p1.split("\\'").join("'")+";p.push('"; })
                                     +"');return p.join('');";
-                            f.cache[scope] = new Function('template_data', strFunc);
+                            //f.cache[scope] = new Function('template_data', strFunc);
                             f.cache[scope] = new Function("obj", strFunc);
                         }                        
                         return f.cache[scope](data);

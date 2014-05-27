@@ -1,6 +1,6 @@
 <?php
 namespace Module\Sample;
-use Fp\Core\Core;
+use Fp\Core;
 use Fp\Core\Filter;
 use Fp\Db\Db;
 use Fp\Table\Table;
@@ -12,7 +12,7 @@ use \Exception;
 
 class Model extends \Fp\Module\Model {
 
-	public function __construct(Core $O) {}	
+	public function __construct(\Fp\Core\Init $O) {}	
 	
 	// you can set method width Crud generator
 

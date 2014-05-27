@@ -48,8 +48,10 @@ class DateTest extends \PHPUnit_Framework_TestCase {
      * @covers Fp\Core\Date::fromStrtotime
      * @todo   Implement testFromStrtotime().
      */
-    public function testFromStrtotime() {
+    public function testFromStrtotime() {        
          $this->assertEquals('25/12/1998', \Fp\Core\Date::fromStrtotime('25 december 1998')->format('d/m/Y'));
+         
+         $this->assertEquals('1400511755', \Fp\Core\Date::fromStrtotime('1400511755')->unixTime()); // not modify unix time
     }
 
     /**

@@ -7,17 +7,20 @@ use \Exception;
  * 
  * Enter description here ...
  * @author mickael
- * @TODO ajouter les methodes final de Table_query Abstract
+ * @TODO ajouter les methodes final de Query Abstract
  *
  */
 interface QueryInterface {
 
 	/**
-	 * @return Table_query
+	 * @return $this
 	 */
 	public function __construct(Table $table, $table_alias=null);
 	public function typeColumn($column);	
 	public function existColumn($column, $fqcn=true);
+        /**
+         *  @return $this
+         */
 	public function innerJoin(Table $table, $alias, $condition);
 	public function outerJoin(Table $table, $alias, $condition);
 	public function leftJoin(Table $table, $alias, $condition);
@@ -51,9 +54,7 @@ interface QueryInterface {
 	public function rowCount();
 	public function lastInsertId();
 
-	/**
-	 * @return Table_query
-	 */
+	/** @return $this */
 	public function selectColumn($column=null, $append=true);
 	public function buildColumn($sanCol);
 	public function selectFunction($sql);
@@ -80,23 +81,23 @@ interface QueryInterface {
 	/**
 	 * si $order est un array la fonction vérifie la présence des clefs dans la liste des colonnes
 	 * @param array $order column[ASC | DESC | RAND] tableau dont les clefs sont colonnes associées aux sens de trie
-	 * @return Table_query
+	 * @return $this
 	 */
 	public function orderBy($order);
 	
 	/**
 	 * si $group peut être un array, la fonction vérifie la présence des clefs dans la liste des colonnes	 
-	 * @return Table_query
+	 * @return $this
 	 */
 	public function groupBy($group);
 	
 	/**
-	 * @return Table_query
+	 * @return $this
 	 */
 	public function limitSelect($start=false, $end=false);
 	
 	/**
-	 * @return Table_query
+	 * @return $this
 	 */
 	public function limitUpdate($start=false);	
 	

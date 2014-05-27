@@ -10,13 +10,13 @@ class SessionEvent {
 	public $O;
 	
 	
-	private function __construct(Core $O) {
+	private function __construct(\Fp\Core\Init $O) {
 		$this->O = $O;
 		// liste d'action repoussées
 		$this->bindEv = (array) $this->O->session()->get('sessionEvent');
 	}
 		
-	static public function load(Core $O) {
+	static public function load(\Fp\Core\Init $O) {
 		if ( !isset(self::$i) ) {			
 			$c = __CLASS__;
 			self::$i = new $c($O);			
@@ -24,7 +24,7 @@ class SessionEvent {
 		return self::$i;
 	}
 	
-	public static function getInstance(Core $O)  {
+	public static function getInstance(\Fp\Core\Init $O)  {
 		return self::load($O);
 		
 	}

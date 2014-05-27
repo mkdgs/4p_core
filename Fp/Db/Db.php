@@ -3,6 +3,8 @@ namespace Fp\Db;
 
 use \Exception;
 
+require_once __DIR__.'/PDO.php';
+
 
 /**
  * Copyright Desgranges Mickael
@@ -70,6 +72,11 @@ class Db {
 		if ( array_key_exists($link_id,self::$DB) ) die('db_connect: duplicate id ');
 		if ( !$type ) $type = 'mysql';
 		$dsn = $type.':dbname='. $bdd_base .';host='. $bdd_host;
+                
+                if ( $type == 'mysql' ) {
+                    require_once __DIR__.'/PDOmysql.php';
+                    require_once __DIR__.'/PDOpgsql.php';
+                }
 		$Db_Extend_PDO = '\Fp\Db\PDO'.$type;
 		self::$DB[$link_id] = array('link' => new $Db_Extend_PDO($dsn,$bdd_login,$bdd_pass, $type),
 									'type' => $type,

@@ -1,6 +1,6 @@
 <?php
 namespace Fp\Route;
-use Fp\Core\Core;
+use Fp\Core;
 
 class Router extends Route {
 
@@ -28,7 +28,7 @@ class Router extends Route {
 	 * )
 	 * 
 	 * $callback est une function à éxécuté si $route correspond à l'url analysée:
-	 * function(Core $O, $params) { code ... }
+	 * function(\Fp\Core\Init $O, $params) { code ... }
 	 * 
 	 * le premier argument est une instance de Core
 	 * le second la liste des correspondants au résultat de $namedCapture
@@ -40,7 +40,7 @@ class Router extends Route {
 	 *           array(
 	 *	             'id' 	=> '[0-9]+',	
 	 *	             'slug' => '[^/]*'),
-	 *		 	 function(Core $O, $params, $route) {					
+	 *		 	 function(\Fp\Core\Init $O, $params, $route) {					
 	 *				$module   = ModuleManager::load($O, '\My\Module');
 	 *				$controller = $module->autoMode();
 	 *				$controller->setRequestParams($params)->config();
@@ -78,11 +78,11 @@ class Router extends Route {
 	/**
 	 * analyse $url et lance le callback associé via la méthode connnect
 	 * 
-	 * @param Core $O
+	 * @param \Fp\Core\Init $O
 	 * @param string $url url à analyser /$rawRoute par défaut
 	 * @return boolean retourne null en cas d'échec et true en cas de succès
 	 */
-	public function parse(Core $O, $url=null) {
+	public function parse(\Fp\Core\Init $O, $url=null) {
 		if ( !$url ) $url = '/'.$O->router()->getRawRoute();
 		foreach ( $this->directory as $r ) {
 			$r['compiledRoute'] = rtrim($r['compiledRoute'], '/');
@@ -95,7 +95,7 @@ class Router extends Route {
 		}
 	}
 
-	public function url(Core $O, $url, $params) {		
+	public function url(\Fp\Core\Init $O, $url, $params) {		
 		foreach ( $params as $k => $v) {
 			$url = str_replace(":$k?", $v, $url);
 			// ajouter condition pour ne pas écraser var qui ont le même préfix

@@ -1,7 +1,10 @@
+<html>
 <?php
 use \Fp\Template\TemplateConsole;
-if( !$O->tpl()->processing() ) return;
 ?>
+<head>
+<base target="_parent" />
+
 <style type="text/css">
 #console-4p {
 	padding: 15px !important;
@@ -24,8 +27,16 @@ if( !$O->tpl()->processing() ) return;
 	margin: 5px;
 	color: #666;
 	background-color: #EEFDFF;
-	border-top: 1px #333 dashed;
+        clear: both;
 }
+
+#console-4p div.console-line hr {
+    border: 0px;
+    border-top: 1px #999 dashed;
+    height: 0px;
+    margin-top: 8px;
+}
+
 
 #console-4p div.console-line h1 {
 	font-size: 16px;
@@ -50,7 +61,6 @@ if( !$O->tpl()->processing() ) return;
 #console-4p pre.console-data { 
 	width:80%;	
 	display: block;
-	float:left;	
 	color:#666;
 }
 #console-4p span.console-label {	
@@ -61,6 +71,7 @@ if( !$O->tpl()->processing() ) return;
 }
 #console-4p .spoiler {
     display: none;
+    clear: both;
 }
 #console-4p .spoiler.show {
     display: block;
@@ -71,8 +82,7 @@ if( !$O->tpl()->processing() ) return;
 	border-left: #ccc 1px dotted;
 	clear: both;
 }
-#console-4p li {
-	border-top: #ccc 0x dotted;
+#console-4p li {	
 	background-color: #EEFDFF;
 	clear: both;
 	max-height: 16px;		
@@ -81,6 +91,7 @@ if( !$O->tpl()->processing() ) return;
 	padding-left: 20px;
 	cursor: pointer;
 }
+
 #console-4p li:AFTER {
 	content: '.';
 	font-size:0px;
@@ -104,6 +115,91 @@ if( !$O->tpl()->processing() ) return;
 	font-size: 10px;
 }
 </style>
+</head>
+<body id="body-console-4p">
+<div id="console-4p" >
+	<hr style="clear: both;" />
+	<a style="color: #FF1119;" href="./?console=off&redirect=<?php echo urlencode($_SERVER['REQUEST_URI']) ?>">Désactiver</a> | 	
+	<a style="color: #FF1119;" href="./?console=cache_reset&redirect=<?php echo urlencode($_SERVER['REQUEST_URI']) ?>">Vider le cache</a> |
+	<?php if( !$O->glob('cache') )  {?>
+	    <a style="color: #FF1119;" href="./?console=cache_stop&redirect=<?php echo urlencode($_SERVER['REQUEST_URI']) ?>">désactiver le cache</a> |
+	<?php } else {?>
+	    <a style="color: #FF1119;" href="./?console=cache_start&redirect=<?php echo urlencode($_SERVER['REQUEST_URI']) ?>">activer le cache</a> |
+	<?php } ?>
+	<a style="color: #FF1119;" href="<?php $G->url->e() ?>/mod/FpModule%5CCrud%5CModule">Crud</a> |
+	<a style="color: #FF1119;" href="<?php $G->url->e() ?>/mod/FpModule%5CWebservice%5CModule">WebService</a>
+		<div class="console-line">
+		<h1>Log</h1>
+		<div class="spoiler"><?php echo TemplateConsole::T_dumpLog($A->log) ?></div>
+	</div>
+	<div class="console-line">
+		<h1>SQL</h1>
+		<div class="spoiler"><?php echo TemplateConsole::T_dumpSql($A->logSql) ?></div>
+	</div>
+	<div class="console-line">
+		<h1>$_GET</h1>
+		<div class="spoiler"><?php echo TemplateConsole::V_dump($_GET) ?></div>
+	</div>
+	<div class="console-line">
+		<h1>$_POST</h1>
+		<div class="spoiler"><?php echo TemplateConsole::V_dump($_POST) ?></div>
+	</div>
+	<div class="console-line">
+		<h1>$_COOKIE</h1>
+		<div class="spoiler"><?php echo TemplateConsole::V_dump($_COOKIE) ?></div>
+	</div>
+	<div class="console-line">
+		<h1>$_SESSION</h1>
+		<div class="spoiler"><?php echo TemplateConsole::V_dump($_SESSION) ?></div>
+	</div>
+	<div class="console-line">
+		<h1>$G</h1>
+		<div class="spoiler"><?php echo TemplateConsole::V_dump($G->toArray()) ?></div>
+	</div>
+        
+        <h1>Template Block</h1>
+	<?php foreach ( $A->block as $v ) { ?>         
+	<div class="console-line">
+		<h1><?php echo $v['name']?></h1>		
+		<div><?php echo $v['tplfile'] ?></div> 		
+		<div  class="spoiler"><?php echo TemplateConsole::T_dump($v); ?></div>
+		<div> <?php echo " {$v['duration']} / {$v['memory']} / {$v['memory_peak']} " ?></div>
+                <hr style="clear: both;" />
+	</div>
+	<?php } ?>
+        
+        <h1>Data Block</h1>
+        <?php foreach ( $A->data as $v ) { ?>           
+            <div class="console-line">
+                    <h1><?php echo $v['name']?></h1>		
+                    <div> <?php echo $v['current_file'] ?></div> 		
+                    <div  class="spoiler"><?php echo TemplateConsole::T_dump($v); ?></div>                   
+                    <hr style="clear: both;" />
+            </div>
+	<?php } ?>
+                
+        <h1>Parsed Block</h1>
+        <?php foreach ( $A->parsed as $v ) {	?>            
+            <div class="console-line">
+                    <h1><?php echo $v['name']?> --</h1>		
+                    <div>file: <?php echo $v['file'] ?></div> 	
+                    <div>in: <?php echo $v['current_file'] ?></div> 		
+                    <div  class="spoiler"><?php echo TemplateConsole::T_dump($v); ?></div>                   
+                    <hr style="clear: both;" />
+            </div>
+	<?php } ?>        
+        
+	<div class="console-line">
+		<h1>statistique</h1>
+		<div>				
+			total_time: <?php echo $A->stats['total_time'] ?> <br />
+			memoire: <?php echo $A->stats['memory'] ?>  <br />
+			memoire peak: <?php echo $A->stats['memory_peak'] ?>  <br />
+		</div>
+                <hr style="clear: both;" />
+	</div>
+</div>
+<script src="<?php $G->url_static_core->e() ?>/jquery/jquery-2.0.3.min.js" ></script>
 <script type="text/javascript">
 $(function(){
     var $console = $('#console-4p');
@@ -149,59 +245,6 @@ $(function(){
 	
 });
 </script>
-<div id="console-4p" >
-	<hr style="clear: both;" />
-	<a style="color: #FF1119;" href="./?console=off&redirect=<?php echo urlencode($_SERVER['REQUEST_URI']) ?>">Désactiver</a> | 	
-	<a style="color: #FF1119;" href="./?console=cache_reset&redirect=<?php echo urlencode($_SERVER['REQUEST_URI']) ?>">Vider le cache</a> |
-	<?php if( !$O->glob('cache') )  {?>
-	    <a style="color: #FF1119;" href="./?console=cache_stop&redirect=<?php echo urlencode($_SERVER['REQUEST_URI']) ?>">désactiver le cache</a> |
-	<?php } else {?>
-	    <a style="color: #FF1119;" href="./?console=cache_start&redirect=<?php echo urlencode($_SERVER['REQUEST_URI']) ?>">activer le cache</a> |
-	<?php } ?>
-	<a style="color: #FF1119;" href="<?php $G->url->e() ?>/mod/FpModule%5CCrud%5CModule">Crud</a> |
-	<a style="color: #FF1119;" href="<?php $G->url->e() ?>/mod/FpModule%5CWebservice%5CModule">WebService</a>
-		<div class="console-line">
-		<h1>Log</h1>
-		<div class="spoiler"><?php echo TemplateConsole::T_dumpLog($A->log) ?></div>
-	</div>
-	<div class="console-line">
-		<h1>SQL</h1>
-		<div class="spoiler"><?php echo TemplateConsole::T_dumpSql($A->logSql) ?></div>
-	</div>
-	<div class="console-line">
-		<h1>$_GET</h1>
-		<div class="spoiler"><?php echo TemplateConsole::V_dump($_GET) ?></div>
-	</div>
-	<div class="console-line">
-		<h1>$_POST</h1>
-		<div class="spoiler"><?php echo TemplateConsole::V_dump($_POST) ?></div>
-	</div>
-	<div class="console-line">
-		<h1>$_COOKIE</h1>
-		<div class="spoiler"><?php echo TemplateConsole::V_dump($_COOKIE) ?></div>
-	</div>
-	<div class="console-line">
-		<h1>$_SESSION</h1>
-		<div class="spoiler"><?php echo TemplateConsole::V_dump($_SESSION) ?></div>
-	</div>
-	<div class="console-line">
-		<h1>$G</h1>
-		<div class="spoiler"><?php echo TemplateConsole::V_dump($G->toArray()) ?></div>
-	</div>
-	<?php foreach ( $A->block as $v ) {	?>
-	<div class="console-line">
-		<h1><?php echo $v['name']?></h1>		
-		<div> <?php echo $v['tplfile'] ?></div> 		
-		<div  class="spoiler"><?php echo TemplateConsole::T_dump($v->value()); ?></div>
-		<div> <?php echo " {$v['duration']} / {$v['memory']} / {$v['memory_peak']} " ?></div>
-	</div>
-	<?php } ?>
-	<div class="console-line">
-		<h1>statistique</h1>
-		<div>				
-			total_time: <?php echo $A->stats['total_time'] ?> <br />
-			memoire: <?php echo $A->stats['memory'] ?>  <br />
-			memoire peak: <?php echo $A->stats['memory_peak'] ?>  <br />
-		</div>
-	</div>
-</div>
+
+</body>
+</html>

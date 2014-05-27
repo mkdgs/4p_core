@@ -3,6 +3,8 @@ namespace Fp\Table;
 
 use \Exception;
 
+require_once __DIR__.'/Query.php';
+
 class Table { 		
 	/**	
 	 * @var Db

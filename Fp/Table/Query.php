@@ -3,6 +3,10 @@ namespace Fp\Table;
 
 use \Exception;
 use Fp\Db\PDOStatement;
+
+require_once __DIR__.'/QueryInterface.php';
+require_once __DIR__.'/QueryAbstract.php';
+require_once __DIR__.'/ConditionAbstract.php';
 //require_once 'core_Query_interface.php';
 //require_once 'core_QueryAbstract.php';
 class Query implements QueryInterface {
@@ -14,11 +18,13 @@ class Query implements QueryInterface {
 		$this->table_alias = $table_alias;
 		$this->dbTable = $table; 
 		if ( $table->DbLink->type == 'mysql') {
-			//require_once 'core_Query_mysql.php';
+			require_once __DIR__.'/QueryMysql.php';
+                        require_once __DIR__.'/ConditionMysql.php';
 			$this->instance = new QueryMysql($table, $table_alias);
 		}
 		else if ( $table->DbLink->type == 'pgsql') {
-			//require_once 'core_Query_pgsql.php';
+			require_once __DIR__.'/QueryPgsql.php';
+                        require_once __DIR__.'/ConditionPgsql.php';
 			$this->instance = new QueryPgsql($table, $table_alias);
 		}		
 	}

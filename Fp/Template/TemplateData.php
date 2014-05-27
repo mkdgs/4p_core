@@ -44,9 +44,9 @@ use \Exception;
  * @property TemplateData
  */
 
-class TemplateData implements \ArrayAccess , \Iterator , \Countable {
+class TemplateData implements \ArrayAccess, \Iterator, \Countable {
 	public $vars = array();
-	public $key = null;
+	public $key  = null;
 	public $i_iterate   = null;
 	public $i_total     = null;
 	public $i_position  = null;
@@ -56,13 +56,16 @@ class TemplateData implements \ArrayAccess , \Iterator , \Countable {
 	 * @param array|TemplateData $vars
 	 */
 	public function __construct($vars = array(), $key=null) {		
-		$this->key  = $key;
-		if ( !($vars instanceof TemplateData) AND is_array($vars) ) {
+		$this->key = $key;
+		if ( !($vars instanceof TemplateData) ) { 
+                    if( is_array($vars) ) {
 			foreach ( $vars as $k => $v ) {
 				$this->vars[$k] = new TemplateData($v, $k);
 			}
+                    }
+                    else $this->vars = $vars;
 		}
-		else $this->vars = $vars;
+		else $this->vars = $vars->vars;
 	}
 
 	public function __toString() {

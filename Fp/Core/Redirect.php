@@ -57,7 +57,7 @@ class Redirect {
 	 * @deprecated
 	 */
 	public static function to($O, $to,$from=null,$code=303) {		
-		if ( !$O instanceof Core ) { //backward < 5.0
+		if ( !$O instanceof Init ) { //backward < 5.0
 			$to = $O;
 			$from= $to;
 			$code = $from;
