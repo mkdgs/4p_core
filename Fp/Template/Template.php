@@ -107,13 +107,11 @@ class Template {
                 return $this;
 
             case 'xhtml_strict':
-            /*
-            $this->doctype = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" '
-              .'"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'."\r\n"
-              .'<html xmlns="http://www.w3.org/1999/xhtml">'."\r\n";
-              return $this;
-             */
-
+                $this->doctype = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" '
+                  .'"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'."\r\n"
+                  .'<html xmlns="http://www.w3.org/1999/xhtml">'."\r\n";
+                  return $this;
+             
             case 'html5':
                 $this->doctype = '<!DOCTYPE html>' . "\r\n";
                 $this->doctype .= '<html lang="' . $this->O->glob('lang') . '">' . "\r\n";
@@ -143,7 +141,7 @@ class Template {
     public function __call($name, $arg) {
         return $this->blockInclude($name);
     }
-
+    
     /**
      * vérifie si un block est assigné
      * @param unknown $block
@@ -244,11 +242,14 @@ class Template {
             $data = ( $data === null ) ? $this->block[$name]['data'] : $data;
             if (!$data instanceof TemplateData)
                 $data = new TemplateData($data);
+            
             $this->block[$name]['data'] = $data;
 
             if ($this->debug)
                 echo '<!-- [BLOCK_START:' . $name . ':' . htmlentities(substr($this->block[$name]['file'], 0, 300), null, 'UTF-8') . '] -->';
+           
             $this->renderBlock($this->block[$name]);
+            
             if ($this->debug)
                 echo '<!-- [BLOCK_END:' . $name . ']-->';
             $this->logBlockEnd($name);
@@ -302,41 +303,48 @@ class Template {
         }
     }
 
-    public function parse($data, $file, $blockname = null) {
-        if (is_object($data) AND $data instanceof TemplateData)
-            $A = $data;
-        else
-            $A = new TemplateData($data);
-        $G = $this->tpl_Global = new TemplateData(self::getGlobal());
-        $O = $this->O;
-        $processingState  = $this->processing;
-        $this->processing = 0;
-        //pre processing file
-        try {
-            if ( $hook_file = $this->getFile($file . '_hook.php')) {
-                include $hook_file;
+    public function parse($data, $file, $blockname = null) {  
+            if ( is_object($data) AND $data instanceof TemplateData)
+                $A = $data;
+            else
+                $A = new TemplateData($data);
+            $G = $this->tpl_Global = new TemplateData(self::getGlobal());
+            $O = $this->O;
+            $processingState  = $this->processing;
+            $this->processing = 0;
+            //pre processing file
+            try {
+                if ( $hook_file = $this->getFile($file . '_hook.php')) {
+                    include $hook_file;
+                }
+            } catch (\Exception $e) {
+                $this->logError($e);
             }
-        } catch (\Exception $e) {
-            $this->logError($e);
-        }
-        $this->processing = 1;
-        try {            
-              
-            $this->parsed[] = array('name'        => ( $blockname ) ? $blockname : $file,
-                                    'file'         => $file,
-                                    'current_file' => self::$current_file,
-                                    'data'         => $A); 
-            ob_start();
-            $this->get_include_contents($file, $A);
-            $t = ob_get_contents();            
-            
-            ob_end_clean();
-        } catch (\Exception $e) {
-            $this->logError($e);
-            //	echo 'error in:'.$file;				
-        }
-        $this->processing = $processingState;
-        return $t;
+
+            $this->processing = 1;
+            try {  
+                if ($this->debug) {
+                    $name = ( $blockname ) ? $blockname : $file;
+                    $ct = 0;
+                    $name_k = $name.'-'.$ct;
+                    while ( array_key_exists($name_k, $this->parsed) && $ct < 10 ) { // limite le nombre de block dans les log
+                        $name_k = $name.'-'.$ct++;                        
+                    }
+                    $this->parsed[$name_k] = array('name'        => $name,
+                                            'file'         => $file,
+                                            'current_file' => self::$current_file,
+                                            'data'         => $A); 
+                }
+                ob_start();
+                $this->get_include_contents($file, $A);
+                $t = ob_get_contents();
+                ob_end_clean();  
+            } catch (\Exception $e) {                      
+                $this->logError($e);
+                echo 'error in:'.$file;				
+            }
+            $this->processing = $processingState;
+            return $t;
     }
 
     public function renderXml($master = 'HTML') {
@@ -397,12 +405,13 @@ class Template {
        
         $this->head()->makeJs(1);
         echo $this->html_body_close;
-        if (!$this->noHeader) {
+        if ( !$this->noHeader ) {
             echo "\r\n</html>";
         }
     }
 
     public function parse_console() {
+        
         $txt = '';
         $d = array();
         $d['stats'] = Debug::point();
@@ -437,12 +446,13 @@ class Template {
         $file = dirname(__FILE__) . '/tpl_console.php';
         $data = new TemplateData($d);
         try {
-            $txt = $this->parse($data, $file);
+            
+            $txt = $this->parse($data, $file);            
             $d = json_encode($txt);
             $txt = "
                     <!-- start Console -->                
                     <iframe style='width:100%;' id='4p_console_content'  ></iframe>
-                    <script> 
+                    <script>// <!--
                     var $4pConsole = document.getElementById('4p_console_content').contentWindow.document;
                     $4pConsole.open();
                     $4pConsole.write($d);
@@ -451,6 +461,7 @@ class Template {
                         obj.style.height = (obj.contentWindow.document.body.scrollHeight+500) + 'px';
                     }
                     $4presizeIframe(document.getElementById('4p_console_content'));
+                    // -->
                     </script>
                     <!-- end Console -->\r\n";
         } catch (\Exception $e) {

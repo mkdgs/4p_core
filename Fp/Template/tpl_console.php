@@ -183,12 +183,14 @@ body {
 	<?php } ?>
                 
         <h1>Parsed Block</h1>
-        <?php foreach ( $A->parsed as $v ) {	?>            
+        <?php 
+
+        foreach ( $A->parsed as $v ) {?>            
             <div class="console-line">
                     <h1><?php echo $v['name']?> --</h1>		
                     <div>file: <?php echo $v['file'] ?></div> 	
                     <div>in: <?php echo $v['current_file'] ?></div> 		
-                    <div  class="spoiler"><?php TemplateConsole::T_dump($v); ?></div>                   
+                    <div  class="spoiler"><?php echo TemplateConsole::T_dump($v['data']);  ?></div>                   
                     <hr style="clear: both;" />
             </div>
 	<?php } ?>        

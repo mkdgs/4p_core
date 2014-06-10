@@ -13,8 +13,7 @@ class TemplateConsole {
 		return $t;
 	}
 	
-	static public function T_dump($var,$inc=0) {	
-            
+	static public function T_dump($var, $inc=0) {	
 		if ( is_scalar($var) ) {	
                     return htmlentities(substr($var,0,250),ENT_COMPAT,'UTF-8');
 		}
@@ -31,13 +30,12 @@ class TemplateConsole {
                     $T_dump .= '</ul>';
                     return $T_dump;
                 }
-                return print_r($var, true);
-            
+                return print_r($var, true);            
 	}
 
 	static public function V_dump($var) {
 		if ( is_scalar($var)  ) {
-			return htmlentities(substr($var,0,300),ENT_COMPAT,'UTF-8')." \r\n";
+			return htmlentities(substr($var,0,300), ENT_COMPAT, 'UTF-8')." \r\n";
 		}
 		$T_dump = '';
 		foreach ($var as $k => $v ) {

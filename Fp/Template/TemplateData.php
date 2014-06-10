@@ -90,7 +90,7 @@ class TemplateData implements \ArrayAccess, \Iterator, \Countable {
 		$log->notice('variable non définie:'. $name);			
 	}
 
-	public function __call($name, $args) {		
+	public function __call($name, $args) {	
 		try {
 			array_unshift($args, $this);
 			return call_user_func_array("\Fp\Template\TemplateDataMethod::$name", $args );

@@ -97,7 +97,7 @@ abstract class Init {
 		->javascriptMaster($this->glob('url').'/config_javascript.php');
 
 		$this->tpl()->setData($this->glob());
-		$this->tpl()->doctype('xhtml_strict');
+		$this->tpl()->doctype('html5');
 	}
 
 	public function output_xml() {
