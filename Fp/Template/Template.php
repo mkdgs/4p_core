@@ -117,20 +117,6 @@ class Template {
             case 'html5':
                 $this->doctype = '<!DOCTYPE html>' . "\r\n";
                 $this->doctype .= '<html lang="' . $this->O->glob('lang') . '">' . "\r\n";
-
-                // internet explorer 8 fix html5
-                if (!isset($_SERVER['HTTP_USER_AGENT']))
-                    $_SERVER['HTTP_USER_AGENT'] = '';
-                preg_match('#MSIE ([0-9]\.[0-9])#', $_SERVER['HTTP_USER_AGENT'], $reg);
-                if (isset($reg[1])) {
-                    if (floatval($reg[1]) < 9) {
-                        $str = '<!--[if lte IE 8]>' . "\r\n";
-                        $str .= '<script src="' . $this->O->glob('url_static_core') . '/html5/html5.js"></script>' . "\r\n";
-                        $str .= '<![endif]-->' . "\r\n";
-                        $str .= '<style>article, aside, figure, footer, header, hgroup, menu, nav, section { display: block; } </style>' . "\r\n";
-                        $this->head()->rawCode($str);
-                    }
-                }
                 return $this;
         }
         throw new Exception('doctype inconnu ' . $doctype, 500);
