@@ -6,8 +6,12 @@ use \Fp\Template\TemplateConsole;
 <base target="_parent" />
 
 <style type="text/css">
+body {
+        font-size: 12px;
+}
+
 #console-4p {
-	padding: 15px !important;
+	padding: 1em !important;
 	background-color: #fff !important;	
 	clear:both !important;
 	margin: 0 !important;
@@ -19,12 +23,12 @@ use \Fp\Template\TemplateConsole;
 	font-family: Verdana, sans-serif;	
 	margin: 0;
 	padding: 0;
-	font-size: 14px;
+	font-size: 1em;
 }
 
 #console-4p div.console-line {
-	padding: 10px;
-	margin: 5px;
+	padding: 0.2em;
+	margin: 0.2em;
 	color: #666;
 	background-color: #EEFDFF;
         clear: both;
@@ -39,7 +43,7 @@ use \Fp\Template\TemplateConsole;
 
 
 #console-4p div.console-line h1 {
-	font-size: 16px;
+	font-size: 1.2em;
 	color: #FF0000;
 }
 
@@ -48,7 +52,7 @@ use \Fp\Template\TemplateConsole;
 }
 #console-4p div.console-line>pre {
 	background-color: #EBF5DE;
-	padding: 20px;
+	padding: 1.4em;
 }
 
 #console-4p div.console-block { 
@@ -66,7 +70,7 @@ use \Fp\Template\TemplateConsole;
 #console-4p span.console-label {	
 	min-width:10%; 
 	float:left;
-	padding-right:4px;
+	padding-right:0.5em;
 	color: #000;
 }
 #console-4p .spoiler {
@@ -85,7 +89,7 @@ use \Fp\Template\TemplateConsole;
 #console-4p li {	
 	background-color: #EEFDFF;
 	clear: both;
-	max-height: 16px;		
+	max-height: 1em;		
 	overflow: hidden;
 	position: relative;
 	padding-left: 20px;
@@ -112,7 +116,7 @@ use \Fp\Template\TemplateConsole;
 	color: #999;
 	position: absolute;
 	left: 0px;	
-	font-size: 10px;
+	font-size: 0.8em;
 }
 </style>
 </head>
@@ -184,7 +188,7 @@ use \Fp\Template\TemplateConsole;
                     <h1><?php echo $v['name']?> --</h1>		
                     <div>file: <?php echo $v['file'] ?></div> 	
                     <div>in: <?php echo $v['current_file'] ?></div> 		
-                    <div  class="spoiler"><?php echo TemplateConsole::T_dump($v); ?></div>                   
+                    <div  class="spoiler"><?php TemplateConsole::T_dump($v); ?></div>                   
                     <hr style="clear: both;" />
             </div>
 	<?php } ?>        

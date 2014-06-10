@@ -52,7 +52,7 @@ class Route {
 	public function __construct() {
 		$this->route 		= '';
 		$this->command 		= array();
-		$this->server_uri   = $_SERVER['SCRIPT_NAME'];		
+		$this->server_uri       = $_SERVER['SCRIPT_NAME'];		
 		if ( !array_key_exists($this->var_route, $_GET) ) { // backward
 			$_GET[$this->var_route] = $this->request_uri	= $_SERVER['REQUEST_URI'];		
 		}
@@ -200,10 +200,11 @@ class Route {
 	 * @param string path of the module on the server with / or it's a filename
 	 * @return string return the webPath of module from the root url
 	 */
-	public function getWebPath($mod_dir) {
-		$a_srv = dirname($_SERVER['SCRIPT_FILENAME']);
+	public function getWebPath($mod_dir) {   
+                $a_srv = dirname($_SERVER['SCRIPT_FILENAME']);
 		$a_uri = explode('/', $mod_dir);
 		$a_srv = explode('/', $a_srv);
+
 		$c = count($a_srv);
 		$p = array();
 		for ( $i= 0;$i < $c; $i++) {

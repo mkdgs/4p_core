@@ -8,7 +8,7 @@ use Fp\Core\Filter;
 use Fp\Permission\Permission;
 use Fp\Db\Db;
 use Fp\Table\Table;
-use Fp\Table\Query as Table_Query;
+use Fp\Table\Query as Table_query;
 use Fp\Module\Utils as Module_Utils;
 use \FpModule\Media\Model as MediaModel;
 
@@ -54,7 +54,10 @@ abstract class ModelNode {
     public $O;
     public $namespace;
 
-    /** @return $this Description * */
+    /**
+     * @param Core\Init $O init instance
+     * @return static
+     **/
     public static function getInstance(\Fp\Core\Init $O) {
         $classname = get_called_class();
         if ( !$c=$O->getInstance($classname)) {

@@ -107,10 +107,12 @@ class Template {
                 return $this;
 
             case 'xhtml_strict':
-            /* $this->doctype = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" '
+            /*
+            $this->doctype = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" '
               .'"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'."\r\n"
               .'<html xmlns="http://www.w3.org/1999/xhtml">'."\r\n";
-              return $this; */
+              return $this;
+             */
 
             case 'html5':
                 $this->doctype = '<!DOCTYPE html>' . "\r\n";
@@ -367,7 +369,7 @@ class Template {
             throw $e;
         }
 
-        if ($this->debug) {
+        if ( $this->debug ) {
             $body = '<debug>' . $this->parse_console() . '</debug>';
         }
         echo self::doctype() . $body;
@@ -402,10 +404,11 @@ class Template {
         }
 
         echo $this->html_body_open;
-        if ($this->debug) {
-            $body .= $this->parse_console();
-        }
         echo $body;
+        if ($this->debug) {
+           echo $this->parse_console();
+        }
+       
         $this->head()->makeJs(1);
         echo $this->html_body_close;
         if (!$this->noHeader) {
@@ -423,11 +426,10 @@ class Template {
         $d['parsed'] = $this->parsed;
        
         $d['block'] = array();
-        foreach ($this->block as $k => $block) {
+        foreach ($this->block as $k => $block) {            
             $a = array();
             $v = ( $block['data'] ) ? clone $block['data'] : new TemplateData();
             $v->name = $k;
-
             $file = null;
             $file = (!empty($block['file']) ) ? $block['file'] : $file;
 
@@ -442,7 +444,7 @@ class Template {
                 $v->memory_peak = '';
                 $v->tplfile = '';
             }
-            $d['block'][] = $v;
+            $d['block'][] = $v;            
         }
 
         $d['log'] = Logger::getLog();
@@ -521,9 +523,10 @@ class Template {
     }
 
     protected function logError(\Exception $e) {
-        $log = new Logger();
-        $log->notice('exception: ' . $e->getMessage(), array('exception' => $e));
         print_r($e->getMessage());
+        $log = new Logger();        
+        $log->notice('exception: ' . $e->getMessage(), array('exception' => $e));
+       
     }
 
     protected function logBlockCore($block) {

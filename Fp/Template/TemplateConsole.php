@@ -13,12 +13,13 @@ class TemplateConsole {
 		return $t;
 	}
 	
-	static public function T_dump($var,$inc=0) {		
+	static public function T_dump($var,$inc=0) {	
+            
 		if ( is_scalar($var) ) {	
-			return htmlentities(substr($var,0,250),ENT_COMPAT,'UTF-8');
+                    return htmlentities(substr($var,0,250),ENT_COMPAT,'UTF-8');
 		}
-		else if ( $var instanceof TemplateData ) {			
-                    return  self::name_div($var->key).self::data_div(self::T_dump($var->v()));                                              
+		else if ( $var instanceof TemplateData ) {	                    
+                    return  self::name_div($var->key).self::data_div(self::T_dump($var->vars));                                              
 		}
                 else if ( is_array($var) ) {		
                     $T_dump = '<ul>';
@@ -30,7 +31,8 @@ class TemplateConsole {
                     $T_dump .= '</ul>';
                     return $T_dump;
                 }
-                return 'error ? '.print_r($var,true);
+                return print_r($var, true);
+            
 	}
 
 	static public function V_dump($var) {

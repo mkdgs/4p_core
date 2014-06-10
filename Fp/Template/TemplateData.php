@@ -65,7 +65,12 @@ class TemplateData implements \ArrayAccess, \Iterator, \Countable {
                     }
                     else $this->vars = $vars;
 		}
-		else $this->vars = $vars->vars;
+		else {
+                    $this->vars = $vars->vars;
+                    $this->i_iterate   = $vars->i_iterate;
+                    $this->i_total     = $vars->i_total;
+                    $this->i_position  = $vars->i_position;
+                }
 	}
 
 	public function __toString() {
