@@ -53,7 +53,7 @@ require_once __DIR__ . '/TemplateHeader.php';
 class Template {
 
     protected $class_Data = 'TemplateData';
-    protected $global_data = null;
+    protected $global_data = array();
     protected $doctype = 'xhtml_strict';
     protected $block   = array();
     protected $data    = array();
@@ -125,12 +125,32 @@ class Template {
         return $this;
     }
 
-    public function setData($array) {
-        if (!isset($this->global_data))
-            $this->global_data = array();
-        if (is_array($array))
+    
+    // TODO refactoring setTplDir
+    protected function getGlobal() {
+        if ( empty($this->global_data) ) {
+            $this->setData($this->O->glob());
+            $this->setTplDir($this->O->glob('dir_tpl'));
+        }
+        return $this->global_data;
+    }
+    
+    public function setData(array $array) {
+        if ( empty($this->global_data) ) {
+            $this->global_data = (array) $this->O->glob();
+            $this->setTplDir($this->O->glob('dir_tpl'));
+        }
+            
+        if ( is_array($array) )
             $this->global_data = array_merge($array, $this->global_data);
+        
+        $this->tpl_Global = new TemplateData($this->global_data);
         return $this;
+    }
+    
+    public function getTplGlobal() {
+       $this->getGlobal();
+       return $this->tpl_Global;
     }
 
     public function setDebug($debug = null) {
@@ -291,8 +311,8 @@ class Template {
             if (!array_key_exists('file', $this->block[$k]))
                 continue; // ( si c'est un block de données ex: AsssignDataSet -> Helper
             $file = $this->block[$k]['file'];
-            $A = $this->block[$k]['data'];
-            $G = $this->tpl_Global;
+            $A    = $this->block[$k]['data'];
+            $G    = $this->getTplGlobal();
             try {
                 if ( $hook_file = $this->getFile($file . '_hook.php')) {
                     include $hook_file;
@@ -303,12 +323,13 @@ class Template {
         }
     }
 
-    public function parse($data, $file, $blockname = null) {  
+    public function parse($data, $file, $blockname = null) {
+        
             if ( is_object($data) AND $data instanceof TemplateData)
                 $A = $data;
             else
                 $A = new TemplateData($data);
-            $G = $this->tpl_Global = new TemplateData(self::getGlobal());
+            $G = $this->getTplGlobal();
             $O = $this->O;
             $processingState  = $this->processing;
             $this->processing = 0;
@@ -323,17 +344,21 @@ class Template {
 
             $this->processing = 1;
             try {  
-                if ($this->debug) {
-                    $name = ( $blockname ) ? $blockname : $file;
-                    $ct = 0;
-                    $name_k = $name.'-'.$ct;
+                if ( $this->debug ) {
+                    $name   = ( $blockname ) ? $blockname : $file;
+                    $ct     = 0;
+                    $name_k = 'parsed::'.$name.'-'.$ct;
                     while ( array_key_exists($name_k, $this->parsed) && $ct < 10 ) { // limite le nombre de block dans les log
-                        $name_k = $name.'-'.$ct++;                        
+                        $name_k = 'parsed::'.$name.'-'.$ct++;                        
                     }
-                    $this->parsed[$name_k] = array('name'        => $name,
-                                            'file'         => $file,
-                                            'current_file' => self::$current_file,
-                                            'data'         => $A); 
+                    $this->logBlockCore($name_k);
+                
+                    $this->parsed[$name_k] = array('name'  => $name_k,
+                                                   'file'         => $file,
+                                                   'current_file' => self::$current_file,
+                                                   'data'         => $A); 
+                    
+                    $this->logBlockEnd($name_k);
                 }
                 ob_start();
                 $this->get_include_contents($file, $A);
@@ -348,8 +373,7 @@ class Template {
     }
 
     public function renderXml($master = 'HTML') {
-        try {
-            $this->tpl_Global = new TemplateData(self::getGlobal());
+        try {           
             $this->preProcessingBlockFile();
             $this->processing = 1;
             ob_start();
@@ -370,8 +394,7 @@ class Template {
     }
 
     public function renderHtml($master = 'HTML') {
-        try {
-            $this->tpl_Global = new TemplateData(self::getGlobal());
+        try {           
             $this->preProcessingBlockFile();
             if (!$this->noHeader) {
                 echo self::doctype();
@@ -391,15 +414,15 @@ class Template {
                 ob_end_clean();
             throw $e;
         }
-
+        
         if (!$this->noHeader) {
             $this->head()->make(1);
             echo "</head>\n";
         }
-
+ 
         echo $this->html_body_open;
         echo $body;
-        if ($this->debug) {
+        if ( $this->debug ) {
            echo $this->parse_console();
         }
        
@@ -410,52 +433,53 @@ class Template {
         }
     }
 
-    public function parse_console() {
-        
+    public function parse_console() {        
         $txt = '';
-        $d = array();
-        $d['stats'] = Debug::point();
-        $d['logSql'] = Db::get_logReq();
+        $d   = array();
+        $d['stats']    = Debug::point();
+        $d['logSql']   = Db::get_logReq();
         $d['globData'] = $this->global_data;
-        $d['data'] = $this->data;
-        $d['parsed'] = $this->parsed;
-       
+        $d['data']     = $this->data;
+              
         $d['block'] = array();
-        foreach ($this->block as $k => $block) {            
-            $a = array();
-            $v = ( $block['data'] ) ? clone $block['data'] : new TemplateData();
-            $v->name = $k;
-            $file = null;
-            $file = (!empty($block['file']) ) ? $block['file'] : $file;
-
-            if (isset($this->logBlock[$k])) {
-                $v->duration = $this->logBlock[$k]['duration'];
-                $v->memory = $this->logBlock[$k]['memory'];
-                $v->memory_peak = $this->logBlock[$k]['memory_peak'];
-                $v->tplfile = htmlentities(substr($block['file'], 0, 300), null, 'UTF-8');
-            } else {
-                $v->duration = '';
-                $v->memory = '';
-                $v->memory_peak = '';
-                $v->tplfile = '';
-            }
+        $d['parsed'] = array();
+        
+        foreach ( $this->block as $k => $block ) {            
+            $v = (array) $block;
+            $v['file']         = (!empty($block['file']) ) ? $block['file'] : null;
+            $v['file'] = htmlentities(substr($block['file'], 0, 300), null, 'UTF-8');
+            if ( isset($this->logBlock[$k]) ) {
+                $v['duration']    = $this->logBlock[$k]['duration'];
+                $v['memory']      = $this->logBlock[$k]['memory'];
+                $v['memory_peak'] = $this->logBlock[$k]['memory_peak'];                
+            }            
             $d['block'][] = $v;            
+        }
+        
+        foreach ( $this->parsed as $block ) {
+            $v = (array) $block;
+            $v['file']         = htmlentities(substr($block['file'], 0, 300), null, 'UTF-8');
+            $v['current_file'] = htmlentities(substr($block['current_file'], 0, 300), null, 'UTF-8');   
+            if ( isset($this->logBlock[$block['name']]) ) {
+                $v['duration']     = $this->logBlock[$block['name']]['duration'];
+                $v['memory']       = $this->logBlock[$block['name']]['memory'];
+                $v['memory_peak']  = $this->logBlock[$block['name']]['memory_peak'];                
+            }        
+            $d['parsed'][] = $v; 
         }
 
         $d['log'] = Logger::getLog();
         $file = dirname(__FILE__) . '/tpl_console.php';
         $data = new TemplateData($d);
-        try {
-            
-            $txt = $this->parse($data, $file);            
-            $d = json_encode($txt);
-            $txt = "
-                    <!-- start Console -->                
+        try {            
+            $txt = $this->parse($data, $file);        
+            $txt = json_encode($txt);
+            $txt = "<!-- start Console -->                
                     <iframe style='width:100%;' id='4p_console_content'  ></iframe>
                     <script>// <!--
                     var $4pConsole = document.getElementById('4p_console_content').contentWindow.document;
                     $4pConsole.open();
-                    $4pConsole.write($d);
+                    $4pConsole.write($txt);
                     $4pConsole.close(); 
                     function $4presizeIframe(obj) {                        
                         obj.style.height = (obj.contentWindow.document.body.scrollHeight+500) + 'px';
@@ -471,20 +495,12 @@ class Template {
         return $txt;
     }
 
-    //TODO refactoring setTplDir
-    protected function getGlobal() {
-        if (!isset($this->global_data) || !is_array($this->global_data)) {
-            $this->setData($this->O->glob());
-            $this->setTplDir($this->O->glob('dir_tpl'));
-        }
-        return $this->global_data;
-    }
-
     protected function renderBlock($block) {
         if ($this->hasCache($block['name'])) {
             echo $block['cache_result'];
             return;
         }
+        
         ob_start();
         $this->get_include_contents($block['file'], $block['data']);
         $out = ob_get_contents();
@@ -509,7 +525,7 @@ class Template {
         $previous = self::$current_file;
         self::$current_file = $file;        
         $B = $this;
-        $G = $this->tpl_Global;
+        $G = $this->getTplGlobal();
         $O = $this->O;
         try {
             include $file;
@@ -527,7 +543,7 @@ class Template {
     }
 
     protected function logBlockCore($block) {
-        if ($this->debug) {
+        if ( $this->debug ) {
             $this->logBlock[$block] = array('block' => $block,
                 'start' => microtime(true),
                 'duration' => '',

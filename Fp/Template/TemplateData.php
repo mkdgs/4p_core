@@ -83,7 +83,7 @@ class TemplateData implements \ArrayAccess, \Iterator, \Countable {
 	 * @return TemplateData
 	 */
 	public function __get($name) {
-		if ( !$this instanceof TemplateData ) return $this->name;
+		//if ( !$this instanceof TemplateData ) return $this->name;
 		if ( is_array($this->vars) && array_key_exists($name, $this->vars) ) return $this->vars[$name];		
 		
 		$log = new Logger();
@@ -130,8 +130,8 @@ class TemplateData implements \ArrayAccess, \Iterator, \Countable {
 
 	// countable 
 	public function count() {
-     	return count($this->vars);
-    }
+            return count($this->vars);
+        }
     
 	// array iterator
 	public function rewind() {

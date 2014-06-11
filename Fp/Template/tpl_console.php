@@ -165,12 +165,24 @@ body {
 	<?php foreach ( $A->block as $v ) { ?>         
 	<div class="console-line">
 		<h1><?php echo $v['name']?></h1>		
-		<div><?php echo $v['tplfile'] ?></div> 		
-		<div  class="spoiler"><?php echo TemplateConsole::T_dump($v); ?></div>
+		<div><?php echo $v['file'] ?></div> 		
+		<div  class="spoiler"><?php echo TemplateConsole::T_dump($v['data']); ?></div>
 		<div> <?php echo " {$v['duration']} / {$v['memory']} / {$v['memory_peak']} " ?></div>
                 <hr style="clear: both;" />
 	</div>
 	<?php } ?>
+                    
+        <h1>Parsed Block</h1>
+        <?php foreach ( $A->parsed as $v ) {?>            
+            <div class="console-line">
+                    <h1><?php echo $v['name'] ?></h1>		
+                    <div>file: <?php echo $v['file'] ?></div> 	
+                    <div>in: <?php echo $v['current_file'] ?></div> 		
+                    <div  class="spoiler"><?php echo TemplateConsole::T_dump($v['data']);  ?></div> 
+                    <div> <?php echo " {$v['duration']} / {$v['memory']} / {$v['memory_peak']} " ?></div>
+                    <hr style="clear: both;" />
+            </div>
+	<?php } ?>    
         
         <h1>Data Block</h1>
         <?php foreach ( $A->data as $v ) { ?>           
@@ -181,25 +193,12 @@ body {
                     <hr style="clear: both;" />
             </div>
 	<?php } ?>
-                
-        <h1>Parsed Block</h1>
-        <?php 
-
-        foreach ( $A->parsed as $v ) {?>            
-            <div class="console-line">
-                    <h1><?php echo $v['name']?> --</h1>		
-                    <div>file: <?php echo $v['file'] ?></div> 	
-                    <div>in: <?php echo $v['current_file'] ?></div> 		
-                    <div  class="spoiler"><?php echo TemplateConsole::T_dump($v['data']);  ?></div>                   
-                    <hr style="clear: both;" />
-            </div>
-	<?php } ?>        
         
 	<div class="console-line">
 		<h1>statistique</h1>
 		<div>				
-			total_time: <?php echo $A->stats['total_time'] ?> <br />
-			memoire: <?php echo $A->stats['memory'] ?>  <br />
+			total_time:   <?php echo $A->stats['total_time'] ?>   <br />
+			memoire:      <?php echo $A->stats['memory'] ?>       <br />
 			memoire peak: <?php echo $A->stats['memory_peak'] ?>  <br />
 		</div>
                 <hr style="clear: both;" />
