@@ -8,9 +8,9 @@ if ( !isset($C_glob) ) {
 }
 
 try {
-    require_once 'init_set.php';
+    require_once 'init_framework.php';
     require_once $C_glob['dir_data'] . 'class/class_init.php';
-    $O = new init($C_glob, $C_glob_Private);   
+    $O = new Fp\Apps\init($C_glob, $C_glob_Private);   
     $O->process();
 } catch (Exception $e_init) {
     
