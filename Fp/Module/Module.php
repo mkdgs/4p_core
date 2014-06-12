@@ -158,14 +158,6 @@ abstract class Module {
 		return $this;
 	}
 
-	/**
-	 * @TODO breaking change replace config by on_config
-	 * we want sure to return $this on config() call
-		protected function config() {
-			$this->on_config();
-			return $this;
-		}
-	*/
 	abstract protected function config();
 	protected function after_config() {}
 	
@@ -174,7 +166,8 @@ abstract class Module {
 	    array_pop($c);
 	    $c = implode('\\', $c);	
 	    $t = $c.'\\Model';
-	   // if ( $t == 'Fp\Module\Model' ) return;
+	    if ( $t == 'Fp\Module\Model' ) return; // is an abstract class
+            
 	    if ( class_exists($t) ) {
 	        $class= $t;
 	        try {
