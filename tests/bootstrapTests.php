@@ -29,7 +29,7 @@ try {
     # parametre db
     $C_glob_Private['db'] = array(
         0 => array(
-            'host'	=> '10.0.215.178',
+            'host'	=> '127.0.0.1',
             'user'	=> 'root',
             'pass'	=> 'test',
             'base'	=> 'test_4p',

@@ -1,7 +1,102 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1401219363">
-  <project timestamp="1401219363">
+<coverage generated="1402555872">
+  <project timestamp="1402555872">
     <package name="Fp\Core">
+      <file name="/home/mickael/dev_projet/web/4publish/4p/Fp/Core/Cache.php">
+        <class name="Cache" namespace="Fp\Core" fullPackage="4_publish.core" package="4_publish" subpackage="core">
+          <metrics methods="9" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="81" coveredstatements="1" elements="90" coveredelements="2"/>
+        </class>
+        <line num="50" type="method" name="__construct" crap="2" count="0"/>
+        <line num="52" type="method" name="getInstance" crap="1" count="1"/>
+        <line num="53" type="stmt" count="1"/>
+        <line num="59" type="method" name="load" crap="20" count="0"/>
+        <line num="60" type="stmt" count="0"/>
+        <line num="61" type="stmt" count="0"/>
+        <line num="62" type="stmt" count="0"/>
+        <line num="63" type="stmt" count="0"/>
+        <line num="64" type="stmt" count="0"/>
+        <line num="65" type="stmt" count="0"/>
+        <line num="66" type="stmt" count="0"/>
+        <line num="67" type="stmt" count="0"/>
+        <line num="69" type="stmt" count="0"/>
+        <line num="70" type="stmt" count="0"/>
+        <line num="72" type="stmt" count="0"/>
+        <line num="75" type="stmt" count="0"/>
+        <line num="76" type="stmt" count="0"/>
+        <line num="77" type="stmt" count="0"/>
+        <line num="80" type="method" name="keyName" crap="2" count="0"/>
+        <line num="81" type="stmt" count="0"/>
+        <line num="84" type="method" name="add" crap="30" count="0"/>
+        <line num="85" type="stmt" count="0"/>
+        <line num="86" type="stmt" count="0"/>
+        <line num="87" type="stmt" count="0"/>
+        <line num="89" type="stmt" count="0"/>
+        <line num="91" type="stmt" count="0"/>
+        <line num="93" type="stmt" count="0"/>
+        <line num="94" type="stmt" count="0"/>
+        <line num="95" type="stmt" count="0"/>
+        <line num="96" type="stmt" count="0"/>
+        <line num="97" type="stmt" count="0"/>
+        <line num="98" type="stmt" count="0"/>
+        <line num="99" type="stmt" count="0"/>
+        <line num="100" type="stmt" count="0"/>
+        <line num="101" type="stmt" count="0"/>
+        <line num="103" type="stmt" count="0"/>
+        <line num="104" type="stmt" count="0"/>
+        <line num="105" type="stmt" count="0"/>
+        <line num="106" type="stmt" count="0"/>
+        <line num="107" type="stmt" count="0"/>
+        <line num="108" type="stmt" count="0"/>
+        <line num="110" type="stmt" count="0"/>
+        <line num="113" type="method" name="serialize" crap="2" count="0"/>
+        <line num="114" type="stmt" count="0"/>
+        <line num="118" type="method" name="unserialize" crap="2" count="0"/>
+        <line num="119" type="stmt" count="0"/>
+        <line num="124" type="method" name="delete" crap="12" count="0"/>
+        <line num="125" type="stmt" count="0"/>
+        <line num="126" type="stmt" count="0"/>
+        <line num="127" type="stmt" count="0"/>
+        <line num="129" type="stmt" count="0"/>
+        <line num="130" type="stmt" count="0"/>
+        <line num="131" type="stmt" count="0"/>
+        <line num="132" type="stmt" count="0"/>
+        <line num="134" type="stmt" count="0"/>
+        <line num="136" type="method" name="get" crap="240" count="0"/>
+        <line num="139" type="stmt" count="0"/>
+        <line num="141" type="stmt" count="0"/>
+        <line num="142" type="stmt" count="0"/>
+        <line num="143" type="stmt" count="0"/>
+        <line num="145" type="stmt" count="0"/>
+        <line num="148" type="stmt" count="0"/>
+        <line num="149" type="stmt" count="0"/>
+        <line num="150" type="stmt" count="0"/>
+        <line num="151" type="stmt" count="0"/>
+        <line num="153" type="stmt" count="0"/>
+        <line num="154" type="stmt" count="0"/>
+        <line num="155" type="stmt" count="0"/>
+        <line num="156" type="stmt" count="0"/>
+        <line num="157" type="stmt" count="0"/>
+        <line num="158" type="stmt" count="0"/>
+        <line num="160" type="stmt" count="0"/>
+        <line num="161" type="stmt" count="0"/>
+        <line num="162" type="stmt" count="0"/>
+        <line num="163" type="stmt" count="0"/>
+        <line num="164" type="stmt" count="0"/>
+        <line num="165" type="stmt" count="0"/>
+        <line num="166" type="stmt" count="0"/>
+        <line num="167" type="stmt" count="0"/>
+        <line num="168" type="stmt" count="0"/>
+        <line num="169" type="stmt" count="0"/>
+        <line num="170" type="stmt" count="0"/>
+        <line num="171" type="stmt" count="0"/>
+        <line num="173" type="stmt" count="0"/>
+        <line num="174" type="stmt" count="0"/>
+        <line num="175" type="stmt" count="0"/>
+        <line num="178" type="stmt" count="0"/>
+        <line num="179" type="stmt" count="0"/>
+        <line num="181" type="stmt" count="0"/>
+        <metrics loc="181" ncloc="129" classes="1" methods="9" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="81" coveredstatements="1" elements="90" coveredelements="2"/>
+      </file>
       <file name="/home/mickael/dev_projet/web/4publish/4p/Fp/Core/Date.php">
         <class name="Date" namespace="Fp\Core" fullPackage="4_publish.core" package="4_publish" subpackage="core">
           <metrics methods="38" coveredmethods="6" conditionals="0" coveredconditionals="0" statements="156" coveredstatements="10" elements="194" coveredelements="16"/>
@@ -335,7 +430,7 @@
       </file>
       <file name="/home/mickael/dev_projet/web/4publish/4p/Fp/Core/Filter.php">
         <class name="Filter" namespace="Fp\Core" fullPackage="4_publish.core" package="4_publish" subpackage="core">
-          <metrics methods="49" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="290" coveredstatements="0" elements="339" coveredelements="0"/>
+          <metrics methods="49" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="290" coveredstatements="14" elements="339" coveredelements="16"/>
         </class>
         <line num="44" type="method" name="__construct" crap="2" count="0"/>
         <line num="56" type="method" name="getVal" crap="90" count="0"/>
@@ -415,22 +510,22 @@
         <line num="169" type="stmt" count="0"/>
         <line num="170" type="stmt" count="0"/>
         <line num="171" type="stmt" count="0"/>
-        <line num="174" type="method" name="int" crap="30" count="0"/>
-        <line num="175" type="stmt" count="0"/>
-        <line num="176" type="stmt" count="0"/>
-        <line num="177" type="stmt" count="0"/>
-        <line num="178" type="stmt" count="0"/>
-        <line num="179" type="stmt" count="0"/>
-        <line num="180" type="stmt" count="0"/>
-        <line num="181" type="stmt" count="0"/>
-        <line num="182" type="stmt" count="0"/>
-        <line num="185" type="method" name="float" crap="12" count="0"/>
-        <line num="186" type="stmt" count="0"/>
-        <line num="187" type="stmt" count="0"/>
-        <line num="188" type="stmt" count="0"/>
-        <line num="189" type="stmt" count="0"/>
-        <line num="190" type="stmt" count="0"/>
-        <line num="191" type="stmt" count="0"/>
+        <line num="174" type="method" name="int" crap="5" count="1"/>
+        <line num="175" type="stmt" count="1"/>
+        <line num="176" type="stmt" count="1"/>
+        <line num="177" type="stmt" count="1"/>
+        <line num="178" type="stmt" count="1"/>
+        <line num="179" type="stmt" count="1"/>
+        <line num="180" type="stmt" count="1"/>
+        <line num="181" type="stmt" count="1"/>
+        <line num="182" type="stmt" count="1"/>
+        <line num="185" type="method" name="float" crap="3" count="1"/>
+        <line num="186" type="stmt" count="1"/>
+        <line num="187" type="stmt" count="1"/>
+        <line num="188" type="stmt" count="1"/>
+        <line num="189" type="stmt" count="1"/>
+        <line num="190" type="stmt" count="1"/>
+        <line num="191" type="stmt" count="1"/>
         <line num="194" type="method" name="intList" crap="2" count="0"/>
         <line num="195" type="stmt" count="0"/>
         <line num="196" type="stmt" count="0"/>
@@ -659,7 +754,7 @@
         <line num="598" type="stmt" count="0"/>
         <line num="599" type="stmt" count="0"/>
         <line num="600" type="stmt" count="0"/>
-        <metrics loc="601" ncloc="401" classes="1" methods="49" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="276" coveredstatements="0" elements="325" coveredelements="0"/>
+        <metrics loc="601" ncloc="401" classes="1" methods="49" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="276" coveredstatements="14" elements="325" coveredelements="16"/>
       </file>
       <file name="/home/mickael/dev_projet/web/4publish/4p/Fp/Core/Init.php">
         <class name="Init" namespace="Fp\Core" fullPackage="4_publish.core" package="4_publish" subpackage="core">
@@ -1144,6 +1239,6 @@
       <line num="145" type="stmt" count="0"/>
       <metrics loc="149" ncloc="50" classes="1" methods="3" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="30" coveredstatements="0" elements="33" coveredelements="0"/>
     </file>
-    <metrics files="7" loc="2126" ncloc="1514" classes="6" methods="150" coveredmethods="6" conditionals="0" coveredconditionals="0" statements="969" coveredstatements="10" elements="1119" coveredelements="16"/>
+    <metrics files="8" loc="2307" ncloc="1643" classes="7" methods="159" coveredmethods="9" conditionals="0" coveredconditionals="0" statements="1050" coveredstatements="25" elements="1209" coveredelements="34"/>
   </project>
 </coverage>
