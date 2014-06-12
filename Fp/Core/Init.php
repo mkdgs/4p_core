@@ -525,11 +525,7 @@ abstract class Init {
 		}
 		return $this->global;
 	}
-	
-        private static function autoload_psr_addNamespace($namespace, $path) {
-            
-        }
-        
+       
 	private static function autoload_psr_search(\Fp\Core\Init $O, $dir, $className,$prefix=null) {
 		    $className = ltrim($className, '\\');
 		    $fileName  = '';
@@ -539,25 +535,12 @@ abstract class Init {
 		        $className = substr($className, $lastNsPos + 1);
 		        $fileName  = str_replace('\\', DIRECTORY_SEPARATOR, $namespace) . DIRECTORY_SEPARATOR;
 		    }
-		    $fileName .= str_replace('_', DIRECTORY_SEPARATOR, $className). '.php';	
-		    
+		    $fileName .= str_replace('_', DIRECTORY_SEPARATOR, $className). '.php';		    
                     
-                    $path     = explode(DIRECTORY_SEPARATOR, $fileName);
-                    $filename = array_pop($path);
-                    $count = count($path);
-                    for ( $i=0; $i <= $count; $i++ ) {
-                        $p = implode(DIRECTORY_SEPARATOR, array_slice($path, $i));
-                        if ( $p ) $p .= DIRECTORY_SEPARATOR;
-                        // be carreful if class is not found before autoload is define it's not a bug... 
-                        // echo $dir.$p.$filename.'<br />'."\r\n";			    
-                        // debug_print_backtrace();
-                        if ( is_file($dir.$p.$filename) ) {
-                            require_once $dir.$p.$filename;
-                            return true;
-                        }
-                    }
-                    
-		   
+                    if ( is_file($dir.$fileName) ) { // full qualified name
+		        require_once $dir.$fileName;
+		        return true;
+		    }  
 	}
 
 	static $autoload_loop = array();
