@@ -32,6 +32,18 @@ class ConditionMysql extends ConditionAbstract {
 					}
 					$r = implode(" $type ", $tmp);
 				}
+                                else if (  $t == 'date' || $t == 'datetime') {                                    
+                                        if ( $sdate = \Fp\Core\Filter::mysqlDateTime($search) ) {
+                                            $v = $this->quote("$sdate");
+                                            $this->searchCase[] = $r = " $column=$v";
+                                        }
+                                        else { // fix searching date (ex year 2014-)                                        
+                                            if ( $search ) {		
+                                                $v = $this->quote("%$search%");
+                                                $this->searchCase[] = $r = "$column LIKE $v ";
+                                            }
+                                        }
+                                }
 				else {
 					if ( $search ) {
 						$v = $this->quote("$search");
@@ -46,7 +58,6 @@ class ConditionMysql extends ConditionAbstract {
 				}
 			}
 		}			
-		//$this->searchCase[] = $r;
 		return $r;
 	}
 	

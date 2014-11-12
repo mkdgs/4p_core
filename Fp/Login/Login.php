@@ -56,7 +56,7 @@ class Login extends \Fp\Module\Model {
 	 */
 	private $session = null;
 	private $uid     = null;
-	private $salt_session_key = 'un autre petit grain de sel__v6.1';
+	private $salt_session_key = 'un autre petit grain de sel__v6.2';
 	public  $O;
 
 	protected $data;

@@ -91,7 +91,7 @@ abstract class Module {
 		$this->config();		
 		$this->data['url_static'] = $this->url_static;
 		
-		if ( $this->model ) $this->loadModel(); // try yo load model 
+		if ( !$this->model ) $this->loadModel(); // try yo load model 
 		
 		// on appel after_config une seul fois  
 		// à la fin de la construction de l'objet 
@@ -171,7 +171,7 @@ abstract class Module {
 	    if ( class_exists($t) ) {
 	        $class= $t;
 	        try {
-	            return $class = $class::getInstance($O); //new $class($this->O);
+	            return $class = $class::getInstance($this->O); //new $class($this->O);
 	        } catch (\Exception $e) { /* no class found or is abstract */ };
 	    }
 	}

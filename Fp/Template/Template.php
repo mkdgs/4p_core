@@ -54,7 +54,7 @@ class Template {
 
     protected $class_Data = 'TemplateData';
     protected $global_data = array();
-    protected $doctype = 'xhtml_strict';
+    protected $doctype = '';
     protected $block   = array();
     protected $data    = array();
     protected $parsed  = array();
@@ -98,8 +98,12 @@ class Template {
     }
 
     public function doctype($doctype = null) {
-        if (!$doctype)
+        if ( !$doctype ) {
+            if ( !$this->doctype ) {
+                $this->doctype('html5');                
+            }
             return $this->doctype;
+        }
         switch ($doctype) {
 
             case 'xml':
@@ -113,8 +117,9 @@ class Template {
                   return $this;
              
             case 'html5':
+                $lang = ( $this->O->glob('lang') ) ? 'lang="'. $this->O->glob('lang').'"' : '' ;                
                 $this->doctype = '<!DOCTYPE html>' . "\r\n";
-                $this->doctype .= '<html lang="' . $this->O->glob('lang') . '">' . "\r\n";
+                $this->doctype .= '<html>' . "\r\n";
                 return $this;
         }
         throw new Exception('doctype inconnu ' . $doctype, 500);

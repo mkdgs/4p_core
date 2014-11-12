@@ -280,7 +280,7 @@ class TemplateDataMethod {
 		}
                 else if ( $group_function ) { // déprécié	
                         while ( $item = $t->iterate() ) {                              
-                             if ( !$item->exists($group_key) ) continue; 
+                             if ( !$item->exists($group_key) ) continue;                             
 			     $key = $group_function($item[$group_key]);                            
                              if ( !array_key_exists($key, $groups) ) {
                                   $groups[$key] = array();

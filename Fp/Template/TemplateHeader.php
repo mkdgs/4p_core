@@ -56,7 +56,7 @@ class TemplateHeader {
     private $base_url = null;
     private static $assets_include = array();
 
-    public function __construct(\Fp\Core\Init $O) {
+    public function __construct(\Fp\Core\Init $O) {       
         $this->O = $O;
     }
 
@@ -80,6 +80,7 @@ class TemplateHeader {
     function noCache($val) {
         if ( $val && !self::$cache ) self::$cache = time();
         else self::$cache = '';
+
         return $this;
     }
 
@@ -270,7 +271,7 @@ class TemplateHeader {
         foreach ( $this->cachedCss as $media => $csskey )  {
             foreach ( $csskey as $k => $files ) {
                 $sorted_files_ref = $files;
-                sort($sorted_files_ref);
+                sort($sorted_files_ref);                
                 $key = 'lesscss_'.md5(implode('',$sorted_files_ref)).'_'.count($files).'_'.$this->O->glob('version').self::$cache.'.css';
 
                 if ( !$cache = $Cdn->exist($key) ) {
@@ -324,8 +325,9 @@ class TemplateHeader {
                     foreach ( $files as $file ) {
                         // lazy loading fix
                             $srcfile = json_encode($file);
-                            $cache .= "document.currentScript = document.createElement('script');";
-                            $cache .= "document.currentScript.src = $srcfile;";
+                            $cache .= "document._currentScript = document.createElement('script');";
+                            $cache .= "document._currentScript.src = $srcfile;";
+                            $cache .= "document.currentScript = document._currentScript;";
                             $js = @file_get_contents($file);
                         if  ( $this->O->glob('debug') < 3 ) {
                             $jsmin = new \JSMin($js);
@@ -385,8 +387,10 @@ class TemplateHeader {
                         try {
                             // lazy loading fix
                             $srcfile = json_encode($file);
-                            $cache .= "document.currentScript = document.createElement('script');";
-                            $cache .= "document.currentScript.src = $srcfile;";
+                            $cache .= "document._currentScript = document.createElement('script');";
+                            $cache .= "document._currentScript.src = $srcfile;";
+                            $cache .= "document.currentScript = document._currentScript;";
+                            
                             $js = @file_get_contents($file);
                             if  ( $this->O->glob('debug') < 3 ) {
                                 $jsmin = new \JSMin($js);

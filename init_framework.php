@@ -26,9 +26,14 @@ ini_set('magic_quotes_runtime', 'Off');
 ini_set('magic_quotes_sybase', 	'Off');  
 
 // misc 
-ini_set('default_charset',				$C_glob['charset']);
-ini_set('mbstring.internal_encoding', 	$C_glob['charset']);
-ini_set('mbstring.http_output',			$C_glob['charset']);
+ini_set('default_charset',		$C_glob['charset']);
+ini_set('zend.script_encoding', 	$C_glob['charset']);
+
+// obsolete depuis php 5.6
+@ini_set('mbstring.internal_encoding', 	$C_glob['charset']);
+@ini_set('mbstring.http_output',	$C_glob['charset']);
+
+
 ini_set('mbstring.detect_order',        'auto');
 
 date_default_timezone_set($C_glob['lc.timezone']);

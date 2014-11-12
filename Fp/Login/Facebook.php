@@ -80,8 +80,7 @@ class Facebook extends \Fp\Module\Model {
 					  'fb_uid'	=> $fb_uid,
 					  'app_id'	=> $app_id);
 		$w = array('fb_uid'	=> $fb_uid,
-				   'app_id'	=> $app_id); 
-		
+                           'app_id'	=> $app_id); 
 		$req = $this->dbLoginFacebook->duplicate();
 		$req->andWhere($w);
 		if ( !$req->getColumn() ) {

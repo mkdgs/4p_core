@@ -5,7 +5,7 @@ class LatLng {
 	public $longitude;
 	public static $earth_radius = 12756200;
 	
-	public function __construct($latitude, $longitude) {		
+	public function __construct($latitude, $longitude) {            
 		$coef_rad = (float) str_replace(',','.', (string)(M_PI/180));		
 		$this->latitude  = (float) str_replace(',','.',(string)$latitude);
 		$this->longitude = (float) str_replace(',','.',(string)$longitude);		

@@ -57,10 +57,10 @@ abstract class ModelNode {
     /**
      * @param Core\Init $O init instance
      * @return static
-     **/
+     * */
     public static function getInstance(\Fp\Core\Init $O) {
         $classname = get_called_class();
-        if ( !$c=$O->getInstance($classname)) {
+        if (!$c = $O->getInstance($classname)) {
             $c = new $classname($O);
             $O->setInstance($classname, $c);
         }
@@ -279,6 +279,52 @@ abstract class ModelNode {
     }
 
     /**
+     * filtre les brouillons
+     * 
+     * @param \Fp\Table\QueryInterface $nodeQuery
+     * @param string $etat
+     */
+    public function filtreEtat(\Fp\Table\QueryInterface $nodeQuery, $etat = true) {
+        if ($etat === true) {
+            $nodeQuery->andWhere('n.etat != 2'); // tout sauf les brouillon
+        } else if (ctype_digit("$etat"))
+            $nodeQuery->andWhere(['n.etat' => $etat]);
+    }
+
+    /**
+     * filtre les publication planifiée
+     * 
+     * @param \Fp\Table\QueryInterface $nodeQuery
+     * @param string $date_publication
+     */
+    public function filtreDatePublication(\Fp\Table\QueryInterface $nodeQuery, $date_publication = true) {
+        if ($date_publication === true) {
+            $today = \Fp\Core\Date::fromStrtotime(time())->mysqlDateTime();
+            $nodeQuery->andWhere("n.date_publication <= '$today' OR n.date_publication = 0 OR n.date_publication IS NULL ");
+        }
+        if ($date_publication === 1) { // uniquement les publication planifiées
+            $today = \Fp\Core\Date::fromStrtotime(time())->mysqlDateTime();
+            $nodeQuery->andWhere("n.date_publication >= '$today' ");
+        }
+    }
+
+    /**
+     * filtre rank
+     * 
+     * @param \Fp\Table\QueryInterface $nodeQuery
+     * @param string $rank A=0 B=750 C=500 D=750 E=1000
+     */
+    public function filtreRank(\Fp\Table\QueryInterface $nodeQuery, $rank = null) {
+        if ($rank) {
+            if (!ctype_digit($rank)) {
+                $ranking = ['A' => 0, 'B' => 250, 'C' => 500, 'D' => 750, 'E' => 1000];
+                $rank = $ranking[strtoupper($rank)];
+            }
+            $nodeQuery->andWhere('n.rank', [ '<=', $rank]); // tout ce qui a une note égale ou meilleur
+        }
+    }
+
+    /**
      * @param int $id_node
      * @param array $data
      */
@@ -316,10 +362,9 @@ abstract class ModelNode {
             return null;
         $q = $this->dbNode->duplicate()->limitSelect(1);
         $q->andWhere($id_node);
-
-        $rows = $q->getAssoc();
-        $data = $this->unserializeData($rows);
+        $data = $q->getAssoc();
         if (!empty($data)) {
+            $data = $this->unserializeData($data);
             $data['tags'] = $this->getTags($id_node);
             $data['media'] = $this->getMedia($id_node);
             $data['relation_link'] = $this->getLinks($id_node);
@@ -342,7 +387,7 @@ abstract class ModelNode {
                 ->orderBy($orderBy);
         $q->andWhere($where);
         $rows = $q->getAssoc();
-        return $this->unserializeData($rows);
+        return $this->unserializeData((array)$rows);
     }
 
     /**
@@ -838,7 +883,11 @@ abstract class ModelNode {
         return $req->delete();
     }
 
-    public function getTags($id_node, $start = 0, $end = null) {
+    public function getTags($id_node, $start = 0, $end = null, $options=array()) {
+        
+        if ( $options ) {
+            // type_node
+        }
         $req = $this->dbNodeTags->duplicate();
         $req->andWhere(array('id_node' => $id_node));
         $req->selectColumn('tag');
@@ -865,7 +914,8 @@ abstract class ModelNode {
                 $this->deleteTag($id_node, Filter::dbSafe($tag));
             }
             $TagsToAdd = array_diff($tag_list, $old_t);
-        } else {
+        }
+        else {
             $TagsToAdd = $tag_list;
         }
 
@@ -873,8 +923,17 @@ abstract class ModelNode {
             $this->addTag($id_node, $tag);
         }
     }
-
-    public function listTagsByNode($where, $start = 0, $end = null) { // a quoi sert cette méthode ?
+    
+    
+    /**
+     *  Liste les tags associés a certain node (ex tout les tags associés a un type node)
+     * 
+     * @param boolean $where
+     * @param type $start
+     * @param type $end
+     * @return type
+     */
+    public function listTagsByNode($where, $start = 0, $end = null) { 
         $orderBy = array('tags.priority' => 'DESC');
         if (!$where)
             $where = true;
@@ -885,7 +944,6 @@ abstract class ModelNode {
                 ->limitSelect($start, $end)
                 ->orderBy($orderBy);
         $q->andWhere($where);
-
         $rows = $q->getAll(array('sql_calc_found_rows'));
         $total = $q->foundRows();
         return Module_Utils::formatList($rows, $start, $end, $total);
@@ -913,6 +971,7 @@ abstract class ModelNode {
         }
 
         $total = 0;
+
         if ($rows = $q->getAll()) {
             $total = $q->foundRows();
             $rows = $this->unserializeDataList($rows);

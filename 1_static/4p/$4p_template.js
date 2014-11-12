@@ -1,16 +1,10 @@
 /*
 * 4p javascript template ports 
-* version : 0.3
+* version : 0.2
 * Copyright Desgranges Mickael
 * mickael@mkdgs.fr
-* 
-* note : 
-* - commentaire javascript sur une ligne non supporté
-* - mettre des commentaire html autour des instructions pour quels ne soient pas éffacer par le DOM (ex code entre <table> et <tr>) 
-* 
-* todo:
-* - prefixer les nom de propriété dans template_data pour éviter des soucis de collisions
 */
+if ( typeof $4p !== 'object' ) var $4p = {};
 $4p.template = function(tpl) {
     var f = {};
     if (typeof tpl == 'string') {
@@ -46,7 +40,6 @@ $4p.template = function(tpl) {
             });
 
     f.cache = {};
-    
     f.render = function(data, scope, data_key) {
         var err = "", func;
         if (!scope)    scope = 'root';
@@ -55,15 +48,8 @@ $4p.template = function(tpl) {
         tpl_data[data_key] = new $4p.templateData(data);
         try {
             if (typeof f.cache[scope] != 'function') {
-                // inspired by http://www.west-wind.com/weblog/posts/509108.aspx
-                // put all data in function scope
-                    
-                var strFunc =  "var args = arguments;" 
-                +"for ( var x in  args[0] ) {"
-                +"   if (args[0].hasOwnProperty(x)) eval('var ' + x + ' = args[0][x];'); "
-                +"}"
-                +"var p=[];var print = function(str) { p.push(str); }; p.push('"
-                        + f.tpl.replace(/[\r\t\n]/g, " ")
+                strFunc ="var p=[]; var print = function(str) { p.push(str); }; p.push('"
+                        + f.scope[scope].replace(/[\r\t\n]/g, " ")
                          .split("'")
                          .join("\\'")
                         .replace(/<script>/g, "{{")
@@ -71,18 +57,27 @@ $4p.template = function(tpl) {
                         .replace(/{{=([^}{2}]+)}}/g, function (m, p1) { return "'+"+p1.split("\\'").join("'")+"+'"; })
                         .replace(/{{(.+?)}}/g, function (m, p1) { return "');"+p1.split("\\'").join("'")+";p.push('"; })
                         +"');return p.join('');";
-                f.cache[scope] = new Function("obj", strFunc);
+               
+               var args = [];                
+                for (var x in tpl_data) {
+                        args.push(x);
+                }
+                f.cache[scope] = new Function(args, strFunc);
+            }
+                       
+            var args_value = [];
+            for (var x in tpl_data) {
+                args_value.push(tpl_data[x]);
             }
            
-            return f.cache[scope](tpl_data);
+            return f.cache[scope].apply(this, args_value);
         } catch (e) {
             err = e.message;
         }
-        return "< # ERROR: " + err +" "+ scope + "-- ok # >";
+        return "< # ERROR: " + err + scope + "-- ok # >";
     };
-    
     return f;
-    
+
 };
 
 $4p.templateData = function(vars, key) {
@@ -92,29 +87,22 @@ $4p.templateData = function(vars, key) {
     this.i_total = null;
     this.i_position = null;
     this.instanceOfTemplateData = true;
-    // iterator
-    this.currentKey = 0;
-    this.keys = [];
 
     this.constructor = function(vars, key) {
         var k, v;
         this.key = (key) ? key : null;
-        if ( vars == null ) {
-            this.vars = vars;
-        }
-        else if (vars.instanceOfTemplateData) {
+        if (vars.instanceOfTemplateData) {
             this.vars = vars.vars;
-            this.keys = this.vars.keys;
         } else if ((/boolean|number|string/).test(typeof vars)) {
             this.vars = vars;
         } else {
-            for (k in vars) {               
+            for (k in vars) {
                 if (vars.hasOwnProperty(k)) {
                     v = vars[k];
                     this.vars[k] = new $4p.templateData(v, k);
-                    this.keys.push(k);
                     // reference the data index
                     if ( !this[k] ) this[k] = this.vars[k];
+
                 }
             }
         }
@@ -154,7 +142,21 @@ $4p.templateData = function(vars, key) {
       return this.value();  
     };
 
-    // iterator
+    /*
+     * ITERATOR
+     */
+    this.currentKey = 0;
+    if (!this.vars.instanceOfTemplateData) {
+        this.keys = [];
+        for ( var key in this.vars) {
+            if (this.vars.hasOwnProperty(key)) {
+                this.keys.push(key);
+            }
+        }
+    } else {
+        this.keys = this.vars.keys;
+    }
+
     this.end = function() {
         this.currentKey = (this.keys.length - 1);
     };

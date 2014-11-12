@@ -189,8 +189,8 @@ abstract class QueryAbstract {
 	 * @param unknown_type $where
 	 * @return ConditionAbstract
 	 */
-	final public function andWhere($where=NULL) {
-		return $this->condition->andWhere($where);		
+	final public function andWhere($where=NULL, $data = null) {
+		return $this->condition->andWhere($where, $data);		
 	}
 	
 	final public function getSearchCase() {
@@ -202,8 +202,8 @@ abstract class QueryAbstract {
 	 * @param unknown_type $where
 	 * @return ConditionAbstract
 	 */
-	final public function orWhere($where=NULL) {
-		return $this->condition->orWhere($where);
+	final public function orWhere($where=NULL, $data = null) {
+		return $this->condition->orWhere($where, $data);
 	}
 	
 	/**
@@ -293,7 +293,7 @@ abstract class QueryAbstract {
 		if ( $this->join ) {
 			foreach ( $this->tableJoin as $v ) {
 				$c = ( $v['condition'] ) ? "ON {$v['condition']} " : '';
-				$table  .= "{$v['joinType']} JOIN {$v['table']->table} as {$v['alias']} ".$c;
+				$table  .= "{$v['joinType']} JOIN {$v['table']->table} as {$v['alias']} ".$c." \r\n";
 			}
 		}
 		return $table;
@@ -389,7 +389,7 @@ abstract class QueryAbstract {
 		$k=$column.' '.$fqcn;		
 		if ( !isset($this->cacheExistColumn[$k]) ) {			
 				$this->cacheExistColumn[$k] = $this->internalExistColumn($column, $fqcn);				
-		}		
+		}	
 		return $this->cacheExistColumn[$k];		
 	}
 	

@@ -11,8 +11,6 @@ use \Exception;
 
 require_once __DIR__.'/Debug.php';
 require_once __DIR__.'/Filter.php';
-;
-
 
 /**
  * Copyright Desgranges Mickael
@@ -65,6 +63,7 @@ abstract class Init {
 	protected $global_private = array();
 	protected $out = '';
 	protected $stopProcess = 0;
+        protected $nologin = 0;
 	protected $version = '7.0';
         
         protected $instance = array();
@@ -258,10 +257,12 @@ abstract class Init {
 			if ( !$this->stopProcess ) $this->db();
 			if ( !$this->stopProcess ) $this->after_init();
 			if ( !$this->stopProcess ) $this->event()->trigger('after_init.core', $this);
-			if ( !$this->stopProcess ) $this->event()->trigger('before_login.core', $this);
-			if ( !$this->stopProcess ) $this->before_login();
-			if ( !$this->stopProcess ) $this->login();
-			if ( !$this->stopProcess ) $this->event()->trigger('after_login.core', $this);
+                        if ( !$this->nologin ) {
+                            if ( !$this->stopProcess ) $this->event()->trigger('before_login.core', $this);
+                            if ( !$this->stopProcess ) $this->before_login();
+                            if ( !$this->stopProcess ) $this->login();
+                            if ( !$this->stopProcess ) $this->event()->trigger('after_login.core', $this);
+                        }
 			if ( !$this->stopProcess ) $this->event()->trigger('before_controller.core', $this);
 			if ( !$this->stopProcess ) $this->before_controller();
 			if ( !$this->stopProcess ) $this->controller();
@@ -411,6 +412,10 @@ abstract class Init {
 		return $this->session;
 	}
 
+        public function hasSession() {
+            return is_object($this->session);
+        }
+        
 	/* @var Login */
 	protected $auth;
 	/**
@@ -653,7 +658,7 @@ abstract class Init {
 			header("Cache-Control: private, max-age=2");
 		}
 
-		$this->session()->set('prev_request_uri', $this->route()->request_uri);
+		if ( is_object($this->session) ) $this->session()->set('prev_request_uri', $this->route()->request_uri);
 		switch ( $this->out ) {
 			case 'xml' :
 				if ( !headers_sent() ) {

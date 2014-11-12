@@ -46,13 +46,14 @@ abstract class Controller_json extends Controller {
 	// spec:
 	// http://groups.google.com/group/json-rpc/web/json-rpc-2-0
 	// this implementation only work for by-name paramaters 
-    // by-name: params MUST be an Object, with member names that match the Server expected parameter names. The absence of expected names MAY result in an error being generated. The names MUST match exactly, including case, to the method's expected parameters.
+        // by-name: params MUST be an Object, with member names that match the Server expected parameter names. The absence of expected names MAY result in an error being generated. The names MUST match exactly, including case, to the method's expected parameters.
 	// add of batch support
 	
 	public $rpc_params;
 	public $rpc_id;
 	public $rpc_method;
 	public $data = array();
+        
 	/**
 	 * Enter description here ...
 	 * @var Core
@@ -66,9 +67,9 @@ abstract class Controller_json extends Controller {
 	}
 
 	final public function init() {		
-		$this->before_config();
-		$this->config();						
-		$this->after_config();	
+		$this->hook('before_config');
+		$this->hook('config');						
+		$this->hook('after_config');	
 			
 		$this->rpc->debug = $this->O->glob('debug');
 

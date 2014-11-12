@@ -258,7 +258,7 @@ class QueryPgsql extends QueryAbstract {
 			}
 			if ( count($o) ) $this->orderBy = ' ORDER by'.implode(',', $o);
 		}
-		else {
+		else if ( !empty($order) ) {
 			$this->orderBy = ' ORDER by '.$order;
 		}		
 		return $this;

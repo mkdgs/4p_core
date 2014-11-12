@@ -47,12 +47,19 @@ abstract class Controller_html extends Controller {
 	 * @var unknown_type
 	 */
 	protected $T_block	  = '';
+        public $tpl_dir           = null;
 	
 	final protected function after_construct() {
 		$this->O->html();
 		if ( !$this->T_block ) $this->setTemplateBlock($this->O->glob('block_central_1'));
 	}
 	
+        
+        final public function setTplDir($tpl_dir) {
+            $this->tpl_dir = $tpl_dir;
+             return $this;
+        }
+        
 	final public function setTemplateBlock($name) {
 		$this->T_block = $name;
 		return $this;
@@ -61,13 +68,12 @@ abstract class Controller_html extends Controller {
 	final public function getTemplateBlock() {
 		return $this->T_block ;
 	}
-	
-	
-	final public function init() {		
-		$this->before_config();		
+		
+	final public function init() {	
+                $this->hook('before_config');
 		$this->config();
-		$this->tpl_config();
-		$this->after_config();		
+		$this->hook('tpl_config');
+                $this->hook('after_config');	
 		if ( !$this->method ) {
 			// on récupère la methode pour le module
 			$method = Filter::id($this->var_method, $_GET);
@@ -85,9 +91,9 @@ abstract class Controller_html extends Controller {
 			throw new \Exception('Not Allowed', 400);
 		}
 		if ( $this->methodIsCallable($this->method ) ) {
-			$this->before_render();			
-			$this->{$this->method}();	
-			$this->after_render();
+                        $this->hook('before_render');	
+			$this->{$this->method}();
+                        $this->hook('after_render');
 			return true;
 		}		
 		else {			

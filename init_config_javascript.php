@@ -1,7 +1,9 @@
 <?php
 $O = $this;
-$session = $O->session();
-$session->close();
+if  (  $O->hasSession() ) {
+    $session = $O->session();
+    $session->close();
+}
 $O->raw();
 $O->header()->typeJs();
 $glob = $O->glob();	

@@ -55,9 +55,9 @@ abstract class Controller_xml extends Controller {
 	
 	final public function init() { 
 		$this->O->xml();
-		$this->joinPointBefore('config');			
-		$this->config();
-		$this->joinPointAfter('config');		
+		$this->hook('before_config');			
+		$this->hook('config');
+		$this->hook('after_config');		
 		
 		if ( !$this->method ) {
 			// on récupère la methode pour le module 
@@ -73,10 +73,10 @@ abstract class Controller_xml extends Controller {
 		if ( empty($this->method) ) $this->method = $this->defaultMethod;
 
 		$this->methodIsAllowed($this->method);				
-		$this->before_render(); 	
+		$this->hook('before_render'); 	
 		if ( method_exists($this,$this->method ) ) {						
 			call_user_func_array(array($this, $this->method),array());			
 		}		
-		$this->after_render();
+		$this->hook('after_render');
 	}		
 }

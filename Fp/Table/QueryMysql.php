@@ -119,7 +119,7 @@ class QueryMysql extends QueryAbstract implements QueryInterface {
 		$s = implode(',', $s);	
 		if ( !$s ) $s='*';	
 		
-		$sql   = "SELECT $calc_found_rows $distinct $s FROM $table $join WHERE $where $this->groupBy $this->orderBy $this->limitSelect ";
+		$sql   = "SELECT $calc_found_rows $distinct $s FROM $table $join WHERE $where $this->groupBy \r\n $this->orderBy $this->limitSelect ";
 		
 		if ( $simule ) return $sql;
 		//echo "/*$sql*/\r\n";
@@ -309,7 +309,7 @@ class QueryMysql extends QueryAbstract implements QueryInterface {
 			}
 			if ( !empty($o) ) $this->orderBy = ' ORDER by'.implode(',', $o);
 		}	
-		else {
+		else if ( !empty($order) ) {
 			$this->orderBy = ' ORDER by '.$order;
 		} 
 				

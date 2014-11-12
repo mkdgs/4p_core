@@ -34,8 +34,8 @@ abstract class Controller {
 	public $var_method;
 	public $data 		  = array();
 	protected $forbidMethod = array('__construct','__call','init','setMethod','render','renderReturn',
-									'setDefaultMethod','setMethod','getTemplateBlock','setTemplateBlock',
-									'setRequestParams','setRequestId','getRequestParams','getRequestId','extendsRequestParams');
+					'setDefaultMethod','setMethod','getTemplateBlock','setTemplateBlock',
+					'setRequestParams','setRequestId','getRequestParams','getRequestId','extendsRequestParams');
 	
 	abstract protected function after_construct();
 	abstract  protected function config();
@@ -58,7 +58,7 @@ abstract class Controller {
 		$this->model = $M->model;
 		$this->data = &$M->data;
 		$this->data['request_mod_params'] = &$this->request_mod_params;
-		$this->after_construct();
+		$this->hook('after_construct');
 	}
 	
 	final public function setRequestParams($connect_params=array()) {
@@ -116,8 +116,17 @@ abstract class Controller {
 		}		
 		return $this;
 	}	
-
-	final public function __call($name, $args =array()) {				
+     
+	
+	final public function hook($method) {
+            if ( method_exists($this,$method) ){
+		return $this->{$method}();
+	    } 		
+	}
+        
+        /*
+        * @TODO ancien systeme de hook à supprimer après vérification de tous les modules
+        final public function __call($name, $args =array()) {           
 		if ( !method_exists($this,$name) ){
 			return false;
 		} 
@@ -132,22 +141,18 @@ abstract class Controller {
 		}		
 		throw new Exception('method not allowed'.$name, 500);
 	} 
-	
-	/**
-	 * @param unknown_type $method __FUNCTION__
-	 */
+
 	final public function joinPointAfter($method) {
 		return $this->{'after_'.$method}();
 	}
 	
-	/**
-	 * @param unknown_type $method __FUNCTION__
-	 */
+
 	final public function joinPointBefore($method) {
 		// make sure the module is initialized
 		$this->prepare();
 		return $this->{'before_'.$method}();
 	}
+        */
 	
 	final public function renderReturn() {
 		ob_start();
