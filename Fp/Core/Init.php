@@ -629,18 +629,20 @@ abstract class Init {
 			}
 			
 			// stop cache
-			$cache = $new_cache = ( is_object($this->session) ) ? $this->session()->get('console_cache') : $this->glob('cache');
-			if ( $consoleGet == 'cache_stop' ) {
-			    $new_cache = 1;
-			}
-			elseif ( $consoleGet == 'cache_start' ) {
-			    $new_cache = 0;
-			}
-			if ( $new_cache != $cache ) {
-			    if( is_object($this->session) ) $this->session()->set('console_cache', $new_cache);
-			    $cache = $new_cache;
-			}		
-			
+			$cache = $this->glob('cache');
+                        if ( !$cache ) { // not override if cache is disabled ( cache == 1 )
+                            $new_cache = ( is_object($this->session) ) ? $this->session()->get('console_cache') : $cache;
+                            if ( $consoleGet == 'cache_stop' ) {
+                                $new_cache = 1;
+                            }
+                            elseif ( $consoleGet == 'cache_start' ) {
+                                $new_cache = 0;
+                            }
+                            if ( $new_cache != $cache ) {
+                                if( is_object($this->session) ) $this->session()->set('console_cache', $new_cache);
+                                $cache = $new_cache;
+                            }	
+                        }
 			$this->global['cache'] = $cache;
 			
 			if ( $consoleGet && $redirect = Filter::custom('redirect',$_GET, function ($var) { return urldecode($var); } ) ) {
