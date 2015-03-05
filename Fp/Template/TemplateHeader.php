@@ -303,9 +303,7 @@ class TemplateHeader {
 
         foreach ( $this->css  as $v	) echo $v.$line_cr;
         $this->css = array();
-        
-        var_dump($debug_level);
-         die('--');
+
         if  ( $debug_level >= 2 && $this->O->glob('cache') ) {
             foreach ( $this->cachedJsMaster as $k => $files ) {
                 foreach ( $files as $file ) {
