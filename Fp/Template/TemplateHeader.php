@@ -2,7 +2,6 @@
 namespace Fp\Template;
 use \Fp\Core;
 use Fp\Core\Filter;
-use Fp\Core\LessCss;
 use Fp\Core\Cdn;
 use \Exception;
 /**
@@ -144,11 +143,11 @@ class TemplateHeader {
     }
 
     protected $cachedCss = array();
-    function lessCss($s,$media='all') {
+    function minCss($s,$media='all') {
         if ( $this->isAssetsInclude($s) ) return $this;
         self::$assets_include[$s] =true;
         
-        $key = 'cssless';
+        $key = 'mincss';
         if ( !array_key_exists($media, $this->cachedCss) ) $this->cachedCss[$media] = array($key => array());
         if ( !array_key_exists($key, $this->cachedCss[$media]) ) $this->cachedCss[$media][$key] = array();
         $this->cachedCss[$media][$key][] = $s;
@@ -257,7 +256,6 @@ class TemplateHeader {
         require_once __DIR__.'/../../Lib/JSMin.php';
         require_once __DIR__.'/../../Lib/CSSmin.php';
         $Cdn  = new Cdn($this->O);
-        $less = new LessCss();
         $debug_level = $this->O->glob('debug');
 
         if ( $debug_level > 2 ) $line_cr = "\r\n";
@@ -272,7 +270,7 @@ class TemplateHeader {
             foreach ( $csskey as $k => $files ) {
                 $sorted_files_ref = $files;
                 sort($sorted_files_ref);                
-                $key = 'lesscss_'.md5(implode('',$sorted_files_ref)).'_'.count($files).'_'.$this->O->glob('version').self::$cache.'.css';
+                $key = 'mincss_'.md5(implode('',$sorted_files_ref)).'_'.count($files).'_'.$this->O->glob('version').self::$cache.'.css';
 
                 if ( !$cache = $Cdn->exist($key) ) {
                     foreach ( $files as $file ) {
@@ -283,8 +281,7 @@ class TemplateHeader {
                                 return  'url('.$matches[1].$path.'/'.$matches[2].$matches[3].')';
                             };                            
                             $css = @file_get_contents($file);
-                            $css = preg_replace_callback("#url\((['\"]?)([^'\":)]+)(['\"]?)\)#i", $cb_replace, $css);
-                            $css = $less->compile($css);
+                            $css = preg_replace_callback("#url\((['\"]?)([^'\":)]+)(['\"]?)\)#i", $cb_replace, $css);                            
                             if  ( $debug_level < 3 ) {
                                 $cssmin = new \CSSmin();
                                 $css = $cssmin->run($css, 3000);
@@ -356,7 +353,6 @@ class TemplateHeader {
         require_once __DIR__.'/../../Lib/JSMin.php';
         require_once __DIR__.'/../../Lib/CSSmin.php';
         $Cdn  = new Cdn($this->O);
-        $less = new LessCss();
         $debug_level = $this->O->glob('debug');
         
         if ( $debug_level > 2 ) $line_cr = "\r\n";
