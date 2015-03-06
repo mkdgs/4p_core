@@ -288,7 +288,7 @@ class TemplateHeader {
                             }
                             $cache .= $css.$line_cr;
                         } catch (\Exception $e) {
-                             if  ( $debug_level > 2 ) {
+                             if ( $debug_level > 2 ) {
                                  throw $e;
                              }                            
                         }
@@ -301,7 +301,7 @@ class TemplateHeader {
         }
         $this->cachedCss = array();
 
-        foreach ( $this->css  as $v	) echo $v.$line_cr;
+        foreach ( $this->css  as $v ) echo $v.$line_cr;
         $this->css = array();
 
         if  ( $debug_level >= 2 && $this->O->glob('cache') ) {
@@ -315,18 +315,17 @@ class TemplateHeader {
         else {
             foreach ( $this->cachedJsMaster as $k => $files ) {
                 $sorted_files_ref = $files;
-                sort($sorted_files_ref);
-        
+                sort($sorted_files_ref);        
                 $key = 'jsMaster_'.md5(implode('',$sorted_files_ref)).'_'.count($files).'_'.$this->O->glob('version').self::$cache.'.js';
                 if ( !$cache = $Cdn->exist($key) ) {
                     foreach ( $files as $file ) {
                         // lazy loading fix
-                            $srcfile = json_encode($file);
-                            $cache .= "document._currentScript = document.createElement('script');";
-                            $cache .= "document._currentScript.src = $srcfile;";
-                            $cache .= "document.currentScript = document._currentScript;";
-                            $js = @file_get_contents($file);
-                        if  ( $this->O->glob('debug') < 3 ) {
+                        $srcfile = json_encode($file);
+                        $cache .= "document._currentScript = document.createElement('script');";
+                        $cache .= "document._currentScript.src = $srcfile;";
+                        $cache .= "document.currentScript = document._currentScript;";
+                        $js = @file_get_contents($file);
+                        if ( $this->O->glob('debug') < 3 ) {
                             $jsmin = new \JSMin($js);
                             $js = $jsmin->min();
                         }

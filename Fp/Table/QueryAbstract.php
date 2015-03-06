@@ -287,13 +287,23 @@ abstract class QueryAbstract {
 		$this->tableJoin[$alias] = array( 'table' => $table, 'alias' => $alias, 'condition' => '', 'joinType' => '');
 		return $this;
 	}
+        
+        final public function subJoin($type, $subquery, $alias, $condition) {
+		$this->tableJoin[$alias] = array( 'table' => $subquery, 'alias' => $alias, 'condition' => $condition, 'joinType' => $type);
+		return $this;
+	}
 	
 	protected function mkJoinTable() {
 		$table = '';
 		if ( $this->join ) {
 			foreach ( $this->tableJoin as $v ) {
-				$c = ( $v['condition'] ) ? "ON {$v['condition']} " : '';
-				$table  .= "{$v['joinType']} JOIN {$v['table']->table} as {$v['alias']} ".$c." \r\n";
+				$c = ( $v['condition'] ) ? "ON {$v['condition']} " : '';                                
+                                if ( !is_string($v['table']) ) {
+                                    $table  .= "{$v['joinType']} JOIN {$v['table']->table} as {$v['alias']} ".$c." \r\n";
+                                }
+                                else {
+                                    $table  .= "{$v['joinType']} JOIN {$v['table']} as {$v['alias']} ".$c." \r\n";
+                                }
 			}
 		}
 		return $table;

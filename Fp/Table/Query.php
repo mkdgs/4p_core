@@ -84,6 +84,14 @@ class Query implements QueryInterface {
 	public function join(Table $table, $alias) {
 		return $this->instance->join($table, $alias);
 	}
+        
+        /**
+	 * @return QueryAbstract
+	 */
+	public function subJoin($type, Table $table, $alias, $condition) {
+		return $this->instance->subJoin($type, $table, $alias, $condition);
+	}
+        
 	/**
 	 * @return QueryAbstract
 	 */
