@@ -163,12 +163,13 @@ class QueryMysql extends QueryAbstract implements QueryInterface {
 		//return $this->query("SELECT FOUND_ROWS()")->fetchColumn();
 	}
 	
-	public function delete() {
+	public function delete($simule=false) {
 		$where = $this->prepareWhere();
 		$table = ( $this->table_alias ) ? "{$this->dbTable->table} as $this->table_alias" : $this->dbTable->table;
 		$join = $this->mkJoinTable();
 		$tablemultidelete = ( $this->table_alias ) ? $this->table_alias : $this->dbTable->table; 
 		$sql = "DELETE $tablemultidelete FROM $table $join WHERE $where $this->orderBy $this->limitUpdate ";
+                if ( $simule ) return $sql;
 		return $this->query($sql)->rowCount();
 	}
 
