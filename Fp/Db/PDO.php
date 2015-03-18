@@ -61,27 +61,37 @@ class PDO {
 		$this->link = '';
 		$this->type = $type;
 	}
-/*
-	public function connect() {	   
+        
+        
+        public function connect() { 		
 		if ( !$this->connect ) {
-			try {			
-                            
-                          
-				$this->link = new \PDO($this->dsn, $this->bdd_login, $this->bdd_pass);
-				$this->link->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-				$this->link->setAttribute(\PDO::ATTR_STATEMENT_CLASS, array('PDOStatement', array($this)));
-				$this->link->exec("SET NAMES utf8");
+			try {	
+                                if ( !$this->link && $this->dsn ) {
+                                    $this->link = new \PDO($this->dsn,$this->bdd_login,$this->bdd_pass);	
+                                }                                
+                                if ( !$this->type  ) {
+                                    $this->type = $this->link->getAttribute(\PDO::ATTR_DRIVER_NAME);
+                                }								
+				$this->link->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);                                
+				$this->link->setAttribute(\PDO::ATTR_STATEMENT_CLASS, array('Fp\Db\PDOStatement', array($this)));			
+				if ( $this->type === 'mysql' ) $this->link->exec("SET NAMES utf8");
 				$this->connect = 1;
-			} catch  (\PDOException  $e) {
+			} catch  (\PDOException  $e) {	
 				$message = preg_replace("/{$this->bdd_pass}/",'***password***',$e->getMessage());
 				$code = $e->getCode();
 				$prev = $e->getPrevious();
 				throw new Exception($message, $code, $prev);
 			}
-		}		
+		}
 		return $this->link;
 	}
-*/
+        
+        final static function set(\PDO $PDO) {
+            $link = new self('', '', '', $PDO->getAttribute(\PDO::ATTR_DRIVER_NAME));          
+            $link->link = $PDO;
+	    $link->connect   = 1;
+            return $link;
+        }
 
 	/**
 	 * @return Db_Extend_PDOStatement

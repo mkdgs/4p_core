@@ -41,9 +41,10 @@ use \Exception;
 * @author		Desgranges Mickael
 * @license		CeciLL-B
 * @link			http://4publish.com
+* @deprecated since 7.4 
 */
 class PDOmysql extends PDO {
-
+/*
 	public function connect() { 		
 		if ( !$this->connect ) {
 			try {	                             
@@ -60,5 +61,5 @@ class PDOmysql extends PDO {
 			}
 		}
 		return $this->link;
-	}
+	}*/
 }

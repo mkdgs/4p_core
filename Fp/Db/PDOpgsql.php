@@ -42,9 +42,10 @@ use \Exception;
 * @author		Desgranges Mickael
 * @license		CeciLL-B
 * @link			http://4publish.com
+* @deprecated since 7.4 
 */
 class PDOpgsql extends PDO {
-
+/*
 	public function connect() { 		
 		if ( !$this->connect ) { 
 			try {		
@@ -62,5 +63,5 @@ class PDOpgsql extends PDO {
 		
 		return $this->link;
 	}
-
+*/
 }
