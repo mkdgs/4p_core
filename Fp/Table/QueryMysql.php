@@ -165,10 +165,19 @@ class QueryMysql extends QueryAbstract implements QueryInterface {
 	
 	public function delete($simule=false) {
 		$where = $this->prepareWhere();
-		$table = ( $this->table_alias ) ? "{$this->dbTable->table} as $this->table_alias" : $this->dbTable->table;
-		$join = $this->mkJoinTable();
-		$tablemultidelete = ( $this->table_alias ) ? $this->table_alias : $this->dbTable->table; 
-		$sql = "DELETE $tablemultidelete FROM $table $join WHERE $where $this->orderBy $this->limitUpdate ";
+                $join = $this->mkJoinTable();
+                
+                if ( !empty($join) ) {
+                    // order and limit not usable on multi delete
+                    $table = ( $this->table_alias ) ? "{$this->dbTable->table} as $this->table_alias" : $this->dbTable->table;		
+                    $tablemultidelete = ( $this->table_alias ) ? $this->table_alias : $this->dbTable->table; 
+                    $sql = "DELETE $tablemultidelete FROM $table $join WHERE $where ";
+                }
+                else {
+                    // order and limit not available with multidelete syntax
+                    $sql = "DELETE FROM {$this->dbTable->table} WHERE $where $this->orderBy $this->limitUpdate ";
+                }                
+		
                 if ( $simule ) return $sql;
 		return $this->query($sql)->rowCount();
 	}
