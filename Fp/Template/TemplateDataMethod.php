@@ -88,6 +88,30 @@ class TemplateDataMethod {
 		}
 		return $o;
 	}
+        
+        public static function orElse($t, $args=null) {
+                if ( !is_array($args) )	$args = func_get_args();
+		array_shift($args);
+		$o = &$t;
+                
+                if ( count($args ) === 1 ) {
+                    if ( $o->v() ){
+                        return $o;
+                    }
+                    else {
+                        return new TemplateData($args[0]);
+                    }
+                }                
+                else {
+                    if ( $args[0] ){
+                        return $o;
+                    }
+                    else {
+                        return new TemplateData($args[1]);
+                    }
+                }
+		return new TemplateData(null);
+	}
                 
         public static function eq($t, $index=0) {
 		$o = &$t;	
