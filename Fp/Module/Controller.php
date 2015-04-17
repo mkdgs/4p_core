@@ -83,7 +83,7 @@ abstract class Controller {
 		return $this->request_mod_id;
 	}
 	
-	final protected function dataMerge(array $data=array()) {
+	final public function dataMerge(array $data=array()) {
 		$this->data = array_merge($this->data, $data);
 	}
 
