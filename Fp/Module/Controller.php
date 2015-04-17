@@ -85,6 +85,7 @@ abstract class Controller {
 	
 	final public function dataMerge(array $data=array()) {
 		$this->data = array_merge($this->data, $data);
+                return $this;
 	}
 
 	final protected function methodIsAllowed($method) {
