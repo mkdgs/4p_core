@@ -93,7 +93,9 @@ class TemplateDataMethod {
                 if ( !is_array($args) )	$args = func_get_args();
 		array_shift($args);
 		$o = &$t;
-                
+                // si data->orElse('is false')
+                // return un objet templateData 'is false' si  data->v() est faux
+                // sinon data est retourné
                 if ( count($args ) === 1 ) {
                     if ( $o->v() ){
                         return $o;
@@ -101,7 +103,10 @@ class TemplateDataMethod {
                     else {
                         return new TemplateData($args[0]);
                     }
-                }                
+                }      
+                // si data->orElse('boolean true or false', 'is false')
+                // return un objet templateData 'is false' si  le premier argument est faux
+                // sinon data est retourné
                 else {
                     if ( $args[0] ){
                         return $o;

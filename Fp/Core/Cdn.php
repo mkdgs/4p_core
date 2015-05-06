@@ -55,7 +55,7 @@ class Cdn {
             while ( !flock($f, LOCK_SH | LOCK_NB) ) {
                 $i++;
                 if ( $i > 100 ) throw new Exception(__METHOD__.' file locked, aborting ', 500);
-                usleep(1000);
+                usleep(200);
             }
             try {
                 $s = filesize($file);
