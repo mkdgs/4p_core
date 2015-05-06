@@ -126,9 +126,9 @@ class QueryMysql extends QueryAbstract implements QueryInterface {
 		return $this->query($sql);
 	}
 
-	public function update(array $set, $raw=null, $simule=false) {
+	public function update(array $set, $raw=null, $simule=false) {  
 		$where = $this->prepareWhere();
-		if ( !$set = $this->set($set, $raw) ) return 0;
+		if ( ( !$set = $this->set($set, $raw) ) && !$simule ) return 0;
 		$table = ( $this->table_alias ) ? "{$this->dbTable->table} as $this->table_alias" : $this->dbTable->table;
 		$join = $this->mkJoinTable();
 		$sql = "UPDATE $table $join SET $set WHERE $where $this->orderBy $this->limitUpdate";

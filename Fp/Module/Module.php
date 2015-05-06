@@ -70,22 +70,21 @@ abstract class Module {
 	protected $render_mode = array('html','json','raw','media','widget','xml');
         
         /** @return $this Description * */
-        public static function getInstance(\Fp\Core\Init $O) {
+        public static function getInstance(\Fp\Core\Init $O, $defaultMode='html', $defaultUrl=null) {
             $classname = get_called_class();
             if ( !$c=$O->getInstance($classname)) {
-                $c = new $classname($O);
+                $c = new $classname($O, $defaultMode, $defaultUrl);
                 $O->setInstance($classname, $c);
             }
             return $c;
         }
-
 	
 	public function __construct(\Fp\Core\Init $O, $defaultMode='html', $defaultUrl=null) {
 		$this->O = $O;		
 		if( !$mode = $this->detectMode() ) {
 			$mode = $defaultMode;
 		}
-		$this->setMode($mode);			
+		$this->setMode($mode);
 		$this->setUrl($this->mode, $defaultUrl);
 				
 		$this->config();		
@@ -125,11 +124,11 @@ abstract class Module {
 	}
 		
 	public function setUrl($mode=null, $defaultUrl=null) {
-	    
+           
 	    if ( !$this->url && !$defaultUrl ) {	       
 	        $this->url = $this->data['url'] = trim($this->O->route()->getRoute(),'/').'?'.$this->var_module.'='.trim(preg_replace('#\\\#', '.', get_called_class()), '\\');
 	    }	    
-	    else if ( $defaultUrl ) {
+	    else if ( $defaultUrl ) {               
 	        $this->is_routed = true;
 	        $this->url = $this->data['url'] = $defaultUrl;
 	    }

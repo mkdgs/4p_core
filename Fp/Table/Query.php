@@ -296,7 +296,7 @@ class Query implements QueryInterface {
 	}
 	
 	public function showUpdateQuery($set, $raw=null) { 
-		return $this->instance->showUpdateQuery($set, $raw);	
+		return $this->instance->showUpdateQuery($set, $raw, 1);	
 	}
 	/** 
 	 * alias pour delete -> rpc javascript
