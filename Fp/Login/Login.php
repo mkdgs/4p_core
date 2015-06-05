@@ -157,7 +157,7 @@ class Login extends \Fp\Module\Model {
 	}
 	public function get($uid) {	
 		$q = $this->dbLogin->duplicate();
-		$q->andWhere(array('uid'=>$uid));
+		$q->andWhere(array('uid'=>$uid));               
 		return $q->getAssoc();	
 	}
 
@@ -166,9 +166,9 @@ class Login extends \Fp\Module\Model {
 	 * @param uid $uid if null session uid is set
 	 * @return mixed
 	 */
-	public function isActive($uid=null) {
-		$uid = $this->getUid($uid);
-		if ( $uid = $this->get($uid) ) {
+	public function isActive($uid=null) {             
+		$uid = $this->getUid($uid);                
+		if ( $uid = $this->get($uid) ) {                   
 			return $uid['status'];
 		}
 	}
