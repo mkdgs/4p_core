@@ -1,4 +1,5 @@
 <?php
+
 namespace Fp\Module;
 
 use Fp\Core;
@@ -192,7 +193,7 @@ abstract class ModelNode {
         $this->tableNodeRevisions->setPrimary('id_version');
         $this->tableNodeRevisions->setUnique(array());
         $this->tableNodeRevisions->setSortable(array('id_version', 'id_node', 'uid', 'label', 'date_revision'));
-//$this->tableNodeRevisions->setFilterRules('idesc', function() { return (time())*-1; });
+
         $this->tableNodeRevisions->setSearchable(array(
             'id_version' => 'bigint',
             'id_node' => 'bigint',
@@ -264,7 +265,6 @@ abstract class ModelNode {
             $q->andWhere()->orSearch($orSearch);
         }
 
-
         /*
           // recherche texte
           if ( is_array($orSearch) && !empty($orSearch)) {
@@ -323,7 +323,7 @@ abstract class ModelNode {
         if ($rank) {
             if (!ctype_digit($rank)) {
                 $ranking = ['A' => 0, 'B' => 250, 'C' => 500, 'D' => 750, 'E' => 1000];
-                $rank = $ranking[strtoupper($rank)];
+                $rank = (int) $ranking[strtoupper($rank)];
             }
             $nodeQuery->andWhere('n.rank', ['<=', $rank]); // tout ce qui a une note égale ou meilleur
         }
@@ -343,13 +343,12 @@ abstract class ModelNode {
         $q->andWhere($id_node);
         if (array_key_exists('id_node', $data))
             unset($data['id_node']);
-        if (array_key_exists('data', $data)) {           
+        if (array_key_exists('data', $data)) {
             $data['data'] = array_merge((array) $n['data'], (array) $data['data']);
             $this->updateNodeDataBlob($id_node, 'node', $data['data']);
         }
-        $du=$data;
-        
-        unset($du['data']);
+        $du = $data;
+        $du['data'] = null;;
         $r = $q->update($du);
         $r2 = $this->updateNodeExtend($id_node, $data, $old_node);
 // only when change
@@ -419,15 +418,10 @@ abstract class ModelNode {
             throw new Exception('type_node is missing', 500);
         }
 
-
-// transaction -> addGroupe
         try {
-
             $tid = Db::startTransaction();
-
             $permission = new Permission($this->O);
 
-//if ( $uid==null ) $uid = 'null';
             $gid = null;
             if ($group) {
                 if ($permission->existGroup($group))
@@ -459,27 +453,22 @@ abstract class ModelNode {
 
             $req = $this->dbNode->duplicate();
             $r = null;
-            if ($id_node) {
+            if ($id_node)
                 $r = $this->updateNode($id_node, $d);
-            }
-
 
             if (!$r) {
                 if ($id_node)
                     $d['id_node'] = $id_node;
-                if ($id = $req->insert($d)) {
+                if ($id = $req->insert($d))
                     $id_node = ( $id_node ) ? $id_node : $id;
-                }
             }
-            
-            if ( $id_node ) {
+
+            if ($id_node)
                 $this->updateNodeDataBlob($id_node, 'node', $data);
-            }
-            
+
             Db::endTransaction($tid);
             return $id_node;
         } catch (\Exception $e) {
-
             Db::rollback();
             throw $e;
         }
@@ -534,9 +523,9 @@ abstract class ModelNode {
         $q = $this->dbNodeLink->duplicate();
         $q->selectColumn('n1.*');
         $q->orderBy(array('position' => 'ASC'));
-        if ($type_node) {
+        if ($type_node)
             $q->andWhere("n1.type_node='$type_node' ");
-        }
+
         $q->innerJoin($this->tableNode, 'n1 ', "n1.id_node=IF(l.id_node_1='$id_node', l.id_node_2, l.id_node_1) ");
         $q->andWhere(" l.id_node_1='$id_node'  OR  l.id_node_2='$id_node'  ");
 
@@ -575,7 +564,6 @@ abstract class ModelNode {
         if ($position_origine == $position)
             return;
         $this->setLinkPosition($id_node_1, $id_node_2);
-
         $l = $this->id_ord($id_node_1, $id_node_2);
 
 //@todo trigger seulement si le changement est fait
@@ -626,9 +614,7 @@ abstract class ModelNode {
         $req->andWhere($w);
         $r = null;
         if ($mfa = $req->getAssoc()) {
-//if ( $mfa['position'] != $position ) { pourquoi ?
             $r = $req->update($data);
-//}
         } else {
             $data = array_merge($data, $w);
             $r = $req->insert($data);
@@ -690,9 +676,8 @@ abstract class ModelNode {
         $q = $this->dbNode->duplicate();
         $q->innerJoin($this->tableRelation, 'r', ' n.id_node=r.id_node_enfant ');
 
-        if ($function && is_callable($function)) {
+        if ($function && is_callable($function))
             $function($q, func_get_args());
-        }
 
         if ($type_node)
             $q->andWhere(array('n.type_node' => $type_node));
@@ -727,7 +712,6 @@ abstract class ModelNode {
      * @param int $position_origine
      */
     public function reOrderRelation($id_node, $id_node_enfant, $position, $position_origine) {
-
         if ($position_origine == $position)
             return;
         $this->setRelationPosition($id_node);
@@ -762,7 +746,6 @@ abstract class ModelNode {
         $t->andWhere(" id_node_parent=$qid_node AND id_node_enfant=$qid_node_enfant ");
         $t->noJoin(true);
         $t->update($set);
-
 //@todo trigger seulement si le changement est fait
         $this->O->event()->trigger($this->namespace . '.change');
         return true;
@@ -801,9 +784,8 @@ abstract class ModelNode {
 
         $req = $this->dbNodeMedia->duplicate();
         $req->andWhere($w);
-        if (!$req->getColumn()) {
+        if (!$req->getColumn())
             $req->insert($data);
-        }
     }
 
     /**
@@ -896,10 +878,6 @@ abstract class ModelNode {
     }
 
     public function getTags($id_node, $start = 0, $end = null, $options = array()) {
-
-        if ($options) {
-// type_node
-        }
         $req = $this->dbNodeTags->duplicate();
         $req->andWhere(array('id_node' => $id_node));
         $req->selectColumn('tag');
@@ -913,9 +891,8 @@ abstract class ModelNode {
     public function attachTags($id_node, array $tags) {
         $tag_list = array();
         foreach ($tags as $v) {
-            if ($v = trim(mb_strtolower($v, 'UTF-8'))) {
+            if ($v = trim(mb_strtolower($v, 'UTF-8')))
                 $tag_list[] = $v;
-            }
         }
 
         $TagsToDelete = array();
@@ -967,13 +944,12 @@ abstract class ModelNode {
                 ->orderBy($orderBy);
         $q->innerJoin($this->dbNodeTags->dbTable, 'tags', 'tags.id_node=n.id_node');
 
-        if ($groupBy) {
+        if ($groupBy)
             $q->groupBy($groupBy);
-        }
 
-        if (empty($tags) && empty($where)) {
+        if (empty($tags) && empty($where))
             $q->andWhere(true);
-        } else {
+        else {
             $q->andWhere($where);
             foreach ($tags as $v) {
                 $q->andWhere(array('tag' => $v));
@@ -981,7 +957,6 @@ abstract class ModelNode {
         }
 
         $total = 0;
-
         if ($rows = $q->getAll()) {
             $total = $q->foundRows();
             $rows = $this->unserializeDataList($rows);
@@ -996,7 +971,6 @@ abstract class ModelNode {
     protected function onNodeChange($id_node, $node, $old_node) {
         $this->O->event()->trigger($this->namespace . '.node.change');
         $uid = $this->O->auth()->uid();
-
         $label = Filter::text('node.revision.label', $node, 'revision');
         $comment = Filter::text('node.revision.comment', $node);
 
@@ -1051,7 +1025,7 @@ abstract class ModelNode {
      * @deprecated use getRevision
      */
     public function getRevisionByIndex($id_node, $index = 0) {
-        $this->getRevision($id_node, $index);
+        return $this->getRevision($id_node, $index);
     }
 
     public function removeRevision($id_version) {
@@ -1073,37 +1047,48 @@ abstract class ModelNode {
     /*
      * Node Data
      */
-    protected function serialize($data) {
+
+    public function serialize($data) {
         return json_encode($data);
     }
 
-    protected function unserialize($data) {        
-        if ( empty($data) ) return $data;               
-                
+    public function unserialize($data) {
+        if (empty($data))
+            return $data;
+
+
         $encoded = @json_decode($data, true);
+
         if (json_last_error() === JSON_ERROR_NONE) {
             $data = $encoded;
-        }
-        else {
-            if ( $encoded = base64_decode($data, true) !== false ) {
-               try {
+        } else {
+            if ($encoded = base64_decode($data, true) !== false) {
+                try {
                     $data = @unserialize($encoded);
-               } catch (\Exception $e) {
-                   
-               }
-            } 
+                } catch (\Exception $e) {
+                    
+                }
+            }
         }
         return $data;
     }
 
-    protected function serializeData($data) {
+    public function serializeData($data) {
         return $this->serialize($data);
     }
 
-    protected function unserializeData($line) {
-        if (!array_key_exists('data', $line))
-            return $line;
-        $line['data'] = $this->getDataBlob($line['id_node']);        
+    public function unserializeData($line) {
+        if (empty($line['data'])) {
+            $line['data'] = $this->getDataBlob($line['id_node']);
+        } else {
+            $d = $line['data'];
+            $line['data'] = base64_decode($d);
+            try {
+                $line['data'] = @unserialize($line['data']);
+            } catch (\Exception $e) {
+                $line['data'] = array();
+            }
+        }
         return $line;
     }
 
@@ -1114,10 +1099,9 @@ abstract class ModelNode {
         return $lines;
     }
 
-   
     public function getDataBlob($id_node) {
         $d = $this->getNodeDataBlob($id_node, 'node');
-        if ( $d ) {
+        if ($d) {
             return $this->unserialize($d['data']);
         }
         return array();
@@ -1152,19 +1136,19 @@ abstract class ModelNode {
     }
 
     /**
-     * @param int $id_node	 * @param array $data
+     * @param int $id_node	 
+     * @param array $data
      */
-    public function updateNodeDataBlob($id_node, $key, $data) {        
-        if ( $oldData = $this->getNodeDataBlob($id_node, $key) ) {           
-            if ( !empty($data) || !empty($oldData['data']) ) {   
+    public function updateNodeDataBlob($id_node, $key, $data) {
+        if ($oldData = $this->getNodeDataBlob($id_node, $key)) {
+            if (!empty($data) || !empty($oldData['data'])) {
                 $q = $this->dbNodeDataBlob->duplicate();
                 $q->andWhere(['id_node' => $id_node, 'key_name' => $key]);
                 $d = ['data' => $this->serialize($data)];
-               
-                 $r = $q->update($d, $raw = null);
+
+                $r = $q->update($d, $raw = null);
             }
-        }
-        else if ( !empty($data) ) {           
+        } else if (!empty($data)) {
             return $this->createNodeDataBlob($id_node, $key, $data);
         }
     }
