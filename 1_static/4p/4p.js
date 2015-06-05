@@ -203,6 +203,23 @@ if (!$4p) {
                         return true;
                     });
             },
+            windowOpen: function(url, data, verb, target) {               
+                    var form = document.createElement("form");
+                    form.action = url;
+                    form.method = verb || 'POST';
+                    form.target = target || "_self";
+                    if (data) {
+                      for (var key in data) {
+                        var input = document.createElement("textarea");
+                        input.name = key;
+                        input.value = typeof data[key] === "object" ? JSON.stringify(data[key]) : data[key];
+                        form.appendChild(input);
+                      }
+                    }
+                    form.style.display = 'none';
+                    document.body.appendChild(form);
+                    form.submit();               
+            },
             jsonEncode: (function () {
                 if (!$ || !($.toJSON || Object.toJSON || window.JSON)) {
                     throw new Error("jQuery needs to be loaded before encode");
