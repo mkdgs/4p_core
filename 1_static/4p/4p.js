@@ -39,11 +39,11 @@ if (!$4p) {
     if (!Array.prototype.filter) {
         Array.prototype.filter = function (fun, thisp) {
             "use strict";
-            if (this == null)
+            if (this === null)
                 throw new TypeError();
             var t = Object(this);
             var len = t.length >>> 0;
-            if (typeof fun != "function")
+            if (typeof fun !== "function")
                 throw new TypeError();
             var res = [];
             var thisp = arguments[1];
@@ -71,7 +71,7 @@ if (!$4p) {
         };
     }
     // striptags
-    if (typeof String.prototype.striptags != 'function') {
+    if (typeof String.prototype.striptags !== 'function') {
         String.prototype.striptags = function () {
             return this.replace(/(<([^>]+)>)/gi, "");
         };
@@ -79,8 +79,9 @@ if (!$4p) {
     // getInt()
     if (typeof String.prototype.getInt !== 'function') {
         String.prototype.getInt = function () {
-            var rgx = new RegExp('[0-9]+', 'g'), r;
-            if (r = rgx.exec(this))
+            var rgx = new RegExp('[0-9]+', 'g');
+            var r =r = rgx.exec(this);
+            if ( r )
                 return parseInt(r);
             else
                 return Number.NaN;
@@ -153,7 +154,7 @@ if (!$4p) {
             events: {},
             parentInstance: function () {
                 try {
-                    if (typeof window.parent.$4p != "undefined") {
+                    if (typeof window.parent.$4p !== "undefined") {
                         return window.parent.$4p;
                     }
                 } catch (e) {
@@ -177,22 +178,23 @@ if (!$4p) {
             },
             globals: {},
             glob: function (name, val) {
-                if (typeof val != 'undefined')
+                if (typeof val !== 'undefined')
                     return $4p.globals[name] = val;
-                if (typeof $4p.globals[name] != 'undefined')
+                if (typeof $4p.globals[name] !== 'undefined')
                     return $4p.globals[name];
             },
             baseUrl: function () {
                 var baseUrl;
                 if (baseUrl)
                     return baseUrl;
-                if (baseUrl = $('base').attr('href'))
+                baseUrl = $('base').attr('href');
+                if ( baseUrl )
                     return baseUrl;
                 return location.href.substring(0, location.href
                         .lastIndexOf('/') + 1);
             },
             log: function (msg) {
-                if (typeof console == "object")
+                if (typeof console === "object")
                     console.log(msg);
             },
             pageLock: function (unlock) {
@@ -203,22 +205,31 @@ if (!$4p) {
                         return true;
                     });
             },
-            windowOpen: function(url, data, verb, target) {               
-                    var form = document.createElement("form");
-                    form.action = url;
-                    form.method = verb || 'POST';
-                    form.target = target || "_self";
-                    if (data) {
-                      for (var key in data) {
-                        var input = document.createElement("textarea");
-                        input.name = key;
-                        input.value = typeof data[key] === "object" ? JSON.stringify(data[key]) : data[key];
-                        form.appendChild(input);
-                      }
+            windowOpen: function (url, data, method, target) {
+                var form = document.createElement("form");
+                form.action = url;
+                form.method = method || 'POST';
+                form.target = target || "_self";
+
+                var mk = function (form, data, prefix) {
+                    var input = document.createElement("textarea");
+                    prefix = prefix || '';
+                    if (typeof data === "object") {
+                        for (var k in data) {
+                            mk(form, data[k], (prefix) ? prefix + '[' + k + ']' : k);
+                        }
                     }
-                    form.style.display = 'none';
-                    document.body.appendChild(form);
-                    form.submit();               
+                    else { 
+                        input.name = (prefix) ? prefix : '  ';
+                        input.value = data;
+                        form.appendChild(input);
+                    }
+                };
+                if (data) mk(form, data);
+                
+                form.style.display = 'none';
+                document.body.appendChild(form);
+                form.submit();
             },
             jsonEncode: (function () {
                 if (!$ || !($.toJSON || Object.toJSON || window.JSON)) {
@@ -258,7 +269,7 @@ if (!$4p) {
                 return string.getInt();
             },
             uniquId: function () {
-                if (typeof $4p.incUniquid == 'undefined') {
+                if (typeof $4p.incUniquid === 'undefined') {
                     $4p.incUniquid = 1;
                 }
                 ;
@@ -275,8 +286,8 @@ if (!$4p) {
             },
             tpl: function (tpl) {
                 var f = {};
-                if (typeof tpl == 'string') {
-                    if (tpl.substring(0, 4) == 'http') {
+                if (typeof tpl === 'string') {
+                    if (tpl.substring(0, 4) === 'http') {
                         $.ajax({
                             cache: true,
                             url: tpl + $4p.skipCache(),
@@ -323,7 +334,7 @@ if (!$4p) {
                     if (!scope)
                         scope = 'root';
                     try {
-                        if (typeof f.cache[scope] != 'function') {
+                        if (typeof f.cache[scope] !== 'function') {
                             var strFunc = "var p=[],print=function(){p.push.apply(p,arguments);};"
                                     + "with(obj){p.push('"
                                     + f.tpl.replace(/[\r\t\n]/g, " ")
@@ -510,7 +521,7 @@ if (!$4p) {
 
                 if (start) {
                     $4p.throbberCounter++;
-                    if ($4p.throbberCounter == 1) {
+                    if ( $4p.throbberCounter === 1) {
                         if ($4p.cfg.throbber.enabled) {
                             $('#fp-throbber').show();
                             // on garde au premier plan
@@ -568,8 +579,8 @@ if (!$4p) {
                 meta.name = 'script';
                 $("head").append(meta);
 
-                if (typeof $4p.cacheScript[url] != 'undefined') {
-                    if (typeof callback == 'function')
+                if (typeof $4p.cacheScript[url] !== 'undefined') {
+                    if (typeof callback === 'function')
                         callback();
                     return true;
                 }
@@ -581,7 +592,7 @@ if (!$4p) {
                     success: function (script) {
                         $4p.cacheScript[url] = 1;
                         try {
-                            if (typeof callback == 'function')
+                            if (typeof callback === 'function')
                                 callback();
                         } catch (error) {
                             $4p.log(error);
@@ -617,13 +628,13 @@ if (!$4p) {
                                 + Math.floor(Math.random() * 1000)
                     };
                     req.doCallback = function (r) {
-                        if (typeof (r.error) == 'undefined')
+                        if (typeof (r.error) === 'undefined')
                             req.error = null;
-                        if (typeof (r.result) == 'undefined')
+                        if (typeof (r.result) === 'undefined')
                             req.result = null;
-                        if (typeof (r.id) == 'undefined')
+                        if (typeof (r.id) === 'undefined')
                             req.id = null;
-                        if (typeof r.callback == 'function')
+                        if (typeof r.callback === 'function')
                             req.callback(r);
                     };
                     t.batch[req.data.id] = req;
@@ -648,7 +659,7 @@ if (!$4p) {
                     }
                     // batch is empty
                     if (!i) {
-                        if (typeof t.callback == 'function')
+                        if (typeof t.callback === 'function')
                             t.callback();
                         return;
                     }
@@ -681,20 +692,20 @@ if (!$4p) {
                                     }
                                 }
                             }
-                            if (typeof t.callback == 'function')
+                            if (typeof t.callback === 'function')
                                 t.callback(r);
                         },
                         error: function (XMLHttpRequest, textStatus,
                                 errorThrown) {
                             var error = textStatus + ': ' + errorThrown;
-                            if (typeof r == 'undefined') {
+                            if (typeof r === 'undefined') {
                                 $4p.log(error);
                                 var r = {
                                     error: error
                                 };
                             } else if (!r.error)
                                 r.error = error;
-                            if (typeof t.callback == 'function')
+                            if (typeof t.callback === 'function')
                                 t.callback(r);
                         }
                     });
@@ -737,18 +748,18 @@ if (!$4p) {
                             };
                         }
                     });
-                    if (r == null)
+                    if (r === null)
                         r = {
                             'error': null,
                             'result': null,
                             'id': null
                         };
                     else {
-                        if (typeof (r.error) == 'undefined')
+                        if (typeof (r.error) === 'undefined')
                             r.error = null;
-                        if (typeof (r.result) == 'undefined')
+                        if (typeof (r.result) === 'undefined')
                             r.result = null;
-                        if (typeof (r.id) == 'undefined')
+                        if (typeof (r.id) === 'undefined')
                             r.id = null;
                     }
                     return r;
@@ -767,13 +778,13 @@ if (!$4p) {
                     };
                     req.error = req.result = req.process = null;
                     req.doCallback = function (r) {
-                        if (typeof (r.error) == 'undefined')
+                        if (typeof (r.error) === 'undefined')
                             req.error = null;
-                        if (typeof (r.result) == 'undefined')
+                        if (typeof (r.result) === 'undefined')
                             req.result = null;
-                        if (typeof (r.id) == 'undefined')
+                        if (typeof (r.id) === 'undefined')
                             req.id = null;
-                        if (typeof r.callback == 'function')
+                        if (typeof r.callback === 'function')
                             req.callback(req);
                     };
 
@@ -796,7 +807,6 @@ if (!$4p) {
                                 errorThrown) {
                             req.result = null;
                             req.error = textStatus + ': ' + errorThrown;
-                            req.id = req.id;
                             req.doCallback(req);
                         }
                     });
@@ -857,7 +867,7 @@ if (!$4p) {
                     buttons: {
                         valider: function () {
                             $(this).data('value', $input.val());
-                            if (typeof $(this).data('callback') == 'function') {
+                            if (typeof $(this).data('callback') === 'function') {
                                 $(this).data('callback')($(this).data('value'),
                                         $(this).data());
                             }
@@ -908,7 +918,7 @@ if (!$4p) {
                                     },
                                     close: function (event, ui) {
                                         $(this).dialog("destroy");
-                                        if (typeof $(this).data('callback') == 'function') {
+                                        if (typeof $(this).data('callback') === 'function') {
                                             $(this).data('callback')(
                                                     $(this).data('value'),
                                                     $(this).data());
@@ -1051,7 +1061,7 @@ if (!$4p) {
             // function
             b64WebEncode: function (str) {
                 str = encodeURIComponent(str);
-                if (typeof window.btoa == 'function') {
+                if (typeof window.btoa === 'function') {
                     str = window.btoa(str);
                 } else
                     str = $4p.base64_encode(str);
@@ -1063,7 +1073,7 @@ if (!$4p) {
             b64WebDecode: function (str) {
                 str = str.replace(/-/g, "+").replace(/_/g, "/").replace(/,/g,
                         "=");
-                if (typeof window.atob == 'function')
+                if (typeof window.atob === 'function')
                     str = window.atob(str);
                 else
                     str = $4p.base64_decode(str);
@@ -1072,7 +1082,7 @@ if (!$4p) {
             dateFromMysqlDate: function (strTime) {
                 if (!strTime)
                     return null;
-                if (typeof strTime == 'object')
+                if (typeof strTime === 'object')
                     return strTime;
                 var t = strTime.split(/[- :]/);
                 if (t.length >= 3) {
@@ -1091,8 +1101,8 @@ if (!$4p) {
 
     $4p.template = function (tpl) {
         var f = {};
-        if (typeof tpl == 'string') {
-            if (tpl.substring(0, 4) == 'http') {
+        if (typeof tpl === 'string') {
+            if (tpl.substring(0, 4) === 'http') {
                 $.ajax({
                     cache: true,
                     url: tpl + $4p.skipCache(),
@@ -1133,7 +1143,7 @@ if (!$4p) {
             var tpl_data = {};
             tpl_data[data_key] = new $4p.templateData(data);
             try {
-                if (typeof f.cache[scope] != 'function') {
+                if (typeof f.cache[scope] !== 'function') {
                     var strFunc = "var p=[]; var print = function(str) { p.push(str); }; p.push('"
                             + f.scope[scope].replace(/[\r\t\n]/g, " ")
                             .split("'")
@@ -1211,7 +1221,7 @@ if (!$4p) {
             for (k in args) {
                 if (args.hasOwnProperty(k)) {
                     v = args[k];
-                    if (o && (typeof o.vars[v] != 'undefined')
+                    if (o && (typeof o.vars[v] !== 'undefined')
                             && (o.vars[v].instanceOfTemplateData)) {
                         o = o.vars[v];
                     } else {
@@ -1289,7 +1299,7 @@ if (!$4p) {
                     return null;
                 if ((/boolean|number|string/).test(typeof this.vars))
                     return null;
-                if (this.i_iterate == null) {
+                if (this.i_iterate === null) {
                     if (rewind) {
                         this.end();
                     } else {
@@ -1299,7 +1309,7 @@ if (!$4p) {
                         if (offset > this.count()) {
                             return null;
                         } else {
-                            for (var i = 0; i != offset; i++) {
+                            for (var i = 0; i !== offset; i++) {
                                 if (rewind)
                                     this.prev();
                                 else
@@ -1317,8 +1327,8 @@ if (!$4p) {
                 }
                 this.i_iterate--;
                 this.i_position = null;
-                var a;
-                if (this.i_iterate > 0 && (a = this.current())) {
+                var a = this.current() ;
+                if ( ( this.i_iterate > 0 ) && a ) {
                     if (!rewind)
                         this.next();
                     else
