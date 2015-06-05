@@ -101,8 +101,8 @@ abstract class ConditionAbstract {
     final protected function _where_($where = null, $type = null, $data = null) {
         $w = null;
         $quote = true;
-
         if ( is_array($where) ) {
+           
             if (!empty($data)) {
                 if (array_key_exists('quote', $data)) {
                     $quote = (bool) $data['quote'];
@@ -124,7 +124,7 @@ abstract class ConditionAbstract {
                                 if ( $mo ) $c[] = $mo;  
                             }
                         }
-                    }
+                    }                    
                     else  $c[] = $this->_where_($v);
                 }
 
@@ -159,7 +159,7 @@ abstract class ConditionAbstract {
         }
 
         if ( empty($w))  $w = '0';
-       
+        
         return "$w";
     }
 
@@ -190,7 +190,8 @@ abstract class ConditionAbstract {
         $r = '';
         $i = 0;
         foreach ($this->child as $c) {
-            if ($t = $c->build($c)) {
+            $t = $c->build($c);           
+            if ( !empty($t) || $t === '0' ) {
                 if ($i != 0) { // ignore le type de la première condition
                     $r .= ' ' . $c->type;
                 } else if ($parent && $parent->condition) { // si le parent est un nouveau groupe on ajoute le type de la condition
@@ -198,7 +199,7 @@ abstract class ConditionAbstract {
                 }
                 $r .= " ( $t ) ";
                 $i++; // on ne compte que les condition non null
-            }
+            }           
         }
         $this->build = $r;
         return $this->condition . $this->build;

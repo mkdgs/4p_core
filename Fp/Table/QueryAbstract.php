@@ -316,7 +316,7 @@ abstract class QueryAbstract {
 	 * @return Table_query
 	 */
 	final public function selectColumn($column=null, $append=true) {
-		if ( !$append) $this->selectedColumn =array();
+		if ( !$append) $this->selectedColumn = array();
 		if ( "$column" ) {
 			$column = explode(',', $column);
 			foreach ( $column as $v ) {
@@ -355,7 +355,7 @@ abstract class QueryAbstract {
 	 */
 	final public function selectFunction($sql, $append=true) {
 		if ( !$append ) $this->selectFunction = array();
-		$this->selectFunction[] = $sql;
+                if ( "$sql" ) $this->selectFunction[] = $sql;
 		return $this;
 	}
 	

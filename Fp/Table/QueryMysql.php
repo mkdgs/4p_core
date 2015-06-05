@@ -98,7 +98,8 @@ class QueryMysql extends QueryAbstract implements QueryInterface {
 		$r = array();
 		foreach ( $this->selectedColumn as $v ) $r[] = $this->buildColumn($v);
 		$select = implode(',', $r);
-		$where = $this->prepareWhere();		
+		$where = $this->prepareWhere();
+                
 		if ( !$select ) $select = '';		
 		$this->setStatementOptions($options);	
 		
@@ -111,11 +112,12 @@ class QueryMysql extends QueryAbstract implements QueryInterface {
 		
 		$join  = $this->mkJoinTable();
 		$table = ( $this->table_alias ) ? "{$this->dbTable->table} as $this->table_alias" : $this->dbTable->table;
-		
+
 		$s = array();
 		if ( $select ) $s[] = $select;
 		if ( !empty($this->selectFunction) ) $s[] = implode(',',$this->selectFunction);
 				
+
 		$s = implode(',', $s);	
 		if ( !$s ) $s='*';	
 		
@@ -168,7 +170,7 @@ class QueryMysql extends QueryAbstract implements QueryInterface {
                 $join = $this->mkJoinTable();
                 
                 // order and limit not available with multidelete syntax
-                if ( !empty($join) ) {                   
+                if ( !empty($join) || empty($this->orderBy) ) {                   
                     $table = ( $this->table_alias ) ? "{$this->dbTable->table} as $this->table_alias" : $this->dbTable->table;		
                     $tablemultidelete = ( $this->table_alias ) ? $this->table_alias : $this->dbTable->table; 
                     $sql = "DELETE $tablemultidelete FROM $table $join WHERE $where ";
