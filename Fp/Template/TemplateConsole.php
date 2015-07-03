@@ -14,7 +14,7 @@ class TemplateConsole {
 	}
 	
 	static public function T_dump($var, $inc=0) {	
-		if ( is_scalar($var) ) {	
+		if ( is_scalar($var) || $var === null ) {	
                     return htmlentities(substr($var,0,250),ENT_COMPAT,'UTF-8');
 		}
 		else if ( $var instanceof TemplateData ) {	                    
@@ -34,7 +34,7 @@ class TemplateConsole {
 	}
 
 	static public function V_dump($var) {
-		if ( is_scalar($var)  ) {
+		if ( is_scalar($var) || $var === null ) {
 			return htmlentities(substr($var,0,300), ENT_COMPAT, 'UTF-8')." \r\n";
 		}
 		$T_dump = '';

@@ -1,5 +1,7 @@
 <?php
+
 namespace Fp\Template;
+
 use Fp\Log\Logger;
 use \Exception;
 
@@ -43,126 +45,148 @@ use \Exception;
  * @link			http://4publish.com
  * @property TemplateData
  */
-
 class TemplateData implements \ArrayAccess, \Iterator, \Countable {
-	public $vars = array();
-	public $key  = null;
-	public $i_iterate   = null;
-	public $i_total     = null;
-	public $i_position  = null;
 
-	/**
-	 * Enter description here ...
-	 * @param array|TemplateData $vars
-	 */
-	public function __construct($vars = array(), $key=null) {		
-		$this->key = $key;
-		if ( !($vars instanceof TemplateData) ) { 
-                    if( is_array($vars) ) {
-			foreach ( $vars as $k => $v ) {
-				$this->vars[$k] = new TemplateData($v, $k);
-			}
-                    }
-                    else $this->vars = $vars;
-		}
-		else {
-                    $this->vars = $vars->vars;
-                    $this->i_iterate   = $vars->i_iterate;
-                    $this->i_total     = $vars->i_total;
-                    $this->i_position  = $vars->i_position;
+    public $vars = array();
+    public $key = null;
+    public $i_iterate = null;
+    public $i_total = null;
+    public $i_position = null;
+
+    /**
+     * Enter description here ...
+     * @param array|TemplateData $vars
+     */
+    public function __construct($vars = array(), $key = null) {
+        $this->key = $key;
+        if (!($vars instanceof TemplateData)) {
+            if (is_array($vars)) {
+                foreach ($vars as $k => $v) {
+                    $this->vars[$k] = new TemplateData($v, $k);
                 }
-	}
-
-	public function __toString() {
-		return ( is_scalar($this->vars) || $this->vars === null ) ? (string) $this->vars : print_r($this->vars,true);
-	}
-
-	/**
-	 * Enter description here ...
-	 * @param unknown_type $name
-	 * @return TemplateData
-	 */
-	public function __get($name) {
-		//if ( !$this instanceof TemplateData ) return $this->name;
-		if ( is_array($this->vars) && array_key_exists($name, $this->vars) ) return $this->vars[$name];		
-		
-		$log = new Logger();
-		$log->notice('variable non définie:'. $name);			
-	}
-
-	public function __call($name, $args) {	
-		try {
-			array_unshift($args, $this);
-			return call_user_func_array("\Fp\Template\TemplateDataMethod::$name", $args );
-		}
-		catch (\Exception $e) {
-			$log = new Logger();			
-			$log->notice($e->getMessage(), array($e));	
-		}
-	}
-
-	public function __set($name, $val) {
-		$this->vars[$name] = new TemplateData($val, $name);
-	}
-
-	public function __unset($name) {
-		unset($this->vars[$name]);
-	}
-	
-	public function __isset($name) {
-		return ( array_key_exists($name, $this->vars) ) ? true : false;
-	}
-
-	// array access
-	public function offsetSet($offset, $value) {
-		$this->__set($offset, $value);
-		//$this->vars[$offset] = $value;
-	}
-	public function offsetExists($var) {
-		return isset($this->vars[$var]);
-	}
-	public function offsetUnset($var) {
-		unset($this->vars[$var]);
-	}
-	public function offsetGet($var) {
-		if ( isset($this->vars[$var]) ) return $this->vars[$var];
-	}
-
-	// countable 
-	public function count() {
-            return count($this->vars);
+            } else
+                $this->vars = $vars;
         }
-    
-	// array iterator
-	public function rewind() {
-		if ( is_array($this->vars) ) reset($this->vars);
-	}
+        else {
+            $this->vars = $vars->vars;
+            $this->i_iterate = $vars->i_iterate;
+            $this->i_total = $vars->i_total;
+            $this->i_position = $vars->i_position;
+        }
+    }
 
-	public function current() {
-		return ( is_array($this->vars) ) ? current($this->vars) : false;
-	}
+    public function __toString() {
+        return ( is_scalar($this->vars) || $this->vars === null ) ? (string) $this->vars : print_r($this->vars, true);
+    }
 
-	public function key() {
-		if ( is_array($this->vars) ) return key($this->vars);
-	}
+    /**
+     * Enter description here ...
+     * @param unknown_type $name
+     * @return TemplateData
+     */
+    public function __get($name) {
+        //if ( !$this instanceof TemplateData ) return $this->name;
+        if (is_array($this->vars) && array_key_exists($name, $this->vars))
+            return $this->vars[$name];
 
-	public function next() {
-		if ( is_array($this->vars) ) return next($this->vars);
-	}
-	
-	public function prev() {
-	    if ( is_array($this->vars) ) return prev($this->vars);
-	}
+        $log = new Logger();
+        $log->notice('variable non définie:' . $name);
+    }
 
-	public function valid() {
-		return $this->current() !== false;
-	}
-	
-	public function end() {
-	    return ( is_array($this->vars) ) ? end($this->vars) : false;
-	}
-	
-	public function reset() {
-	    return ( is_array($this->vars) ) ? reset($this->vars) : false;
-	}
+    public function __call($name, $args) {
+        try {
+
+            $numArgs = count($args);
+            $fn = "\Fp\Template\TemplateDataMethod";
+            // because direct call is ~~15x faster
+            if ($numArgs < 1)
+                return $fn::$name($this);
+
+            if ($numArgs === 1)
+                return $fn::$name($this, $args[0]);
+
+            if ($numArgs === 2)
+                return $fn::$name($this, $args[0], $args[1]);
+            
+            array_unshift($args, $this);
+            return call_user_func_array($fn.'::'.$name, $args);
+        } catch (\Exception $e) {
+            $log = new Logger();
+            $log->notice($e->getMessage(), array($e));
+        }
+    }
+
+    public function __set($name, $val) {
+        $this->vars[$name] = new TemplateData($val, $name);
+    }
+
+    public function __unset($name) {
+        unset($this->vars[$name]);
+    }
+
+    public function __isset($name) {
+        return ( array_key_exists($name, $this->vars) ) ? true : false;
+    }
+
+    // array access
+    public function offsetSet($offset, $value) {
+        $this->__set($offset, $value);
+        //$this->vars[$offset] = $value;
+    }
+
+    public function offsetExists($var) {
+        return isset($this->vars[$var]);
+    }
+
+    public function offsetUnset($var) {
+        unset($this->vars[$var]);
+    }
+
+    public function offsetGet($var) {
+        if (isset($this->vars[$var]))
+            return $this->vars[$var];
+    }
+
+    // countable 
+    public function count() {
+        return count($this->vars);
+    }
+
+    // array iterator
+    public function rewind() {
+        if (is_array($this->vars))
+            reset($this->vars);
+    }
+
+    public function current() {
+        return ( is_array($this->vars) ) ? current($this->vars) : false;
+    }
+
+    public function key() {
+        if (is_array($this->vars))
+            return key($this->vars);
+    }
+
+    public function next() {
+        if (is_array($this->vars))
+            return next($this->vars);
+    }
+
+    public function prev() {
+        if (is_array($this->vars))
+            return prev($this->vars);
+    }
+
+    public function valid() {
+        return $this->current() !== false;
+    }
+
+    public function end() {
+        return ( is_array($this->vars) ) ? end($this->vars) : false;
+    }
+
+    public function reset() {
+        return ( is_array($this->vars) ) ? reset($this->vars) : false;
+    }
+
 }

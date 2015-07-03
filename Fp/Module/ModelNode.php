@@ -325,7 +325,7 @@ abstract class ModelNode {
                 $ranking = ['A' => 0, 'B' => 250, 'C' => 500, 'D' => 750, 'E' => 1000];
                 $rank = (int) $ranking[strtoupper($rank)];
             }
-            $nodeQuery->andWhere('n.rank', ['<=', $rank]); // tout ce qui a une note égale ou meilleur
+            $nodeQuery->andWhere(['n.rank' => ['<=', $rank]]); // tout ce qui a une note égale ou meilleur
         }
     }
 
@@ -859,7 +859,7 @@ abstract class ModelNode {
         $t->andWhere(" id_node=$qid_node AND id_media=$qid_media ");
         $t->noJoin(true);
         $t->update($set);
-        return true;
+        return $t->showUpdateQuery($set);
     }
 
     /*

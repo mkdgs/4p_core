@@ -363,4 +363,22 @@ class Date {
 		# Some other day
 		return $formatDate($inTimestamp, $i18n[$lang]['other'] );		
 	}
+        
+        public function add($interval) {
+            return $this->dateTime->add($interval);
+        }
+        
+        public function roundTime() {
+                $second = $this->dateTime->format("s");
+                $this->dateTime->add(new \DateInterval("PT".(60-$second)."S"));
+                // Get minute
+                $minute = $this->dateTime->format("i");
+                // Convert modulo 10
+                $minute = $minute % 10;
+                // Count minutes to next 10-multiple minuts
+                $diff = 10 - $minute;
+                // Add the difference to the original date time
+                $this->dateTime->add(new \DateInterval("PT".$diff."M"));
+                return $this;
+        }
 }

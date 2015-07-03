@@ -179,7 +179,7 @@ class TemplateDataMethod {
 	
 	public static function toJson($t) {
 		$v = $t->v();
-		if ( is_scalar($v) ) return json_encode($v);
+		if ( is_scalar($v) || $v === null ) return json_encode($v);
 		return json_encode($t->toArray());
 	}
 
@@ -211,7 +211,8 @@ class TemplateDataMethod {
 	}
 
 	public static function value($t) {
-		return ( is_scalar($t->vars) || $t->vars === null) ? strval($t->vars) : $t->vars;
+                if ( $t->vars === null ) return '';
+		return ( is_scalar($t->vars) ) ? strval($t->vars) : $t->vars;
 	}
 
 	public static function v($t) {
@@ -402,7 +403,7 @@ class TemplateDataMethod {
 	public static function jsString($t) {
 		$c = clone $t;
 		$v = $c->v();		
-		if ( is_scalar($v) ) $c->vars = json_encode($v);
+		if ( is_scalar($v) || $v === null ) $c->vars = json_encode($v);
 		else $c->vars = json_encode($c->toAarray());
 		return $c;
 	}

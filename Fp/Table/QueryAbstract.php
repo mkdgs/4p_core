@@ -106,8 +106,16 @@ abstract class QueryAbstract {
 	final public function duplicate() {
 		$r = clone $this;
 		return $r;
-	}	
-	
+	}		
+        
+        /**
+	 * @return Table_query
+	 */
+	final public function newQuery() {
+		return $this->duplicate();
+	}
+        
+        
 	/**
 	 * set and normalize options
 	 */

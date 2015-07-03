@@ -176,19 +176,22 @@ class Route {
 	}
 
 	public function rewriteUrl($url, $keyword=null) {
-		$url = trim($url, "\t\n\r\0\x0B. /");
-		if ( $keyword ) {
+		$url = trim($url, "\t\n\r\0\x0B. /");		
+		// on supprime les params incomplet
+                if ( strpos($url, '{') ) {
+                    $url = preg_replace('#/(?:[a-z0-9_]*)-\{(?:[a-z0-9_]*)\}#', '', $url);
+                    $url = preg_replace('#/{[a-z0-9_]*\}#', '', $url);
+                }
+                if ( strpos($url, '%7B') ) {
+                    $url = preg_replace('#/%7B[a-z0-9_]*\%7D#', '', $url);
+                }
+                if ( !empty($keyword) ) {
 			$keyword = Filter::dirName($keyword);
 			$keyword = str_replace('_','-',$keyword);
 			$keyword = trim($keyword, '-');
 			$keyword = preg_replace("#-{2,}#",'-','+'.$keyword);	
-		}
-		else $keyword ='';
-		// on supprime les params incomplet
-		$url = preg_replace('#/(?:[a-z0-9_]*)-\{(?:[a-z0-9_]*)\}#', '', $url);
-		$url = preg_replace('#/{[a-z0-9_]*\}#', '', $url);
-		$url = preg_replace('#/%7B[a-z0-9_]*\%7D#', '', $url);
-		$url = preg_replace('#/$#','',$url).$keyword;
+                        $url = preg_replace('#/$#','',$url).$keyword;
+		}		
 		return $url;
 	}
 	

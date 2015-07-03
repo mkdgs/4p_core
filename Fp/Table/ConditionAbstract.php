@@ -113,8 +113,8 @@ abstract class ConditionAbstract {
             else {
                 $c = array();
                 foreach ($where as $k => $v) {                    
-                    if ( $col = $this->existColumn($k)) {                         
-                        if (is_scalar($v)) {
+                    if ( $col = $this->existColumn($k)) {     
+                        if ( is_scalar($v) || $v === null ) {                            
                             $v = $this->quote($v);
                             $c[] = "$col=$v";
                         } 
