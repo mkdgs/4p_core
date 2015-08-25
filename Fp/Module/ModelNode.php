@@ -55,6 +55,11 @@ abstract class ModelNode {
      */
     public $dbNodeDataBlob;
 
+    /**
+     * @var Table_query
+     */
+    public $dbNodeDataChar;
+
     /** @var \Fp\Core\Init */
     public $O;
     public $namespace;
@@ -214,6 +219,14 @@ abstract class ModelNode {
         $this->tableNodeDataBlob = Table::setTable($dbLink, $shemaNodeDataBlob);
         $this->dbNodeDataBlob = new Table_query($this->tableNodeDataBlob);
 
+        $shemaNodeDataChar = array('table' => 'node_data_char',
+            'column' => array(
+                'id_node' => array('type' => 'bigint', 'primary' => 1, 'sortable' => 1, 'searchable' => 1),
+                'key_name' => array('type' => 'varchar', 'sortable' => 1, 'searchable' => 1),
+                'data' => array('type' => 'varchar', 'sortable' => 1, 'searchable' => 1),
+        ));
+        $this->tableNodeDataChar = Table::setTable($dbLink, $shemaNodeDataChar);
+        $this->dbNodeDataChar = new Table_query($this->tableNodeDataChar);
 
         $this->config();
     }
@@ -348,7 +361,8 @@ abstract class ModelNode {
             $this->updateNodeDataBlob($id_node, 'node', $data['data']);
         }
         $du = $data;
-        $du['data'] = null;;
+        $du['data'] = null;
+        ;
         $r = $q->update($du);
         $r2 = $this->updateNodeExtend($id_node, $data, $old_node);
 // only when change
@@ -763,6 +777,15 @@ abstract class ModelNode {
     }
 
     /**
+     * @param array $where
+     * */
+    public function getAllMedia($where) {
+        $q = $this->dbNodeMedia->duplicate();
+        $q->andWhere($where);
+        return $r = $q->fetchAll();
+    }
+
+    /**
      * @param int $id_node
      * @param int $id_media
      * @param int $position
@@ -1056,19 +1079,15 @@ abstract class ModelNode {
         if (empty($data))
             return $data;
 
-
-        $encoded = @json_decode($data, true);
-
-        if (json_last_error() === JSON_ERROR_NONE) {
-            $data = $encoded;
-        } else {
-            if ($encoded = base64_decode($data, true) !== false) {
-                try {
-                    $data = @unserialize($encoded);
-                } catch (\Exception $e) {
-                    
-                }
+        if ($encoded = base64_decode($data, true)) { // support ancien format base64+ php serialise
+            try {
+                $data = @unserialize($encoded);
+            } catch (\Exception $e) {
+                
             }
+        } else {
+            $data = @json_decode($data, true);
+            // if ( json_last_error() !== JSON_ERROR_NONE)             
         }
         return $data;
     }
@@ -1082,9 +1101,8 @@ abstract class ModelNode {
             $line['data'] = $this->getDataBlob($line['id_node']);
         } else {
             $d = $line['data'];
-            $line['data'] = base64_decode($d);
             try {
-                $line['data'] = @unserialize($line['data']);
+                $line['data'] = $this->unserialize($d);
             } catch (\Exception $e) {
                 $line['data'] = array();
             }
@@ -1123,6 +1141,9 @@ abstract class ModelNode {
         }
         $req->limitSelect($start, $end);
         $rows = $req->getAll();
+        foreach ($rows as $k => $v) {
+            $rows[$k]['data'] = $this->unserialize($rows[$k]['data']);
+        }
         $total = $req->foundRows();
         return Module_Utils::formatList($rows, $start, $end, $total);
     }
@@ -1154,19 +1175,202 @@ abstract class ModelNode {
     }
 
     /**
-     * @param int $id_node	 */
-    public function getNodeDataBlob($id_node, $key) {
+     * @param int|array $id_node int with key_name or single array
+     * @param string key_name 
+     * */
+    public function getNodeDataBlob($id_node, $key = null) {
         $q = $this->dbNodeDataBlob->duplicate();
-        $q->andWhere(['id_node' => $id_node, 'key_name' => $key]);
-        return $q->getAssoc();
+        if (!is_array($id_node)) {
+            $q->andWhere(['id_node' => $id_node, 'key_name' => $key]);
+        } else {
+            $q->andWhere($id_node);
+        }
+        $r = $q->getAssoc();
+        if (!empty($r)) {
+            $r['data'] = $this->unserialize($r['data']);
+            return $r;
+        }
     }
 
     /**
-     * @param int $id_node	 */
+     * @param int $id_node
+     * */
+    public function getAllNodeDataBlob($where) {
+        $q = $this->dbNodeDataBlob->duplicate();
+        $q->andWhere($where);
+        $r = $q->fetchAll();
+        if (!empty($r)) {
+            foreach ($r as $k => $l) {
+                $r[$k]['data'] = $this->unserialize($r[$k]['data']);
+            }
+            return $r;
+        }
+    }
+
+    /**
+     * @param int $id_node	
+     * */
     public function removeNodeDataBlob($id_node, $key) {
         $q = $this->dbNodeDataBlob->duplicate();
         $q->andWhere(['id_node' => $id_node, 'key_name' => $key]);
         return $q->remove();
+    }
+
+    public function getDataChar($id_node) {
+        $d = $this->getNodeDataChar($id_node, 'node');
+        if ($d) {
+            return $d['data'];
+        }
+        return array();
+    }
+
+    /**
+     * @param int $start
+     * @param int $end
+     * @param array $orderBy
+     * @param array $search
+     */
+    public function listNodeDataChar($start = 0, $end = 30, $orderBy = array(), $search = array()) {
+        $req = $this->dbNodeDataChar->duplicate();
+        $req->orderBy($orderBy);
+        if (empty($search)) {
+            $req->andWhere(true);
+        } else {
+            $req->search($search);
+        }
+        $req->limitSelect($start, $end);
+        $rows = $req->getAll();
+        $total = $req->foundRows();
+        return Module_Utils::formatList($rows, $start, $end, $total);
+    }
+
+    public function createNodeDataChar($id_node, $key, $data) {
+        $req = $this->dbNodeDataChar->duplicate();
+        $d = array('id_node' => $id_node,
+            'key_name' => $key,
+            'data' => $data);
+        return $req->insert($d);
+    }
+
+    /**
+     * @param int $id_node	 
+     * @param array $data
+     */
+    public function updateNodeDataChar($id_node, $key, $data) {
+        if ($oldData = $this->getNodeDataChar($id_node, $key)) {
+            if (!empty($data) || !empty($oldData['data'])) {
+                $q = $this->dbNodeDataChar->duplicate();
+                $q->andWhere(['id_node' => $id_node, 'key_name' => $key]);
+                $d = ['data' => $data];
+
+                $r = $q->update($d, $raw = null);
+            }
+        } else if (!empty($data)) {
+            return $this->createNodeDataChar($id_node, $key, $data);
+        }
+    }
+
+    /**
+     * @param int|array $id_node int with key_name or single array
+     * @param string key_name 
+     * */
+    public function getNodeDataChar($id_node, $key = null) {
+        $q = $this->dbNodeDataChar->duplicate();
+        if (!is_array($id_node)) {
+            $q->andWhere(['id_node' => $id_node, 'key_name' => $key]);
+        } else {
+            $q->andWhere($id_node);
+        }
+        return $q->getAssoc();
+    }
+
+    /**
+     * @param array $where   
+     * */
+    public function getAllNodeDataChar($where) {
+        $q = $this->dbNodeDataChar->duplicate();
+        $q->andWhere($where);
+        return $q->fetchAll();
+    }
+
+    /**
+     * @param int $id_node	 */
+    public function removeNodeDataChar($id_node, $key) {
+        $q = $this->dbNodeDataChar->duplicate();
+        $q->andWhere(['id_node' => $id_node, 'key_name' => $key]);
+        return $q->remove();
+    }
+
+    /*
+     * Fusionne deux node, les données de $id_node_from sont ajouté a $id_node_to si elle n'existe pas
+     * 
+     */
+    public function fusion($id_node_to, $id_node_from, $delete = true) {
+        $tid = \Fp\Db\Db::startTransaction();
+        $node_from = $this->getById($id_node_from);
+    
+        $data_char = (array) $this->getAllNodeDataChar(['id_node' => $id_node_from]);
+        foreach ($data_char as $d) {
+            if (!$this->getNodeDataChar($id_node_to, $d['key_name'])) {
+                $this->createNodeDataChar($id_node_to, $d['key_name'], $d['data']);
+            }
+        }
+
+        $data_blob = (array) $this->getAllNodeDataBlob(['id_node' => $id_node_from]);
+        foreach ($data_char as $d) {
+            if (!$this->getNodeDataBlob($id_node_to, $d['key_name'])) {
+                $this->createNodeDataBlob($id_node_to, $d['key_name'], $d['data']);
+            }
+        }
+
+
+        $medias_old = (array) $this->getAllMedia(['id_node' => $id_node_from]);
+        $medias = (array) $this->getAllMedia(['id_node' => $id_node_to]);
+        foreach ($medias as $k => $v) {
+            $medias[$v['id_media']] = $v;
+        }
+        foreach ($medias_old as $k => $v) {
+            if (!array_key_exists($v['id_media'], $medias)) {
+                $this->addMedia($id_node_to, $v['id_media']);
+            }
+        }
+
+        $tags_old = (array) $this->getAllTags(['id_node' => $id_node_from]);
+        $tags = (array) $this->getAllTags(['id_node' => $id_node_to]);
+        $tags_to = [];
+        foreach ($tags_old as $v) {
+            $tags_to[$v] = $v['tag'];
+        }
+        foreach ($tags as $v) {
+            $tags_to[$v] = $v['tag'];
+        }
+        if (!empty($tags)) {
+            $this->attachTags($id_node_to, $tags_to);
+        }
+
+        $links = (array) $this->getLinks($id_node_from);
+        foreach ($links as $v) {
+            $this->addLink($id_node_to, $v['id_node']);
+        }
+
+        $parents = (array) $this->getParents($id_node_from);
+        foreach ($parents as $v) {
+            $this->addChildren($v['id_node_parent'], $id_node_to);
+        }
+
+        $children = (array) $this->getChildren($id_node_from);
+        foreach ($children as $v) {
+            $this->addChildren($id_node_to, $v['id_node_enfant']);
+        }
+        
+        if ( $delete ) {
+            $this->deleteNode(['id_node' => $id_node_from]);
+            //$this->createNode($id_node_from, null, null, null, 301, 0, []);
+        }
+
+                
+        \Fp\Db\Db::endTransaction($tid);
+        return $this->getById($id_node_to);
     }
 
 // ACCESS
