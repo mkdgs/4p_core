@@ -152,8 +152,8 @@ class Db {
 	// @todo global transaction over all db
 	public static function startTransaction() {
 		if ( !self::$inTransaction ) { 
-			$tid =  self::get_link()->startTransaction();
-			self::$inTransaction = $tid;
+			$tid =  self::get_link()->startTransaction();                         
+			self::$inTransaction = $tid;                        
 			return $tid;
 		}
 	}
@@ -169,6 +169,7 @@ class Db {
 	public static function rollback() {
 		try {
 		    if ( self::get_link()->inTransaction() ) {
+                       self::$inTransaction = null;
 		       return  self::get_link()->rollBack();
 		    }			
 		} catch (\Exception $e ) { }

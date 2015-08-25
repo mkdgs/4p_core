@@ -9,14 +9,19 @@ class Cdn {
         $this->cache_dir = $O->glob('dir_cache').'cdn/';
         $this->O = $O;     
         $this->noCache =  $O->glob('cache');   
-       // if( !file_exists($this->cache_dir) ) mkdir($this->cache_dir);
+        
+        
     }
 
-    public function exist($file) {
+    public function exist($file) {        
         if ( !$this->noCache && is_file($this->cache_dir.$file) ) return true;
     }
 
     public function put($file, $data) {
+        if ( !is_dir($this->cache_dir) ) {
+            $r = mkdir($this->cache_dir, 0755, true);
+            if ( !$r ) throw new Exception('can\'t create directory '.$this->cache_dir, 500);
+        }
         if ( file_put_contents($this->cache_dir.$file, $data) ) return true;
     }
 

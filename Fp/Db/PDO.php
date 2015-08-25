@@ -163,8 +163,8 @@ class PDO {
 	final public function startTransaction() {
 		$this->connect();
 		if ( !self::$inTransaction ) {
-			if ( $this->link->beginTransaction() ) {
-				return self::$inTransaction = microtime();
+			if ( $this->link->beginTransaction() ) {   
+				return self::$inTransaction = microtime().'#'.rand(1000, 9999);
 			}
 			throw new Exception(__METHOD__);
 		}
@@ -173,6 +173,7 @@ class PDO {
 	final public function endTransaction($tid) { 
 		$this->connect();
 		if ( self::$inTransaction  == $tid) {
+                   
 		    self::$inTransaction = false;		    
 		    if ( $this->link->inTransaction() ) { 
     			return $this->link->commit();
@@ -183,9 +184,10 @@ class PDO {
 	final public function rollback() {
 		$this->connect();
 		if ( $this->link->inTransaction() ) {
+                        $tid = self::$inTransaction;
 			self::$inTransaction = false;
 			$this->link->rollBack();
-			return true;
+			return $tid;
 		}
 	}
 	

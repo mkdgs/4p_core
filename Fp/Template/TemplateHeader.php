@@ -250,6 +250,17 @@ class TemplateHeader {
         if ( array_key_exists($url, self::$assets_include) ) return true;
     }
 
+    
+    protected static function fileGetContents($file) {
+        $contextOptions = array(
+            "ssl" => array(
+                "verify_peer" => false,
+                "verify_peer_name" => false,
+            ),
+        );
+        return @file_get_contents($file , false, stream_context_create($contextOptions));
+    }
+    
     protected $headerStarted = null;
     
     function make($last = null) {
@@ -280,7 +291,7 @@ class TemplateHeader {
                                 $path = implode('/',array_slice(explode('/', $file), 0,-1));
                                 return  'url('.$matches[1].$path.'/'.$matches[2].$matches[3].')';
                             };                            
-                            $css = @file_get_contents($file);
+                            $css = self::fileGetContents($file);
                             $css = preg_replace_callback("#url\((['\"]?)([^'\":)]+)(['\"]?)\)#i", $cb_replace, $css);                            
                             if  ( $debug_level < 3 ) {
                                 $cssmin = new \CSSmin();
@@ -324,7 +335,7 @@ class TemplateHeader {
                         $cache .= "document._currentScript = document.createElement('script');";
                         $cache .= "document._currentScript.src = $srcfile;";
                         $cache .= "document.currentScript = document._currentScript;";
-                        $js = @file_get_contents($file);
+                        $js = self::fileGetContents($file);
                         if ( $this->O->glob('debug') < 3 ) {
                             $jsmin = new \JSMin($js);
                             $js = $jsmin->min();
@@ -386,7 +397,7 @@ class TemplateHeader {
                             $cache .= "document._currentScript.src = $srcfile;";
                             $cache .= "document.currentScript = document._currentScript;";
                             
-                            $js = @file_get_contents($file);
+                            $js = self::fileGetContents($file);
                             if  ( $this->O->glob('debug') < 3 ) {
                                 $jsmin = new \JSMin($js);
                                 $js = $jsmin->min();

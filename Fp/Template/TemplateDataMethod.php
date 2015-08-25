@@ -438,7 +438,7 @@ class TemplateDataMethod {
 
 
 	public static $classTextile;
-	public static function textile($t) {
+	public static function textile($t, $restricted=true) {
 		$c = clone $t;
 		if( !isset(self::$classTextile) ) {
 			//require __DIR__.'/../../lib/Netcarver/Textile/Parser.php';
@@ -447,7 +447,8 @@ class TemplateDataMethod {
 			self::$classTextile = new \Netcarver\Textile\Parser('html5');			
 			self::$classTextile->setRelativeImagePrefix('./mod/FpModule%5CMedia%5CModule/html/image/');
 		}
-
+               // self::$classTextile->setRestricted($restricted);
+                
 		// gestion des image associés aux node
 		// à corriger le contenu html est déja encodé, si on le décode ce code html sera interprété 
 		// Filter::decodeHtmlChars(
@@ -457,6 +458,49 @@ class TemplateDataMethod {
 		$c->vars = preg_replace($r, '$1', $c->vars);
 		
 		
+		$rgxAttr = '(?:{(?P<css>((width|height|margin|padding)+:[0-9]+(px|%);)*)})?';
+		$rgxCredit = '(?:\[(?P<credit>[^\]]*)\])?';
+		$rgxUrl    = '(?P<url>([0-9]+|[/?\pL0-9-_\.+&%:#=;,]+))';
+		$regex = array(
+				"@(!image$rgxAttr:$rgxUrl$rgxCredit)@u",				
+				"@!video$rgxAttr:$rgxUrl$rgxCredit@u",
+				"@!music$rgxAttr:$rgxUrl$rgxCredit@u",
+				"@!link$rgxAttr:$rgxUrl$rgxCredit@u"
+		);
+		
+		$replace = array(
+				'<div data-linked-media="(?P=url)" data-embed-image="(?P=url)" style="(?P=css)" data-credit="(?P=credit)"></div>',
+				'<div data-embed-video="(?P=url)" data-credit="(?P=credit)" ></div>',
+				'<div data-embed-music="(?P=url)" style="(?P=css)" data-credit="(?P=credit)"></div>',
+				'<a data-embed-link="(?P=url)" href="(?P=url)" style="(?P=css)" data-credit="(?P=credit)">(?P=url)</a>'
+		);
+		//$c->vars = preg_replace($regex, $replace, $c->vars);
+		
+		$myReplace = function ($regex, $replace, $subject) {				
+			$extendReplace = function ($matches) use ($replace) {	
+				$string = array_shift($matches);	
+						
+				foreach ( $matches as $k => $v ) {
+					if ( !ctype_digit("$k") ) {
+						$replace = str_replace("(?P=$k)", htmlspecialchars($v, ENT_QUOTES, 'UTF-8', true), $replace);	
+					}
+					else {						
+						$replace = str_replace("$$k", htmlspecialchars($v, ENT_QUOTES, 'UTF-8', true), $replace);
+					}
+				}
+				return $replace;
+			};
+			return preg_replace_callback($regex, $extendReplace, $subject);
+		};
+		
+		foreach ( $regex as $k => $v ) {
+ 			$c->vars = $myReplace($v, $replace[$k], $c->vars);
+		}
+		return $c;
+	}
+        
+        public static function embedMedia($t, $restricted=true) {
+		$c = clone $t;				
 		$rgxAttr = '(?:{(?P<css>((width|height|margin|padding)+:[0-9]+(px|%);)*)})?';
 		$rgxCredit = '(?:\[(?P<credit>[^\]]*)\])?';
 		$rgxUrl    = '(?P<url>([0-9]+|[/?\pL0-9-_\.+&%:#=;,]+))';

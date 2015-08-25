@@ -3,8 +3,8 @@ use \Fp\Log\Logger;
 if ( version_compare(PHP_VERSION, '5.3.0', '<') ) {
 	die('bad php version' . PHP_VERSION);
 }
-require_once 'Fp/Core/Init.php';
-require_once 'Fp/Core/Core.php';
+require_once __DIR__.'/Fp/Core/Init.php';
+require_once __DIR__.'/Fp/Core/Core.php';
 
 # paramètre php
 #ini_set('arg_separator.output', '&amp;');

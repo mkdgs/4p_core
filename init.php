@@ -8,7 +8,7 @@ if ( !isset($C_glob) ) {
 }
 
 try {
-    require_once 'init_framework.php';
+    require_once __DIR__.'/init_framework.php';
     require_once $C_glob['dir_data'] . 'class/class_init.php';
     $O = new Fp\Apps\init($C_glob, $C_glob_Private);   
     $O->process();
