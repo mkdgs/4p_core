@@ -23,23 +23,26 @@ class ConditionMysql extends ConditionAbstract {
         if ($column) {
             if (is_scalar($search)) {
                 $t = $this->typeColumn($column);
-                if ($t == 'varchar') {
+                if ($t == 'varchar') {        
                     $sp = $this->searchParser($search);
                     $tmp = array();
-                    $poss = 0;
+                    $this->searchCase[] = $tmp[] = "$column COLLATE utf8_general_ci LIKE ".$this->quote("%$search%");
+                     
+                    $poss = 1;
                     foreach ($sp as $search) {
-                        if ($search) {
-                            if ( $poss ) {
+                        if ($search) {                            
+                            if ( $poss === 1 )  {
+                                $v = $this->quote("$search%");
+                                $this->searchCase[] = $tmp[] = "$column COLLATE utf8_general_ci LIKE $v ";  
+                            }
+                            else {
                                 $stopWords = ['le', 'la', 'les', 'l', "d'", 'aux', 'ce', 'se', 'un', 'une', 'et', 'en', '&'];
                                 if ( ( count($sp) > 1 ) && ( strlen($v) > 1 ) && !in_array($v, $stopWords)) {
                                     $v = $this->quote("%$search%");
                                     $this->searchCase[] = $tmp[] = "$column COLLATE utf8_general_ci LIKE $v ";
                                 }
                             }
-                            else {
-                                $v = $this->quote("$search%");
-                                $this->searchCase[] = $tmp[] = "$column COLLATE utf8_general_ci LIKE $v ";  
-                            }
+                           
                             $poss++;
                         }
                     }

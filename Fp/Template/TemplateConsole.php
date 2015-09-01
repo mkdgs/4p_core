@@ -13,18 +13,20 @@ class TemplateConsole {
 		return $t;
 	}
 	
-	static public function T_dump($var, $inc=0) {	
+	static public function T_dump($var, $inc=0) {
+                if ( $inc >= 16 ) $var = '*** too much recursion ***';        
+                $i = $inc+1;
 		if ( is_scalar($var) || $var === null ) {	
                     return htmlentities(substr($var,0,250),ENT_COMPAT,'UTF-8');
 		}
 		else if ( $var instanceof TemplateData ) {	                    
-                    return  self::name_div($var->key).self::data_div(self::T_dump($var->vars));                                              
+                    return  self::name_div($var->key).self::data_div(self::T_dump($var->vars, $i));                                              
 		}
                 else if ( is_array($var) ) {		
                     $T_dump = '<ul>';
                     foreach ( $var as $k => $v ) {
                             $T_dump .= '<li>';	
-                            $T_dump .= self::T_dump($v);
+                            $T_dump .= self::T_dump($v, $i);
                             $T_dump .= '</li>';
                     }
                     $T_dump .= '</ul>';

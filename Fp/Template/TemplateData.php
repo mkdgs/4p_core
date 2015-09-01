@@ -58,21 +58,22 @@ class TemplateData implements \ArrayAccess, \Iterator, \Countable {
      * @param array|TemplateData $vars
      */
     public function __construct($vars = array(), $key = null) {
-        $this->key = $key;
-        if (!($vars instanceof TemplateData)) {
+        $this->key = $key;        
+        if ( $vars instanceof TemplateData) {
+            $this->vars = &$vars->vars;
+            $this->i_iterate = &$vars->i_iterate;
+            $this->i_total = &$vars->i_total;
+            $this->i_position = &$vars->i_position;
+        }
+        else {
             if (is_array($vars)) {
                 foreach ($vars as $k => $v) {
                     $this->vars[$k] = new TemplateData($v, $k);
                 }
             } else
-                $this->vars = $vars;
+                $this->vars = &$vars;
         }
-        else {
-            $this->vars = $vars->vars;
-            $this->i_iterate = $vars->i_iterate;
-            $this->i_total = $vars->i_total;
-            $this->i_position = $vars->i_position;
-        }
+        
     }
 
     public function __toString() {
@@ -95,9 +96,9 @@ class TemplateData implements \ArrayAccess, \Iterator, \Countable {
 
     public function __call($name, $args) {
         try {
-
             $numArgs = count($args);
             $fn = "\Fp\Template\TemplateDataMethod";
+          
             // because direct call is ~~15x faster
             if ($numArgs < 1)
                 return $fn::$name($this);
@@ -106,8 +107,8 @@ class TemplateData implements \ArrayAccess, \Iterator, \Countable {
                 return $fn::$name($this, $args[0]);
 
             if ($numArgs === 2)
-                return $fn::$name($this, $args[0], $args[1]);
-            
+                return $fn::$name($this, $args[0], $args[1]);            
+           
             array_unshift($args, $this);
             return call_user_func_array($fn.'::'.$name, $args);
         } catch (\Exception $e) {
