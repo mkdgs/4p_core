@@ -125,7 +125,7 @@ abstract class ConditionAbstract {
                             }
                         }
                     }                    
-                    else  $c[] = $this->_where_($v);
+                    else  $c[] = $this->_where_($v, $type);
                 }
 
                 if ( !empty($c) ) {
