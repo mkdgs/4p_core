@@ -1,50 +1,83 @@
 /*
  * 4p javascript template ports 
- * version : 0.3
+ * version : 0.6
  * Copyright Desgranges Mickael
  * mickael@mkdgs.fr
  */
 if (typeof $4p !== 'object')
     var $4p = {};
+
 $4p.template = function (tpl) {
     var f = {};
-    if (typeof tpl == 'string') {
-        if (tpl.substring(0, 4) == 'http') {
-            $.ajax({
-                cache: true,
-                url: tpl + ( ($4p.skipCache ) ?  $4p.skipCache() : '' ),
-                dataType: 'text',
-                async: false,
-                success: function (d) {
-                    f.tpl = d;
-                }
-            });
-        } else
-            f.tpl = tpl;
-
-    } else {
-        $4p.log('unknow tpl type ' + typeof tpl);
-        return;
-    }
-    // test scope part
-    f.scope = {};
-    f.element = document.createElement('div');
-    f.element.innerHTML = f.tpl;
-    f.element = $(f.element);
-    var $textarea = $('<textarea />');
-    f.element.find('[data-fp-scope]').each(
-            function () {
-                var scope = $(this).attr('data-fp-scope')
-                $(this).parent().attr('data-fp-scope-parent', scope);
-                f.scope[scope] = $textarea.append($(this)).html();                
-                $textarea.html('');
-                if ($(this)[0].hasAttribute('data-fp-remove'))
-                    $(this).remove();                
-            });
-    f.scope['root'] = $textarea.append(f.element).html();
-
     f.cache = {};
-    f.render = function (data, scope, data_key) {
+    f.scope = {};
+
+    f.skipCache = function () {
+        return (typeof $4p.skipCache !== "undefined") ? $4p.skipCache() : '';
+    };
+
+    f.getTemplate = function (tpl) {
+        if (typeof tpl == 'string') {
+            if (tpl.substring(0, 4) == 'http') {
+                $.ajax({
+                    cache: true,
+                    url: tpl + f.skipCache(),
+                    dataType: 'text',
+                    async: false,
+                    success: function (d) {
+                        return d;
+                    }
+                });
+            }
+            return tpl;
+        }
+        f.log('unknow tpl type ' + typeof tpl);
+        return;
+    };
+
+    f.decomposeTemplate = function ($element, scopeObject) {
+        var scopeObject;
+        if (!scopeObject)
+            scopeObject = f.scope;
+        var $textarea = $('<textarea />');
+        var $nestedParts = $('[data-fp-scope]', $element);
+
+        $nestedParts.each(function () {
+            f.decomposeTemplate($(this), scopeObject);
+        });
+
+        $element.each(function () {
+            if ($('[data-fp-scope]', $(this)).length !== 0)
+                console.log($(this));
+            var scope = $(this).attr('data-fp-scope');
+            $(this).parent().attr('data-fp-scope-parent', scope);
+            // if (f.scope[scope]) f.log('template part ' + scope + ' has been overwritten');
+            f.scope[scope] = $textarea.append($(this)).html();
+            // if ($(this)[0].hasAttribute('data-fp-remove')) // become useless 
+            $(this).remove();
+            $textarea.html('');
+        });
+
+        $('[data-fp-scope-hide]', $nestedParts).remove();
+    };
+
+    f.getParent = function (scope) {
+        if (scope === 'root')
+            return f.element;
+        return $('[data-fp-scope-parent=' + scope + ']', f.element);
+    };
+
+    f.renderAfter = function (scope, data, bind_data) {
+        if (scope === 'root')
+            return f.element;
+        return $(f.render(data, scope, bind_data)).appendTo(f.getParent(scope));
+    };
+
+    f.use = function (data, scope, data_key, misc_data) {
+        $4p.templateData.print(f.render(data, scope, data_key, misc_data));
+    };
+
+    f.render = function (data, scope, data_key, misc_data) {
         var err = "", func;
         if (!scope)
             scope = 'root';
@@ -52,9 +85,16 @@ $4p.template = function (tpl) {
             data_key = 'data';
         var tpl_data = {};
         tpl_data[data_key] = new $4p.templateData(data);
+
+        if (typeof misc_data === 'object') {
+            for (km in misc_data) {
+                tpl_data[km] = new $4p.templateData(misc_data[km]);
+            }
+        }
+
         try {
             if (typeof f.cache[scope] != 'function') {
-                var strFunc = "var p=[]; var print = function(str) { p.push(str); }; p.push('"
+                var strFunc = "var p=[]; var use=tpl.use; var print = function(str) { p.push(str); }; var hold_print=$4p.templateData.print; $4p.templateData.print=tpl.print=print; p.push('"
                         + f.scope[scope].replace(/[\r\t\n]/g, " ")
                         .split("'")
                         .join("\\'")
@@ -66,29 +106,43 @@ $4p.template = function (tpl) {
                         .replace(/{{(.+?)}}/g, function (m, p1) {
                             return "');" + p1.split("\\'").join("'") + ";p.push('";
                         })
-                        + "');return p.join('');";
+                        + "');$4p.templateData.print = hold_print;return p.join('');";
 
-                var args = [];
+                var args = ['tpl'];
                 for (var x in tpl_data) {
                     args.push(x);
                 }
                 f.cache[scope] = new Function(args, strFunc);
             }
 
-            var args_value = [];
+            var args_value = [this];
             for (var x in tpl_data) {
                 args_value.push(tpl_data[x]);
             }
-
             return f.cache[scope].apply(this, args_value);
         } catch (e) {
             err = e.message;
         }
-        return "< # $4p.template ERROR: "  + scope + ' '+ err  + "-- ok # >";
+        f.log("$4p.template ERROR: " + scope + ' ' + err);
     };
-    return f;
 
-    
+    f.log = function (msg) {
+        if (typeof console !== "undefined")
+            console.log(msg)
+    };
+
+    f.print = function (str) {
+        f.log('print: ' + str);
+    };
+
+    f.tpl = f.getTemplate(tpl);
+    // get scope part
+    f.element = document.createElement('div');
+    f.element.innerHTML = f.tpl;
+    f.element = $(f.element).attr('data-fp-scope', 'root');
+    f.decomposeTemplate(f.element);
+
+    return f;
 };
 
 $4p.templateData = function (vars, key) {
@@ -103,8 +157,8 @@ $4p.templateData = function (vars, key) {
         var k, v;
         this.key = (key) ? key : null;
         var varsTypeOf = typeof vars;
-        
-        if ( varsTypeOf !== 'undefined' ) {
+
+        if (varsTypeOf !== 'undefined') {
             if (vars.instanceOfTemplateData === true) {
                 this.vars = vars.vars;
             } else if ((/boolean|number|string/).test(varsTypeOf)) {
@@ -145,23 +199,21 @@ $4p.templateData = function (vars, key) {
         return o;
     };
 
-    this.value = function () {
+    this.v = function () {
         return this.vars;
     };
-    this.v = function () {
-        return this.value();
-    };
     this.e = function () {
-        return this.value();
+        return $4p.templateData.print(this.v());
     };
 
     this.toString = function () {
-        return this.value() + '';
+        return this.v() + '';
     };
 
     this.valueOf = function () {
-        return this.value() + '';
+        return this.v() + '';
     };
+
 
     /*
      * ITERATOR
@@ -253,4 +305,5 @@ $4p.templateData = function (vars, key) {
             this.reset();
         };
     }
+    
 };
