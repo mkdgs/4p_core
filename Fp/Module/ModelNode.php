@@ -1137,7 +1137,7 @@ abstract class ModelNode {
             if (array_key_exists($v['id_node'], $ldata)) {
                 foreach ($ldata[$v['id_node']] as $key_name => $list) {                   
                         $lines[$k]['data_blob'][$key_name] = $list;
-                        if ($key_name === 'node') {
+                        if ($key_name === 'node' && isset($lines[$k]['data_blob'][$key_name][0]['data'])) {
                             $lines[$k]['data'] = &$lines[$k]['data_blob'][$key_name][0]['data'];                          
                         }                   
                 }
