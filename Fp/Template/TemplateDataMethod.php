@@ -479,7 +479,7 @@ class TemplateDataMethod {
             //require __DIR__.'/../../lib/Netcarver/Textile/DataBag.php';
             //require __DIR__.'/../../lib/Netcarver/Textile/Tag.php';
             self::$classTextile = new \Netcarver\Textile\Parser('html5');
-            self::$classTextile->setRelativeImagePrefix('./mod/FpModule%5CMedia%5CModule/html/image/');
+            self::$classTextile->setRelativeImagePrefix('./?module=FpModule%5CMedia%5CModule&mode=html&a=image');
         }
         // self::$classTextile->setRestricted($restricted);
         // gestion des image associés aux node

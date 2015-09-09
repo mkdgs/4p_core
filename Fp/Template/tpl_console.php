@@ -130,8 +130,8 @@ body {
 	<?php } else {?>
 	    <a style="color: #FF1119;" href="./?console=cache_start&redirect=<?php echo urlencode($_SERVER['REQUEST_URI']) ?>">activer le cache</a> |
 	<?php } ?>
-	<a style="color: #FF1119;" href="<?php $G->url->e() ?>/mod/FpModule%5CCrud%5CModule">Crud</a> |
-	<a style="color: #FF1119;" href="<?php $G->url->e() ?>/mod/FpModule%5CWebservice%5CModule">WebService</a>
+	<a style="color: #FF1119;" href="<?php $G->url->e() ?>/?module=FpModule%5CCrud%5CModule">Crud</a> |
+	<a style="color: #FF1119;" href="<?php $G->url->e() ?>/?module=FpModule%5CWebservice%5CModule">WebService</a>
 		<div class="console-line">
 		<h1>Log</h1>
 		<div class="spoiler"><?php echo TemplateConsole::T_dumpLog($A->log) ?></div>
