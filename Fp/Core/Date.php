@@ -56,6 +56,12 @@ class Date {
 		)
 	);
 	protected $timezone = 'Europe/Paris';
+        
+        function __clone() {    
+            // Force la copie de this->dateTime, sinon
+            // il pointera vers le même objet.
+            $this->dateTime = clone $this->dateTime;
+        }
 	
 	/**
 	 * @param mysql date
