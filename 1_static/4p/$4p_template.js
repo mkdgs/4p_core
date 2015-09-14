@@ -101,12 +101,12 @@ $4p.template = function (tpl) {
                         .replace(/<script>/g, "{{")
                         .replace(/<\/script>/g, "}}")
                         .replace(/{{=([^}{2}]+)}}/g, function (m, p1) {
-                            return "'+" + p1.split("\\'").join("'") + "+'";
+                            return "'+"+p1.split("\\'").join("'")+"+'";
                         })
-                        .replace(/{{(.+?)}}/g, function (m, p1) {
-                            return "');" + p1.split("\\'").join("'") + ";p.push('";
+                        .replace(/{{([^}{2}]+)}}/g, function (m, p1) {
+                            return "');"+p1.split("\\'").join("'")+";p.push('";
                         })
-                        + "');$4p.templateData.print = hold_print;return p.join('');";
+                        +"');$4p.templateData.print = hold_print;return p.join('');";
 
                 var args = ['tpl'];
                 for (var x in tpl_data) {
