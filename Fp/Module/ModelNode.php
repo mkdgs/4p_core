@@ -1137,8 +1137,8 @@ abstract class ModelNode {
             if (array_key_exists($v['id_node'], $ldata)) {
                 foreach ($ldata[$v['id_node']] as $key_name => $list) {                   
                         $lines[$k]['data_blob'][$key_name] = $list;
-                        if ($key_name === 'node' && isset($lines[$k]['data_blob'][$key_name][0]['data'])) {
-                            $lines[$k]['data'] = &$lines[$k]['data_blob'][$key_name][0]['data'];                          
+                        if ($key_name === 'node' && isset($lines[$k]['data_blob'][$key_name][0])) {
+                            $lines[$k]['data'] = &$lines[$k]['data_blob'][$key_name][0];                          
                         }                   
                 }
             }
@@ -1185,6 +1185,7 @@ abstract class ModelNode {
         if ($oldData = $this->getNodeDataBlob($id_node, $key)) {
             if (!empty($oldData['data'])) {
                 if (empty($data)) {
+                    
                     return $this->removeNodeDataBlob(['id_node_data_blob' => $oldData['id_node_data_blob']]);
                 } else {                    
                     $d = ['data' => $this->serialize($data)];
