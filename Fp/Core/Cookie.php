@@ -64,7 +64,7 @@ class Cookie {
 		elseif ( !empty(self::$dom) ) { 
 			return self::$domain;
 		} 
-		return $_SERVER["HTTP_HOST"];
+		return $_SERVER["SERVER_NAME"];
 	}
 
 	public static function delete($name=null) {	

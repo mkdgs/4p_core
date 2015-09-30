@@ -65,7 +65,7 @@ class Session {
 		
 		
 		$currentCookieParams = session_get_cookie_params();		
-		$rootDomain = $O->glob('domain');		
+		$rootDomain = $O->glob('cookie_domain');		
 		session_set_cookie_params(
 				$currentCookieParams["lifetime"],
 				$currentCookieParams["path"],
