@@ -271,8 +271,7 @@ if (!$4p) {
             uniquId: function () {
                 if (typeof $4p.incUniquid === 'undefined') {
                     $4p.incUniquid = 1;
-                }
-                ;
+                };
                 $4p.incUniquid++;
                 var d = new Date().getTime();
                 return $4p.incUniquid + '' + d;
@@ -826,14 +825,13 @@ if (!$4p) {
                             return parseInt($(e).css('z-index')) || 1;
                         }));
             },
-            /* deprecated */
             msg: function (title, msg) {
                 var d = {
                     title: title,
                     msg: msg
                 };
                 var r = $4p.tpl(
-                        '<div title="~#= title #~"><p>~#= msg #~</p></div>')
+                        '<div title="{{=title}}"><p>{{=msg}}</p></div>')
                         .render(d);
                 $(r).dialog({
                     modal: true,
@@ -850,7 +848,6 @@ if (!$4p) {
                     }
                 });
             },
-            /* deprecated */
             msgPrompt: function (title, msg, data) {
                 var $dialog = $('<div />').attr('title', title);
                 var $input = $('<input type="text" />').val(data);
@@ -868,8 +865,9 @@ if (!$4p) {
                         valider: function () {
                             $(this).data('value', $input.val());
                             if (typeof $(this).data('callback') === 'function') {
-                                $(this).data('callback')($(this).data('value'),
-                                        $(this).data());
+                                 $(this).data('callback').apply(this, [
+                                                    $(this).data('value'),
+                                                    $(this).data() ]);
                             }
                             $(this).dialog('close');
                         },
@@ -888,14 +886,13 @@ if (!$4p) {
                 };
                 return $dialog;
             },
-            /* deprecated */
             msgConfirm: function (title, msg, data) {
                 var d = {
                     title: title,
                     msg: msg
                 };
                 var r = $4p.tpl(
-                        '<div title="~#= title #~"><p>~#= msg #~</p></div>')
+                        '<div title="{{=title}}"><p>{{=msg}}</p></div>')
                         .render(d);
                 var dial = $(r)
                         .dialog(
@@ -919,19 +916,18 @@ if (!$4p) {
                                     close: function (event, ui) {
                                         $(this).dialog("destroy");
                                         if (typeof $(this).data('callback') === 'function') {
-                                            $(this).data('callback')(
+                                            $(this).data('callback').apply(this, [
                                                     $(this).data('value'),
-                                                    $(this).data());
+                                                    $(this).data() ]);
                                         }
                                         $(this).remove();
                                     }
                                 });
                 dial.addCallback = function (cb) {
-                    $(dial).data("callback", cb);
+                    $(this).data("callback", cb);
                 };
                 return dial;
             },
-            /* deprecated */
             msgError: function (title, msg) {
                 var d = {
                     title: title,
