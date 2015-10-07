@@ -1198,12 +1198,14 @@ abstract class ModelNode {
             return $this->createNodeDataBlob($id_node, $key, $data);
         }
     }
+    
+   
 
     /**
      * @param int|array $id_node int with key_name or single array
      * @param string key_name 
      * */
-    public function getNodeDataBlob($id_node, $key = null) {
+    public function getNodeDataBlob($id_node, $key_name = 'node') {
         $q = $this->dbNodeDataBlob->duplicate();
         $q->limitSelect(1);
 
