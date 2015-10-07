@@ -33,22 +33,34 @@ class ConditionMysql extends ConditionAbstract {
                     $this->searchCase[] = $tmp[] = "$column COLLATE utf8_general_ci LIKE " . $this->quote("%$search_str");
 
                     $poss = 1;
-                    $stopWords = ['le', 'la', 'les', 'l', "d'", 'aux', 'ce', 'se', 'un', 'une', 'et', 'en', '&'];
+                    $stopWords = array('alors', 'au', 'aucuns', 'aussi'
+                        , 'autre', 'avant', 'avec', 'car', 'ce', 'cela', 'ces'
+                        , 'ceux', 'ci', 'dans', 'des', 'du'
+                        , 'doit', 'donc', 'début', 'elle', 'elles', 'en', 'encore', 'essai'
+                        , 'est', 'et', 'eu', 'il', 'ils', 'je', 'la', 'le', 'les'
+                        , 'leur', 'là', 'ma', 'mot', 'même', 'ni', 'nous', 'ou', 'où', 'par'
+                        , 'parce', 'pas', 'peu', 'pour', 'pourquoi', 'quand', 'que', 'quel', 'quelle'
+                        , 'quelles', 'quels', 'qui', 'sa', 'sans', 'ses', 'si', 'sien', 'son', 'sont'
+                        , 'sous', 'soyez', 'sujet', 'sur', 'ta', 'tels', 'tes', 'ton', 'tous', 'tout'
+                        , 'trop', 'très', 'tu', 'vont', 'votre', 'vous', 'vu', 'ça', 'de',
+                        'avec', 'à', 'a', "l'", "d'", 'aux', 'se', 'un', 'une', '&', '!', '?', '.', '\'', '"', ';', ':', '+', '-'
+                    );
 
                     if (count($sp) > 1) {
+                        $nb_case = count($sp);
                         foreach ($sp as $sp_search) {
                             $sp_search = trim($sp_search, '"');
-                            if ($poss === 1) { // si le premier match le début
+                            if ($poss === 1 &&  ( $nb_case < 3 ) ) { // si le premier match le début avec une recherche de moins de 3 mots 
                                 $v = $this->quote("$sp_search%");
                                 $this->searchCase[] = $tmp[] = "$column COLLATE utf8_general_ci LIKE $v ";
                             }
 
-                            if (( strlen($v) > 1 ) && !in_array($v, $stopWords)) {// si il est contenu et n'est pas un stop words
+                            if ( ( strlen($sp_search) > 1 ) && !in_array(mb_strtolower($sp_search, 'UTF-8'), $stopWords)) {// si il est contenu et n'est pas un stop words
                                 $v = $this->quote("%$sp_search%");
                                 $this->searchCase[] = $tmp[] = "$column COLLATE utf8_general_ci LIKE $v ";
                             }
-                            
-                            if ( $poss === count($sp)  ) { // si le dernier mache la fin 
+
+                            if ($poss === count($nb_case) && ( $nb_case < 3 ) ) { // si le dernier mach la fin avec une recherche de moins de 3 mots 
                                 $v = $this->quote("$sp_search%");
                                 $this->searchCase[] = $tmp[] = "$column COLLATE utf8_general_ci LIKE $v ";
                             }
