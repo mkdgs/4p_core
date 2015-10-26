@@ -45,7 +45,7 @@ class HttpHeader {
 
     public function redirect($url) {
         if (headers_sent()) {
-            echo "<html><body><script type=\"text/javascript\">\ntop.location.href = '$url';\n</script></html></body>";
+            echo "<html><body><script type=\"text/javascript\">\n top.location.href = '$url';\n</script></html></body>";
             exit();
         } else {
             $this->http_301($url);
