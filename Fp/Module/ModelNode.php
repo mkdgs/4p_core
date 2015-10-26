@@ -1210,7 +1210,7 @@ abstract class ModelNode {
         $q->limitSelect(1);
 
         if (!is_array($id_node)) {
-            $q->andWhere(['id_node' => $id_node, 'key_name' => $key]);
+            $q->andWhere(['id_node' => $id_node, 'key_name' => $key_name]);
         } else {
             $q->andWhere($id_node);
         }
