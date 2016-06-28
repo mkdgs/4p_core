@@ -48,6 +48,12 @@ class Date {
 	private $dateTime;
 	protected $lang = 'fr';
 	protected $intl = array(
+                'en' => array(
+				'days' => array('Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'),
+				'days_short' => array('Mon','Tue','Wed','Thu','Fry','Sat','Sun'),
+				'month' => array('January','February','March','April','May','June','July','August','September','October','November','December'),
+				'month_short' => array('Jan','Feb','Mar','Apr','May','June','Jul','Aug','Sep','Oct','Nov','Dec')
+		),
 		'fr' => array(
 				'days' => array('Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi','Dimanche'),
 				'days_short' => array('Lun','Mar','Mer','Jeu','Ven','Sam','Dim'),
@@ -162,6 +168,10 @@ class Date {
 	protected function getIntl($key) {
 		return $this->intl[$this->lang][$key];
 	}
+        
+        public function setLang($lang) {
+            $this->lang = $lang;
+        }
 	/**
 	 * @deprecated
 	 */
