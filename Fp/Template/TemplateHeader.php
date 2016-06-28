@@ -1,9 +1,12 @@
 <?php
+
 namespace Fp\Template;
+
 use \Fp\Core;
 use Fp\Core\Filter;
 use Fp\Core\Cdn;
 use \Exception;
+
 /**
  * Copyright Desgranges Mickael
  * mickael@4publish.com
@@ -44,24 +47,25 @@ use \Exception;
  * @link			http://4publish.com
  */
 class TemplateHeader {
-    private $script   = Array();
-    private $scriptMaster   = Array();
+
+    private $script = Array();
+    private $scriptMaster = Array();
     private $scriptInline = Array();
-    private $css 	 = Array();
-    private $link     = Array();
-    private $meta     = Array();
+    private $css = Array();
+    private $link = Array();
+    private $meta = Array();
     private static $cache = null;
     private $instance = null;
     private $base_url = null;
     private static $assets_include = array();
 
-    public function __construct(\Fp\Core\Init $O) {       
+    public function __construct(\Fp\Core\Init $O) {
         $this->O = $O;
     }
 
-    public function base_url($url,$target=null) {
-        $target = ( $target ) ? 'target="'.$target.'"' :'';
-        $this->base_url = '<base href="'.$url.'" '.$target.' />';
+    public function base_url($url, $target = null) {
+        $target = ( $target ) ? 'target="' . $target . '"' : '';
+        $this->base_url = '<base href="' . $url . '" ' . $target . ' />';
         return $this;
     }
 
@@ -77,180 +81,207 @@ class TemplateHeader {
     }
 
     function noCache($val) {
-        if ( $val && !self::$cache ) self::$cache = time();
-        else self::$cache = '';
+        if ($val && !self::$cache)
+            self::$cache = time();
+        else
+            self::$cache = '';
 
         return $this;
     }
 
     function rw_cache($url) {
         $url = $this->makeUrlRelative($url);
-        if ( self::$cache  ) {
-            return preg_match('/\?/',$url) ? $url.'&_='.self::$cache : $url.'?_='.self::$cache;
-        }
-        else if ( $v = $this->O->glob('version') ) {
-            return preg_match('/\?/',$url) ? $url.'&v='.$v : $url.'?v='.$v;
+        if (self::$cache) {
+            return preg_match('/\?/', $url) ? $url . '&_=' . self::$cache : $url . '?_=' . self::$cache;
+        } else if ($v = $this->O->glob('version')) {
+            return preg_match('/\?/', $url) ? $url . '&v=' . $v : $url . '?v=' . $v;
         }
         return $url;
     }
 
     protected $cachedJsMaster = array();
-    function javascriptMaster($s) {        
-        if ( $this->isAssetsInclude($s) ) return $this;
-        self::$assets_include[$s] =true;
-        
+
+    function javascriptMaster($s) {
+        if ($this->isAssetsInclude($s))
+            return $this;
+        self::$assets_include[$s] = true;
+
         $key = 'jsMaster';
-        if ( !array_key_exists($key, $this->cachedJsMaster) ) $this->cachedJsMaster[$key] = array();
-        $this->cachedJsMaster[$key][] = $s;        
+        if (!array_key_exists($key, $this->cachedJsMaster))
+            $this->cachedJsMaster[$key] = array();
+        $this->cachedJsMaster[$key][] = $s;
         return $this;
     }
 
-    function js($s,array $attr=null) {
+    function js($s, array $attr = null) {
         return self::javascript($s, $attr);
     }
 
     protected $js = array();
     protected $cachedJs = array();
-    function javascript($s, $no_cache=0) {
-        if ( $this->isAssetsInclude($s) ) return $this;
-        self::$assets_include[$s] =true;
-        
+
+    function javascript($s, $no_cache = 0) {
+        if ($this->isAssetsInclude($s))
+            return $this;
+        self::$assets_include[$s] = true;
+
         $key = 'js';
-        if ( $no_cache ) {
-            if ( !array_key_exists($key, $this->js) ) $this->js[$key] = array();
+        if ($no_cache) {
+            if (!array_key_exists($key, $this->js))
+                $this->js[$key] = array();
             $this->js[$key][] = $s;
         }
         else {
-            if ( !array_key_exists($key, $this->cachedJs) ) $this->cachedJs[$key] = array();
+            if (!array_key_exists($key, $this->cachedJs))
+                $this->cachedJs[$key] = array();
             $this->cachedJs[$key][] = $s;
         }
-        
+
         return $this;
     }
 
     function rawCode($str) {
-        $this->script[md5($str)] =  ''.$str.'';
+        $this->script[md5($str)] = '' . $str . '';
     }
 
-    function javascriptCode($code, $addTag=null) {
-        if ( $addTag ) $code = '<script type="text/javascript">'.$code.'</script>';
-        $this->scriptInline[md5($code)] =  $code;
+    function javascriptCode($code, $addTag = null) {
+        if ($addTag)
+            $code = '<script type="text/javascript">' . $code . '</script>';
+        $this->scriptInline[md5($code)] = $code;
         return $this;
     }
-    function jsTemplate($id,$file) {
-        $this->link['jstemplate'] = '<link id="x-js-template-'.$id.'" rel="x-js-template" type="text/x-js-template" href="'.$file.'" />';
+
+    function jsTemplate($id, $file) {
+        $this->link['jstemplate'] = '<link id="x-js-template-' . $id . '" rel="x-js-template" type="text/x-js-template" href="' . $file . '" />';
         return $this;
     }
 
     protected $cachedCss = array();
-    function minCss($s,$media='all') {
-        if ( $this->isAssetsInclude($s) ) return $this;
-        self::$assets_include[$s] =true;
-        
+
+    function minCss($s, $media = 'all') {
+        if ($this->isAssetsInclude($s))
+            return $this;
+        self::$assets_include[$s] = true;
+
         $key = 'mincss';
-        if ( !array_key_exists($media, $this->cachedCss) ) $this->cachedCss[$media] = array($key => array());
-        if ( !array_key_exists($key, $this->cachedCss[$media]) ) $this->cachedCss[$media][$key] = array();
+        if (!array_key_exists($media, $this->cachedCss))
+            $this->cachedCss[$media] = array($key => array());
+        if (!array_key_exists($key, $this->cachedCss[$media]))
+            $this->cachedCss[$media][$key] = array();
         $this->cachedCss[$media][$key][] = $s;
         return $this;
     }
 
-    function css($s, $media='all') {
-        if ( $this->isAssetsInclude($s) ) return $this;
-        self::$assets_include[$s] =true;
-        
-        $this->css[md5($s)] = '<link rel="stylesheet" href="'.Filter::htmlAttr($this->rw_cache($s)).'" type="text/css" media="'.$media.'" />';
+    function css($s, $media = 'all') {
+        if ($this->isAssetsInclude($s))
+            return $this;
+        self::$assets_include[$s] = true;
+
+        $this->css[md5($s)] = '<link rel="stylesheet" href="' . Filter::htmlAttr($this->rw_cache($s)) . '" type="text/css" media="' . $media . '" />';
         return $this;
     }
 
-    function linkRel($ref, $type="canonical") {
-        $this->link[md5($ref)] = '<link rel="'.Filter::htmlAttr($type).'" href="'.Filter::htmlAttr($ref).'" />';
+    function linkRel($ref, $type = "canonical") {
+        $this->link[md5($ref)] = '<link rel="' . Filter::htmlAttr($type) . '" href="' . Filter::htmlAttr($ref) . '" />';
         return $this;
     }
 
     function touchIcon($s) {
-        $this->link['touch_icon'] = '<link rel="apple-touch-icon-precomposed" href="'.Filter::htmlAttr($this->rw_cache($s)).'" />';
+        $this->link['touch_icon'] = '<link rel="apple-touch-icon-precomposed" href="' . Filter::htmlAttr($this->rw_cache($s)) . '" />';
         return $this;
     }
+
     function shortcutIcon($s) {
-        $this->link['shortcut_icon'] = '<link rel="shortcut icon" href="'.Filter::htmlAttr($this->rw_cache($s)).'" type="image/x-icon" />';
+        $this->link['shortcut_icon'] = '<link rel="shortcut icon" href="' . Filter::htmlAttr($this->rw_cache($s)) . '" type="image/x-icon" />';
         return $this;
     }
+
     function icon($s) {
-        $this->link['icon'] = '<link rel="icon" href="'.Filter::htmlAttr($this->rw_cache($s)).'" />';
+        $this->link['icon'] = '<link rel="icon" href="' . Filter::htmlAttr($this->rw_cache($s)) . '" />';
         return $this;
     }
-    function rss($titre,$url) {
-        $this->link[md5($url)] =  '<link rel="alternate" type="application/rss+xml" title="'.Filter::htmlAttr($titre).'" href="'.Filter::htmlAttr($this->rw_cache($url)).'" />';
+
+    function rss($titre, $url) {
+        $this->link[md5($url)] = '<link rel="alternate" type="application/rss+xml" title="' . Filter::htmlAttr($titre) . '" href="' . Filter::htmlAttr($this->rw_cache($url)) . '" />';
         return $this;
     }
-    function atom($titre,$url) {
-        $this->link[md5($url)] = '<link href="'.Filter::htmlAttr($this->rw_cache($url)).'" type="application/atom+xml" rel="alternate" title="'.Filter::htmlAttr($titre).'" />';
+
+    function atom($titre, $url) {
+        $this->link[md5($url)] = '<link href="' . Filter::htmlAttr($this->rw_cache($url)) . '" type="application/atom+xml" rel="alternate" title="' . Filter::htmlAttr($titre) . '" />';
         return $this;
     }
 
     function base($s) {
-        $this->meta['base'] = '<base href="'.Filter::htmlAttr($s).'"/>';
+        $this->meta['base'] = '<base href="' . Filter::htmlAttr($s) . '"/>';
         return $this;
     }
+
     function title($s) {
-        $this->meta['title'] =  '<title>'.Filter::htmlspecialchars($s).'</title>';
+        $this->meta['title'] = '<title>' . Filter::htmlspecialchars($s) . '</title>';
         return $this;
     }
 
     // for open graph http://ogp.me/
-    function metaProperty($name,  $content) {
-        $this->meta['property '.$name] = 	'<meta property="'.Filter::htmlAttr($name).'" content="'.Filter::htmlAttr($content).'" />';
+    function metaProperty($name, $content) {
+        $this->meta['property ' . $name] = '<meta property="' . Filter::htmlAttr($name) . '" content="' . Filter::htmlAttr($content) . '" />';
         return $this;
     }
 
-    function metaName($name,  $content) {
-        $this->meta['name '.$name] = 	'<meta name="'.Filter::htmlAttr($name).'" content="'.Filter::htmlAttr($content).'" />';
+    function metaName($name, $content) {
+        $this->meta['name ' . $name] = '<meta name="' . Filter::htmlAttr($name) . '" content="' . Filter::htmlAttr($content) . '" />';
         return $this;
     }
 
-    function metaDescription($s)  {
-        $this->meta['description'] = '<meta name="description" content="'.Filter::htmlAttr($s).'" />';
+    function metaDescription($s) {
+        $this->meta['description'] = '<meta name="description" content="' . Filter::htmlAttr($s) . '" />';
         return $this;
     }
+
     function metaAuthor($s) {
-        $this->meta['author'] = '<meta name="author" content="'.Filter::htmlAttr($s).'" />';
+        $this->meta['author'] = '<meta name="author" content="' . Filter::htmlAttr($s) . '" />';
         return $this;
     }
-    function metaCharset($s='utf-8') {
-        $this->meta['charset'] =  '<meta http-equiv="Content-Type" content="text/html; charset='.$s.'" />';
+
+    function metaCharset($s = 'utf-8') {
+        $this->meta['charset'] = '<meta http-equiv="Content-Type" content="text/html; charset=' . $s . '" />';
         return $this;
     }
-    function metaLanguage($s='fr_FR') {
-        $this->meta['language'] =  '<meta name="language" content="'.$s.'" />';
+
+    function metaLanguage($s = 'fr_FR') {
+        $this->meta['language'] = '<meta name="language" content="' . $s . '" />';
         return $this;
     }
+
     function metaCopyright($s) {
-        $this->meta['copyright'] = 	'<meta name="copyright" content="'.Filter::htmlAttr($s).'" />';
-        return $this;
-    }
-    function metaRobots($s='NOODP,index,follow') {
-        $this->meta['robots'] = 	'<meta name="robots" content="'.Filter::htmlAttr($s).'" />';
-        return $this;
-    }
-    function metaRevisit($s='3 days') {
-        $this->meta['revisit'] = 	'<meta name="revisit-after" content="'.Filter::htmlAttr($s).'" />';
-        return $this;
-    }
-    function metaDistribution($s='Global') {
-        $this->meta['distribution'] = 	'<meta name="distribution" content="'.Filter::htmlAttr($s).'" />';
+        $this->meta['copyright'] = '<meta name="copyright" content="' . Filter::htmlAttr($s) . '" />';
         return $this;
     }
 
-    function metaHttpEquiv($name,$content) {
-        $this->meta['http_equiv'.$name.$content] =  '<meta  http-equiv="'.Filter::htmlAttr($name).'" content="'.Filter::htmlAttr($content).'" />';
+    function metaRobots($s = 'NOODP,index,follow') {
+        $this->meta['robots'] = '<meta name="robots" content="' . Filter::htmlAttr($s) . '" />';
         return $this;
     }
-    
+
+    function metaRevisit($s = '3 days') {
+        $this->meta['revisit'] = '<meta name="revisit-after" content="' . Filter::htmlAttr($s) . '" />';
+        return $this;
+    }
+
+    function metaDistribution($s = 'Global') {
+        $this->meta['distribution'] = '<meta name="distribution" content="' . Filter::htmlAttr($s) . '" />';
+        return $this;
+    }
+
+    function metaHttpEquiv($name, $content) {
+        $this->meta['http_equiv' . $name . $content] = '<meta  http-equiv="' . Filter::htmlAttr($name) . '" content="' . Filter::htmlAttr($content) . '" />';
+        return $this;
+    }
+
     protected function isAssetsInclude($url) {
-        if ( array_key_exists($url, self::$assets_include) ) return true;
+        if (array_key_exists($url, self::$assets_include))
+            return true;
     }
 
-    
     protected static function fileGetContents($file) {
         $contextOptions = array(
             "ssl" => array(
@@ -258,163 +289,184 @@ class TemplateHeader {
                 "verify_peer_name" => false,
             ),
         );
-        return @file_get_contents($file , false, stream_context_create($contextOptions));
+        return @file_get_contents($file, false, stream_context_create($contextOptions));
     }
-    
+
     protected $headerStarted = null;
-    
+
     function make($last = null) {
-        require_once __DIR__.'/../../Lib/JSMin.php';
-        require_once __DIR__.'/../../Lib/CSSmin.php';
-        $Cdn  = new Cdn($this->O);
+        require_once __DIR__ . '/../../Lib/JSMin.php';
+        require_once __DIR__ . '/../../Lib/CSSmin.php';
+        $Cdn = new Cdn($this->O);
         $debug_level = $this->O->glob('debug');
+        $no_cache = $this->O->glob('cache');
 
-        if ( $debug_level > 2 ) $line_cr = "\r\n";
-        else $line_cr = null;
+        if ($debug_level > 2)
+            $line_cr = "\r\n";
+        else
+            $line_cr = null;
 
-        if ( !$this->headerStarted ) {
+        if (!$this->headerStarted) {
             $this->headerStarted = 1;
-            echo $this->base_url.$line_cr;
+            echo $this->base_url . $line_cr;
         }
 
-        foreach ( $this->cachedCss as $media => $csskey )  {
-            foreach ( $csskey as $k => $files ) {
+        foreach ($this->cachedCss as $media => $csskey) {
+            foreach ($csskey as $k => $files) {
                 $sorted_files_ref = $files;
-                sort($sorted_files_ref);                
-                $key = 'mincss_'.md5(implode('',$sorted_files_ref)).'_'.count($files).'_'.$this->O->glob('version').self::$cache.'.css';
-
-                if ( !$cache = $Cdn->exist($key) ) {
-                    foreach ( $files as $file ) {
-                        try {
-                            // rewrite relative uri to absolute url
-                            $cb_replace = function($matches) use ($file) {
-                                $path = implode('/',array_slice(explode('/', $file), 0,-1));
-                                return  'url('.$matches[1].$path.'/'.$matches[2].$matches[3].')';
-                            };                            
-                            $css = self::fileGetContents($file);
-                            $css = preg_replace_callback("#url\((['\"]?)([^'\":)]+)(['\"]?)\)#i", $cb_replace, $css);                            
-                            if  ( $debug_level < 3 ) {
-                                $cssmin = new \CSSmin();
-                                $css = $cssmin->run($css, 3000);
+                sort($sorted_files_ref);
+                if (!$no_cache) {
+                    $key = 'mincss_' . md5(implode('', $sorted_files_ref)) . '_' . count($files) . '_' . $this->O->glob('version') . self::$cache . '.css';
+                    if (!$cache = $Cdn->exist($key)) {
+                        foreach ($files as $file) {
+                            try {
+                                // rewrite relative uri to absolute url
+                                $cb_replace = function($matches) use ($file) {
+                                    $path = implode('/', array_slice(explode('/', $file), 0, -1));
+                                    return 'url(' . $matches[1] . $path . '/' . $matches[2] . $matches[3] . ')';
+                                };
+                                $css = self::fileGetContents($file);
+                                $css = preg_replace_callback("#url\((['\"]?)([^'\":)]+)(['\"]?)\)#i", $cb_replace, $css);
+                                if ($debug_level < 3) {
+                                    $cssmin = new \CSSmin();
+                                    $css = $cssmin->run($css, 3000);
+                                }
+                                $cache .= $css . $line_cr;
+                            } catch (\Exception $e) {
+                                if ($debug_level > 2) {
+                                    throw $e;
+                                }
                             }
-                            $cache .= $css.$line_cr;
-                        } catch (\Exception $e) {
-                             if ( $debug_level > 2 ) {
-                                 throw $e;
-                             }                            
                         }
+                        $Cdn->put($key, $cache);
                     }
-                    $Cdn->put($key, $cache);
+                    echo '<link rel="stylesheet" href="' . $Cdn->url($key) . '" type="text/css" media="' . $media . '" />' . $line_cr;
+                    break;
+                } else {
+                    foreach ($files as $file) {
+                        echo '<link rel="stylesheet" href="' . $file . '" type="text/css" media="' . $media . '" />' . $line_cr;
+                    }
                 }
-                echo '<link rel="stylesheet" href="'.$Cdn->url($key).'" type="text/css" media="'.$media.'" />'.$line_cr;
-                break;
             }
         }
         $this->cachedCss = array();
 
-        foreach ( $this->css  as $v ) echo $v.$line_cr;
+        foreach ($this->css as $v)
+            echo $v . $line_cr;
         $this->css = array();
 
-        if  ( $debug_level >= 2 && $this->O->glob('cache') ) {
-            foreach ( $this->cachedJsMaster as $k => $files ) {
-                foreach ( $files as $file ) {
-                    echo '<script src="'.$this->rw_cache($file).'" type="text/javascript" ></script>'.$line_cr;
+        if ($debug_level >= 2 && $this->O->glob('cache')) {
+            foreach ($this->cachedJsMaster as $k => $files) {
+                foreach ($files as $file) {
+                    echo '<script src="' . $this->rw_cache($file) . '" type="text/javascript" ></script>' . $line_cr;
                 }
             }
             $this->cachedJsMaster = array();
-        }
-        else {
-            foreach ( $this->cachedJsMaster as $k => $files ) {
+        } else {
+            foreach ($this->cachedJsMaster as $k => $files) {
                 $sorted_files_ref = $files;
-                sort($sorted_files_ref);        
-                $key = 'jsMaster_'.md5(implode('',$sorted_files_ref)).'_'.count($files).'_'.$this->O->glob('version').self::$cache.'.js';
-                if ( !$cache = $Cdn->exist($key) ) {
-                    foreach ( $files as $file ) {
-                        // lazy loading fix
-                        $srcfile = json_encode($file);
-                        $cache .= "document._currentScript = document.createElement('script');";
-                        $cache .= "document._currentScript.src = $srcfile;";
-                        $cache .= "document.currentScript = document._currentScript;";
-                        $js = self::fileGetContents($file);
-                        if ( $this->O->glob('debug') < 3 ) {
-                            $jsmin = new \JSMin($js);
-                            $js = $jsmin->min();
+                sort($sorted_files_ref);
+                if (!$no_cache) {
+                    $key = 'jsMaster_' . md5(implode('', $sorted_files_ref)) . '_' . count($files) . '_' . $this->O->glob('version') . self::$cache . '.js';
+                    if (!$cache = $Cdn->exist($key)) {
+                        foreach ($files as $file) {
+                            // lazy loading fix
+                            $srcfile = json_encode($file);
+                            $cache .= "document._currentScript = document.createElement('script');";
+                            $cache .= "document._currentScript.src = $srcfile;";
+                            $cache .= "document.currentScript = document._currentScript;";
+                            $js = self::fileGetContents($file);
+                            if ($this->O->glob('debug') < 3) {
+                                $jsmin = new \JSMin($js);
+                                $js = $jsmin->min();
+                            }
+                            $cache .= $js . $line_cr;
                         }
-                        $cache .= $js.$line_cr;
+                        $Cdn->put($key, $cache);
                     }
-                    $Cdn->put($key, $cache);
+                    echo '<script src="' . $Cdn->url($key) . '" type="text/javascript" ></script>' . $line_cr;
+                    break;
+                } else {
+                    foreach ($files as $file) {
+                        echo '<script src="' . $files . '" type="text/javascript" ></script>' . $line_cr;
+                    }
                 }
-                echo '<script src="'.$Cdn->url($key).'" type="text/javascript" ></script>'.$line_cr;
-                break;
             }
             $this->cachedJsMaster = array();
         }
 
-        if ( $last ) {
-            foreach ( $this->link as $v ) echo $v.$line_cr;
-            foreach ( $this->meta as $v ) echo $v.$line_cr;
+        if ($last) {
+            foreach ($this->link as $v)
+                echo $v . $line_cr;
+            foreach ($this->meta as $v)
+                echo $v . $line_cr;
         }
-        
-        if ( ob_get_level() ) ob_flush();
+
+        if (ob_get_level())
+            ob_flush();
         flush();
     }
 
     public function makeJs() {
-        require_once __DIR__.'/../../Lib/JSMin.php';
-        require_once __DIR__.'/../../Lib/CSSmin.php';
-        $Cdn  = new Cdn($this->O);
+        require_once __DIR__ . '/../../Lib/JSMin.php';
+        require_once __DIR__ . '/../../Lib/CSSmin.php';
+        $Cdn = new Cdn($this->O);
         $debug_level = $this->O->glob('debug');
-        
-        if ( $debug_level > 2 ) $line_cr = "\r\n";
-        else $line_cr = null;
-        
-        foreach ( $this->js as $key => $files ) {
-            foreach ( $files as $file ) {
-                echo '<script src="'.$this->rw_cache($file).'" type="text/javascript" ></script>'.$line_cr;
+
+        if ($debug_level > 2)
+            $line_cr = "\r\n";
+        else
+            $line_cr = null;
+
+        foreach ($this->js as $key => $files) {
+            foreach ($files as $file) {
+                echo '<script src="' . $this->rw_cache($file) . '" type="text/javascript" ></script>' . $line_cr;
             }
         }
-               
-        if  ( $debug_level >= 2 && $this->O->glob('cache') ) {        
-            foreach ( $this->cachedJs as $key => $files ) {
-                foreach ( $files as $file ) {
-                    echo '<script src="'.$this->rw_cache($file).'" type="text/javascript" ></script>'.$line_cr;
+
+        if ($debug_level >= 2 && $this->O->glob('cache')) {
+            foreach ($this->cachedJs as $key => $files) {
+                foreach ($files as $file) {
+                    echo '<script src="' . $this->rw_cache($file) . '" type="text/javascript" ></script>' . $line_cr;
                 }
             }
             $this->cachedJs = array();
-        }
-        else {
-            foreach ( $this->cachedJs as $key => $files ) {
+        } else {
+            foreach ($this->cachedJs as $key => $files) {
                 $sorted_files_ref = $files;
                 sort($sorted_files_ref);
-        
-                $key = 'js_'.md5(implode('', $sorted_files_ref)).'_'.count($files).'_'.$this->O->glob('version').self::$cache.'.js';
-                if ( !$cache = $Cdn->exist($key) ) {
-                    foreach ( $files as $file ) {
+
+                $key = 'js_' . md5(implode('', $sorted_files_ref)) . '_' . count($files) . '_' . $this->O->glob('version') . self::$cache . '.js';
+                if (!$cache = $Cdn->exist($key)) {
+                    foreach ($files as $file) {
                         try {
                             // lazy loading fix
                             $srcfile = json_encode($file);
                             $cache .= "document._currentScript = document.createElement('script');";
                             $cache .= "document._currentScript.src = $srcfile;";
                             $cache .= "document.currentScript = document._currentScript;";
-                            
+
                             $js = self::fileGetContents($file);
-                            if  ( $this->O->glob('debug') < 3 ) {
+                            if ($this->O->glob('debug') < 3) {
                                 $jsmin = new \JSMin($js);
                                 $js = $jsmin->min();
                             }
-                            $cache .= $js.$line_cr;
+                            $cache .= $js . $line_cr;
                         } catch (\Exception $e) {
+                            
                         }
                     }
                     $Cdn->put($key, $cache);
                 }
-                echo '<script src="'.$Cdn->url($key).'" type="text/javascript" ></script>'.$line_cr;
+                echo '<script src="' . $Cdn->url($key) . '" type="text/javascript" ></script>' . $line_cr;
                 break;
             }
             $this->cachedJs = array();
         }
-        
-        foreach ( $this->scriptInline as $v ) echo $v.$line_cr;
+
+        foreach ($this->scriptInline as $v)
+            echo $v . $line_cr;
         $this->scriptInline = array();
     }
+
 }

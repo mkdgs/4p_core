@@ -115,7 +115,7 @@ class Db {
 
 	// fermeture connection
 	public static function close($all=null) {
-		if ( $all ) foreach ( self::$DB as $k => $v ) self::$DB[$k] = null;
+		if ( $all === true ) foreach ( self::$DB as $k => $v ) self::$DB[$k] = null;
 		elseif ( array_key_exists(self::$link_id,self::$DB) ) self::$DB[self::$link_id] = null;
 	}
 

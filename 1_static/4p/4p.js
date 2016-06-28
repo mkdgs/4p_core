@@ -662,7 +662,7 @@ if (!$4p) {
                             t.callback();
                         return;
                     }
-                    $.ajax({
+                    $.ajax({                        
                         type: "POST",
                         url: $4p.urlAddParams(url, {
                             "method": 'batch'

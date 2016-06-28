@@ -414,8 +414,9 @@ abstract class ModelNode {
                 ->limitSelect(1)
                 ->orderBy($orderBy);
         $q->andWhere($where);
-        $rows = $q->getAssoc();
-        return $this->unserializeData((array) $rows);
+        if ( $rows = $q->getAssoc() ) {
+            return $this->unserializeData((array) $rows);
+        }
     }
 
     /**
@@ -1109,7 +1110,7 @@ abstract class ModelNode {
      * @return array 
      */
     public function unserializeData($line) {
-        if ( empty($line['data'])  ) {
+        if ( empty($line['data']) && isset($line['id_node'])  ) {
             $d = $this->getNodeDataBlob($line['id_node'], 'node');
             if( !empty($d) ) {
                 $line['data'] = $d['data'];
@@ -1318,10 +1319,13 @@ abstract class ModelNode {
                 if (empty($data)) {
                     return $this->removeNodeDataChar(['id_node_data_char' => $oldData['id_node_data_char']]);
                 } else {
-                    $d = ['data' => $this->serialize($data)];
-                    $q = $this->dbNodeDataChar->duplicate();
-                    $q->andWhere(['id_node_data_char' => $oldData['id_node_data_char']]);
-                    return $q->dbNodeDataChar->update($d);
+                    $data = $this->serialize($data);                    
+                    if ( $data !== $oldData['data'] ) {
+                        $d = ['data' => $data];
+                        $q = $this->dbNodeDataChar->duplicate();
+                        $q->andWhere(['id_node_data_char' => $oldData['id_node_data_char']]);
+                        return $q->update($d);
+                    }
                 }
             }
         } else if (!empty($data)) {
