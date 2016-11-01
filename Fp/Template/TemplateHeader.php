@@ -297,6 +297,7 @@ class TemplateHeader {
     function make($last = null) {
         require_once __DIR__ . '/../../Lib/JSMin.php';
         require_once __DIR__ . '/../../Lib/CSSmin.php';
+         
         $Cdn = new Cdn($this->O);
         $debug_level = $this->O->glob('debug');
         $no_cache = $this->O->glob('cache');
@@ -310,7 +311,7 @@ class TemplateHeader {
             $this->headerStarted = 1;
             echo $this->base_url . $line_cr;
         }
-
+  
         foreach ($this->cachedCss as $media => $csskey) {
             foreach ($csskey as $k => $files) {
                 $sorted_files_ref = $files;
@@ -394,17 +395,12 @@ class TemplateHeader {
             }
             $this->cachedJsMaster = array();
         }
-
         if ($last) {
             foreach ($this->link as $v)
                 echo $v . $line_cr;
             foreach ($this->meta as $v)
                 echo $v . $line_cr;
         }
-
-        if (ob_get_level())
-            ob_flush();
-        flush();
     }
 
     public function makeJs() {

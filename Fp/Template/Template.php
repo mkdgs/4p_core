@@ -76,10 +76,10 @@ class Template {
     }
 
     protected function getFile($file) {
-        if ( is_file($file))
+        if (is_file($file))
             return $file;
-        
-        if ( is_file($this->tpl_dir . $file))
+
+        if (is_file($this->tpl_dir . $file))
             return $this->tpl_dir . $file;
 
         return false;
@@ -95,8 +95,8 @@ class Template {
     }
 
     protected function getHook($file) {
-        try {            
-            if ( $hook_file = $this->isFile($file . '_hook.php')) {                
+        try {
+            if ($hook_file = $this->isFile($file . '_hook.php')) {
                 return $hook_file;
             }
         } catch (\Exception $e) {
@@ -338,7 +338,8 @@ class Template {
             $A = $this->block[$k]['data'];
             $G = $this->getTplGlobal();
             $hookfile = $this->getHook($file);
-            if ( $hookfile ) include $hookfile;
+            if ($hookfile)
+                include $hookfile;
         }
     }
 
@@ -354,7 +355,8 @@ class Template {
         $this->processing = 0;
         //pre processing file
         $hookfile = $this->getHook($file);
-        if ( $hookfile ) include $hookfile;
+        if ($hookfile)
+            include $hookfile;
 
         $this->processing = 1;
         try {
@@ -407,7 +409,8 @@ class Template {
         echo self::doctype() . $body;
     }
 
-    public function renderHtml($master = 'HTML') {
+    public function renderHtml($master = 'HTML', $auto_flush = true) {
+
         try {
             $this->preProcessingBlockFile();
             if (!$this->noHeader) {
@@ -428,22 +431,33 @@ class Template {
                 ob_end_clean();
             throw $e;
         }
-
         if (!$this->noHeader) {
             $this->head()->make(1);
             echo "</head>\n";
         }
-
+        if ($auto_flush) {
+            if (ob_get_level())
+                ob_flush();
+            flush();
+        }
         echo $this->html_body_open;
         echo $body;
+        if ($auto_flush) {
+            flush();
+        }
+        $this->head()->makeJs(1);
+        if ($auto_flush) {
+            flush();
+        }
         if ($this->debug) {
             echo $this->parse_console();
         }
-
-        $this->head()->makeJs(1);
         echo $this->html_body_close;
         if (!$this->noHeader) {
             echo "\r\n</html>";
+        }
+        if ($auto_flush) {
+            flush();
         }
     }
 
@@ -532,11 +546,11 @@ class Template {
 
 
         $is_file = $this->isFile($file);
-        if ( !$is_file) { // on consière que c'est un block de code déjà préparé
+        if (!$is_file) { // on consière que c'est un block de code déjà préparé
             echo $file;
             return;
         }
-        
+
         $file = $is_file;
 
         $previous = self::$current_file;
