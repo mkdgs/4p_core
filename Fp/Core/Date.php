@@ -384,6 +384,10 @@ class Date {
             return $this->dateTime->add($interval);
         }
         
+        public function sub($interval) {
+            return $this->dateTime->sub($interval);
+        }
+        
         public function roundTime() {
                 $second = $this->dateTime->format("s");
                 $this->dateTime->add(new \DateInterval("PT".(60-$second)."S"));
