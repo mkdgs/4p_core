@@ -193,11 +193,11 @@ class Upload {
 		if ( $dir ) $this->upload_dir = $this->trail_slash($dir);
 		//echo $this->upload_dir;
 		if ( !is_dir($this->upload_dir) ) {
-			if ( !@mkdir($this->upload_dir, '0777', true) ) { 
+			if ( !@mkdir($this->upload_dir, 0777, true) ) { 
 				throw new Exception("répertoire de destination invalide: $this->upload_dir");
 			}
 		}
-		if ( !is_writable($this->upload_dir) ) {
+		if ( !is_writable($this->upload_dir) &&  !chmod($this->upload_dir,  0755 ) ) {
 			throw new Exception('l\'écriture est interdite dans: '.$this->upload_dir);
 		}
 	}
