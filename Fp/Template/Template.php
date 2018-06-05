@@ -387,6 +387,15 @@ class Template {
         $this->processing = $processingState;
         return $t;
     }
+    
+    private function filterOutput($out) {           
+        $https =  $this->O->glob('protocol'); 
+        if ( $https === 'https' ) {              
+            $dom = str_replace('.', '\.',$this->O->glob('domain'));           
+            $out = preg_replace("#http:\/\/(([^\.]+\.)?$dom)#msi", 'https://$1', $out);
+        }
+        return $out;        
+    }
 
     public function renderXml($master = 'HTML') {
         try {
@@ -406,7 +415,7 @@ class Template {
         if ($this->debug) {
             $body = '<debug>' . $this->parse_console() . '</debug>';
         }
-        echo self::doctype() . $body;
+        echo self::doctype() . $this->filterOutput($body);
     }
 
     public function renderHtml($master = 'HTML', $auto_flush = true) {
@@ -441,7 +450,7 @@ class Template {
             flush();
         }
         echo $this->html_body_open;
-        echo $body;
+        echo $this->filterOutput($body);
         if ($auto_flush) {
             flush();
         }

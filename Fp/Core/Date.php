@@ -258,6 +258,9 @@ class Date {
 	public function format($format) {
 		return $this->dateTime->format($format);
 	}
+        public function strftime($format) {
+		return strftime($format, $this->dateTime->getTimestamp());
+	}  
 	public function iso8601() {		
 		return $this->dateTime->format(DateTime::ISO8601);
 	} 	

@@ -11,7 +11,7 @@ abstract class ConditionAbstract {
     public $type = null;
     protected $build = null;
     protected $searchCase = array();
-    protected $operator = array('=', '>=', '<=', '!=', 'LIKE', 'BETWEEN', 'NOT LIKE', 'NOT BETWEEN', 'IS', 'IS NOT');
+    protected $operator = array('=', '>', '<', '>=', '<=', '!=', 'LIKE', 'BETWEEN', 'NOT LIKE', 'NOT BETWEEN', 'IS', 'IS NOT');
 
     /**
      * @var Table_query_abstract
