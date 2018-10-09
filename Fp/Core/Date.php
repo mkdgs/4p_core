@@ -362,11 +362,13 @@ class Date {
     }
 
     public function add($interval) {
-        return $this->dateTime->add($interval);
+        $this->dateTime->add($interval);
+        return $this;
     }
 
     public function sub($interval) {
-        return $this->dateTime->sub($interval);
+        $this->dateTime->sub($interval);
+        return $this;
     }
 
     public function roundTime() {
